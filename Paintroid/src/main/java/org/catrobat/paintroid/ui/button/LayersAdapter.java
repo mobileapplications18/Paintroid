@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,11 +48,11 @@ public class LayersAdapter extends BaseAdapter implements OnLayerEventListener {
 	private ArrayList<Layer> layerList;
 	private int layerCounter = 0;
 
-	public LayersAdapter(Bitmap firstLayer) {
+	public LayersAdapter(@Nullable Bitmap firstLayer) {
 		initLayers(firstLayer);
 	}
 
-	private void initLayers(Bitmap firstLayer) {
+	private void initLayers(@Nullable Bitmap firstLayer) {
 		layerList = new ArrayList<>();
 		layerList.add(new Layer(0, firstLayer));
 		layerCounter++;
