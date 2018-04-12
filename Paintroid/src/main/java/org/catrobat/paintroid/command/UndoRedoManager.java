@@ -52,7 +52,7 @@ public final class UndoRedoManager {
 	}
 
 	private static void undoResizeCommand(Layer undoLayer, ResizeCommand undoCommand) {
-		for (Layer layer : LayerListener.getInstance().getAdapter().getLayers()) {
+		for (Layer layer : LayerListener.getInstance().getLayerModel().getLayers()) {
 			if (layer == undoLayer) {
 				continue;
 			}
@@ -94,7 +94,7 @@ public final class UndoRedoManager {
 	}
 
 	private static void redoResizeCommand(Layer redoLayer, ResizeCommand redoCommand) {
-		for (Layer layer : LayerListener.getInstance().getAdapter().getLayers()) {
+		for (Layer layer : LayerListener.getInstance().getLayerModel().getLayers()) {
 			if (layer == redoLayer) {
 				continue;
 			}
@@ -124,7 +124,7 @@ public final class UndoRedoManager {
 	}
 
 	private static void undoRotateCommand(Layer undoLayer, RotateCommand undoCommand) {
-		for (Layer layer : LayerListener.getInstance().getAdapter().getLayers()) {
+		for (Layer layer : LayerListener.getInstance().getLayerModel().getLayers()) {
 			if (layer == undoLayer) {
 				continue;
 			}
@@ -164,7 +164,7 @@ public final class UndoRedoManager {
 	}
 
 	private static void redoRotateCommand(Layer redoLayer, RotateCommand redoCommand) {
-		for (Layer layer : LayerListener.getInstance().getAdapter().getLayers()) {
+		for (Layer layer : LayerListener.getInstance().getLayerModel().getLayers()) {
 			if (layer == redoLayer) {
 				continue;
 			}

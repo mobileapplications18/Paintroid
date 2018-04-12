@@ -47,6 +47,7 @@ import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.tools.Layer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DrawingSurface extends SurfaceView implements
 		SurfaceHolder.Callback {
@@ -119,7 +120,7 @@ public class DrawingSurface extends SurfaceView implements
 			if (workingBitmap != null && !workingBitmap.isRecycled()
 					&& surfaceCanBeUsed) {
 
-				ArrayList<Layer> layers = LayerListener.getInstance().getAdapter().getLayers();
+				List<Layer> layers = LayerListener.getInstance().getLayerModel().getLayers();
 
 				for (int i = layers.size() - 1; i >= 0; i--) {
 					surfaceViewCanvas.drawBitmap(layers.get(i).getImage(), 0, 0, opacityPaint);

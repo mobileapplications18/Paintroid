@@ -86,7 +86,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	public boolean openedFromCatroid;
 
 	boolean imageHasBeenModified() {
-		return (!(LayerListener.getInstance().getAdapter().getLayers().size() == 1)
+		return (!(LayerListener.getInstance().getLayerModel().getLayers().size() == 1)
 				|| !isPlainImage || PaintroidApplication.commandManager.checkIfDrawn());
 	}
 

@@ -229,7 +229,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 			initResizeBounds();
 			if (areResizeBordersValid()) {
 
-				for (Layer layer : LayerListener.getInstance().getAdapter().getLayers()) {
+				for (Layer layer : LayerListener.getInstance().getLayerModel().getLayers()) {
 					Command resizeCommand = new ResizeCommand((int) Math.floor(resizeBoundWidthXLeft),
 							(int) Math.floor(resizeBoundHeightYTop),
 							(int) Math.floor(resizeBoundWidthXRight),
@@ -259,7 +259,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	private void rotate(RotateCommand.RotateDirection rotateDirection) {
 		IndeterminateProgressDialog.getInstance().show();
-		for (Layer layer : LayerListener.getInstance().getAdapter().getLayers()) {
+		for (Layer layer : LayerListener.getInstance().getLayerModel().getLayers()) {
 			Command command = new RotateCommand(rotateDirection);
 
 			if (layer.getSelected()) {

@@ -2,17 +2,17 @@
  * Paintroid: An image manipulation application for Android.
  * Copyright (C) 2010-2015 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,14 +42,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
+import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
-
 import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.command.CommandManager;
 import org.catrobat.paintroid.command.UndoRedoManager;
@@ -57,11 +52,7 @@ import org.catrobat.paintroid.command.implementation.CommandManagerImplementatio
 import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.LoadCommand;
 import org.catrobat.paintroid.common.Constants;
-import org.catrobat.paintroid.dialog.CustomAlertDialogBuilder;
-import org.catrobat.paintroid.dialog.DialogAbout;
-import org.catrobat.paintroid.dialog.DialogTermsOfUseAndService;
-import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
-import org.catrobat.paintroid.dialog.InfoDialog;
+import org.catrobat.paintroid.dialog.*;
 import org.catrobat.paintroid.dialog.InfoDialog.DialogType;
 import org.catrobat.paintroid.dialog.colorpicker.ColorPickerDialog;
 import org.catrobat.paintroid.listener.LayerListener;
@@ -73,7 +64,6 @@ import org.catrobat.paintroid.ui.BottomBar;
 import org.catrobat.paintroid.ui.DrawingSurface;
 import org.catrobat.paintroid.ui.Perspective;
 import org.catrobat.paintroid.ui.TopBar;
-import org.catrobat.paintroid.ui.button.LayersAdapter;
 
 import java.io.File;
 
@@ -86,7 +76,6 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 
 	@VisibleForTesting
 	public String catroidPicturePath;
-	public LayersAdapter layersAdapter;
 	private BottomBar bottomBar;
 	@VisibleForTesting
 	public TopBar topBar;
@@ -140,7 +129,6 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		bottomBar = new BottomBar(this);
 		topBar = new TopBar(this);
 		layerSideNav = (NavigationView) findViewById(R.id.nav_view_layer);
-		layersAdapter = new LayersAdapter(drawingSurface.getBitmapCopy());
 
 		int colorPickerBackgroundColor = colorPickerInitialColor;
 		ColorPickerDialog.getInstance().setInitialColor(colorPickerBackgroundColor);
@@ -190,10 +178,10 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 
 		commandManager.setUpdateTopBarListener(topBar);
 		commandManager.addChangeActiveLayerListener(LayerListener.getInstance());
-		commandManager.setLayerEventListener(LayerListener.getInstance().getAdapter());
+		commandManager.setLayerEventListener(LayerListener.getInstance().getLayerModel());
 
 		commandManager.commitAddLayerCommand(
-				new LayerCommand(LayerListener.getInstance().getAdapter().getLayer(0)));
+				new LayerCommand(LayerListener.getInstance().getLayerModel().getLayer(0)));
 
 		UndoRedoManager.getInstance().update();
 
@@ -311,7 +299,6 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		bottomBar = new BottomBar(this);
 		topBar = new TopBar(this);
 		layerSideNav = (NavigationView) findViewById(R.id.nav_view_layer);
-		layersAdapter = new LayersAdapter(drawingSurface.getBitmapCopy());
 
 		int colorPickerBackgroundColor = colorPickerInitialColor;
 		ColorPickerDialog.getInstance().setInitialColor(colorPickerBackgroundColor);
@@ -325,14 +312,12 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		initKeyboardIsShownListener();
 		setFullScreen(false);
 
-		PaintroidApplication.commandManager
-				.setUpdateTopBarListener(topBar);
+		PaintroidApplication.commandManager.setUpdateTopBarListener(topBar);
 		UndoRedoManager.getInstance().update();
 	}
 
 	@Override
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
 		switch (item.getItemId()) {
 			case R.id.nav_back_to_pocket_code:
 				showSecurityQuestionBeforeExit();

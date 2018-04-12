@@ -137,7 +137,7 @@ public class CommandManagerImplementation implements CommandManager, Observer {
 			layerCommand.setLayersBitmapCommands(result);
 
 			int id = layerCommand.getLayer().getLayerID();
-			int pos = LayerListener.getInstance().getAdapter().getPosition(id);
+			int pos = LayerListener.getInstance().getLayerModel().getPosition(id);
 			layerCommand.setOldLayerPosition(pos);
 
 			drawBitmapCommandsAtLayer.remove(result.get(0));
@@ -310,8 +310,8 @@ public class CommandManagerImplementation implements CommandManager, Observer {
 	private void handleRemoveLayer(LayerCommand command) {
 		drawBitmapCommandsAtLayer.remove(command.getLayersBitmapCommands().get(0));
 		removeLayer(command.getLayer());
-		int pos = LayerListener.getInstance().getAdapter().getLayers().size() - 1;
-		changeActiveLayer(LayerListener.getInstance().getAdapter().getLayers().get(pos));
+		int pos = LayerListener.getInstance().getLayerModel().getLayers().size() - 1;
+		changeActiveLayer(LayerListener.getInstance().getLayerModel().getLayers().get(pos));
 		LayerListener.getInstance().updateButtonResource();
 	}
 
@@ -367,7 +367,7 @@ public class CommandManagerImplementation implements CommandManager, Observer {
 
 		command.setLayersBitmapCommands(result);
 
-		changeActiveLayer(LayerListener.getInstance().getAdapter().getLayers().get(0));
+		changeActiveLayer(LayerListener.getInstance().getLayerModel().getLayers().get(0));
 		drawingSurfaceRedraw();
 		LayerListener.getInstance().updateButtonResource();
 	}
