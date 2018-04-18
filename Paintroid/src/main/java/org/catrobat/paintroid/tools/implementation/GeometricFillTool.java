@@ -44,6 +44,7 @@ import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
 import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.listener.ShapeToolOptionsListener;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 
@@ -227,8 +228,8 @@ public class GeometricFillTool extends BaseToolWithRectangleShape {
 			((GeometricFillCommand) command).addObserver(this);
 
 			IndeterminateProgressDialog.getInstance().show();
-			Layer layer = LayerListener.getInstance().getCurrentLayer();
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+			LayerModel layerModel = LayerListener.getInstance().getLayerModel();
+			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), command);
 			highlightBox();
 		}
 	}

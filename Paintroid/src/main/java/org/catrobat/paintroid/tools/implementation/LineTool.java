@@ -31,6 +31,7 @@ import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.PathCommand;
 import org.catrobat.paintroid.listener.BrushPickerView;
 import org.catrobat.paintroid.listener.LayerListener;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 
@@ -109,8 +110,8 @@ public class LineTool extends BaseTool {
 
 		if (pathInsideBitmap) {
 			Command command = new PathCommand(BITMAP_PAINT, finalPath);
-			Layer layer = LayerListener.getInstance().getCurrentLayer();
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+			LayerModel layerModel = LayerListener.getInstance().getLayerModel();
+			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), command);
 		}
 
 		return true;

@@ -38,6 +38,7 @@ import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.command.implementation.FillCommand;
 import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.listener.LayerListener;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.DrawingSurface;
@@ -97,8 +98,8 @@ public class FillTool extends BaseTool {
 
 		Command command = new FillCommand(new Point((int) coordinate.x, (int) coordinate.y), BITMAP_PAINT, colorTolerance);
 		((FillCommand) command).addObserver(this);
-		Layer layer = LayerListener.getInstance().getCurrentLayer();
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
+		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), command);
 
 		return true;
 	}

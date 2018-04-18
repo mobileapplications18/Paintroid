@@ -151,7 +151,7 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 						private void handleAndAssignImage(Bitmap bitmap) {
 							Command command = new LoadCommand(bitmap);
 							PaintroidApplication.commandManager.commitCommandToLayer(
-									new LayerCommand(LayerListener.getInstance().getCurrentLayer()), command);
+									new LayerCommand(LayerListener.getInstance().getLayerModel()), command);
 						}
 					});
 		} else if (openedFromCatroid) {
@@ -181,7 +181,7 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		commandManager.setLayerEventListener(LayerListener.getInstance().getLayerModel());
 
 		commandManager.commitAddLayerCommand(
-				new LayerCommand(LayerListener.getInstance().getLayerModel().getLayer(0)));
+				new LayerCommand(LayerListener.getInstance().getLayerModel()));
 
 		UndoRedoManager.getInstance().update();
 

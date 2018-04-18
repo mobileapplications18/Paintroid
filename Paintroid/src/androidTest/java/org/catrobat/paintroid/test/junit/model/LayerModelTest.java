@@ -90,7 +90,7 @@ public class LayerModelTest {
 			layerModel.addLayer(testLayer);
 			assertEquals(layerModel.getLayerCount(), 2);
 			assertTrue((layerModel.getLayer(0)) instanceof Layer);
-			assertEquals((layerModel.getLayer(0)),testLayer);
+			assertEquals(layerModel.getLayer(0),testLayer);
 			layerModel.removeLayer(layerModel.getLayer(0));
 			assertEquals(layerModel.getLayerCount(), 1);
 

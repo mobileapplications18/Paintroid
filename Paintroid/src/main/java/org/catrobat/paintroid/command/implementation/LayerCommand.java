@@ -3,25 +3,26 @@ package org.catrobat.paintroid.command.implementation;
 import android.graphics.Canvas;
 
 import org.catrobat.paintroid.command.LayerBitmapCommand;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.Layer;
 
 import java.util.ArrayList;
 
 public class LayerCommand extends BaseCommand {
-	private Layer layer;
+	private LayerModel layerModel;
 	private ArrayList<Integer> listOfMergedLayerIds;
 	private ArrayList<LayerBitmapCommand> layersBitmapCommands;
 	private CommandManagerImplementation.CommandType layerCommandType;
 
 	private int oldLayerPosition;
 
-	public LayerCommand(Layer layer) {
-		this.layer = layer;
+	public LayerCommand(LayerModel layerModel) {
+		this.layerModel = layerModel;
 		oldLayerPosition = -1;
 	}
 
-	public LayerCommand(Layer newLayer, ArrayList<Integer> listOfMergedLayerIds) {
-		layer = newLayer;
+	public LayerCommand(LayerModel newLayerModel, ArrayList<Integer> listOfMergedLayerIds) {
+		layerModel = newLayerModel;
 		this.listOfMergedLayerIds = listOfMergedLayerIds;
 		layersBitmapCommands = new ArrayList<>(this.listOfMergedLayerIds.size());
 		layerCommandType = CommandManagerImplementation.CommandType.NO_LAYER_COMMAND;
@@ -29,7 +30,7 @@ public class LayerCommand extends BaseCommand {
 	}
 
 	public Layer getLayer() {
-		return layer;
+		return layerModel.getCurrentLayer();
 	}
 
 	public ArrayList<Integer> getLayersToMerge() {

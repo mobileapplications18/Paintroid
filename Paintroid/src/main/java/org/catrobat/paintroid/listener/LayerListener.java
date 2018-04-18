@@ -257,7 +257,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 		if (success) {
 			Layer layer = layerModel.getLayer(0);
 			selectLayer(layer);
-			commandManager.commitAddLayerCommand(new LayerCommand(layer));
+			commandManager.commitAddLayerCommand(new LayerCommand(layerModel));
 			UndoRedoManager.getInstance().update();
 
 			layersAdapter.notifyDataSetChanged();
@@ -282,7 +282,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 			newPosition = currentPosition - 1;
 		}
 
-		PaintroidApplication.commandManager.commitRemoveLayerCommand(new LayerCommand(layerModel.getCurrentLayer()));
+		PaintroidApplication.commandManager.commitRemoveLayerCommand(new LayerCommand(layerModel));
 		layerModel.removeLayer(layerModel.getCurrentLayer());
 		selectLayer(layerModel.getLayer(newPosition));
 
@@ -314,7 +314,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 			updateButtonResource();
 			refreshView();
 
-			PaintroidApplication.commandManager.commitMergeLayerCommand(new LayerCommand(getCurrentLayer(), layerToMergeIds));
+			PaintroidApplication.commandManager.commitMergeLayerCommand(new LayerCommand(layerModel, layerToMergeIds));
 			ToastFactory.makeText(context, R.string.layer_merged,
 					Toast.LENGTH_LONG).show();
 
@@ -326,7 +326,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 	public void resetLayer() {
 		Layer layer = layerModel.clearLayer();
 		selectLayer(layer);
-		PaintroidApplication.commandManager.commitAddLayerCommand(new LayerCommand(layer));
+		PaintroidApplication.commandManager.commitAddLayerCommand(new LayerCommand(layerModel));
 		updateButtonResource();
 		refreshView();
 	}

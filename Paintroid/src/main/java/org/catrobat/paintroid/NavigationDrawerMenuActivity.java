@@ -313,7 +313,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 			public void run(Bitmap bitmap) {
 				Command command = new LoadCommand(bitmap);
 				PaintroidApplication.commandManager.commitCommandToLayer(
-						new LayerCommand(LayerListener.getInstance().getCurrentLayer()), command);
+						new LayerCommand(LayerListener.getInstance().getLayerModel()), command);
 			}
 		});
 	}
