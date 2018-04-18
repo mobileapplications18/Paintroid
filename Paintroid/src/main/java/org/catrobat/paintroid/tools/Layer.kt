@@ -11,7 +11,7 @@ class Layer(layerId: Int, bitmap: Bitmap?) {
 		set(image) {
 			field = image
 			if (selected && PaintroidApplication.drawingSurface != null) {
-				PaintroidApplication.drawingSurface.setBitmap(image)
+				PaintroidApplication.drawingSurface.setBitmap(image) // todo this is so bad...
 			}
 		}
 
