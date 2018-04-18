@@ -23,7 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.Log;
 
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class ResizeCommand extends BaseCommand {
 	private static final String TAG = ResizeCommand.class.getSimpleName();
@@ -45,11 +45,11 @@ public class ResizeCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(Canvas canvas, LayerModel layerModel) {
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 
 		try {
-			Bitmap bitmap = layer.getImage();
+			Bitmap bitmap = layerModel.getCurrentLayer().getImage();
 
 			if (resizeCoordinateXRight < resizeCoordinateXLeft) {
 				Log.e(TAG, "coordinate X right must be larger than coordinate X left");
@@ -109,7 +109,7 @@ public class ResizeCommand extends BaseCommand {
 			bitmap.getPixels(pixelsToCopy, 0, copyFromWidth, copyFromXLeft, copyFromYTop, copyFromWidth, copyFromHeight);
 			resizedBitmap.setPixels(pixelsToCopy, 0, copyToWidth, copyToXLeft, copyToYTop, copyToWidth, copyToHeight);
 
-			layer.setImage(resizedBitmap);
+			layerModel.getCurrentLayer().setImage(resizedBitmap);
 
 			setChanged();
 		} catch (Exception e) {

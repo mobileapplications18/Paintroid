@@ -21,11 +21,11 @@ package org.catrobat.paintroid.command;
 
 import android.graphics.Canvas;
 
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public interface Command {
 
-	void run(Canvas canvas, Layer layer);
+	void run(Canvas canvas, LayerModel layerModel);
 
 	void freeResources();
 }

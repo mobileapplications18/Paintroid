@@ -25,7 +25,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class TextToolCommand extends BaseCommand {
 	protected final String[] multilineText;
@@ -51,7 +51,7 @@ public class TextToolCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(Canvas canvas, LayerModel layerModel) {
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 
 		canvas.save();

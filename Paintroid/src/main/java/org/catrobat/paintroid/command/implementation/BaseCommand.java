@@ -28,7 +28,7 @@ import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,7 +61,7 @@ public abstract class BaseCommand extends Observable implements Command {
 	}
 
 	@Override
-	public abstract void run(Canvas canvas, Layer layer);
+	public abstract void run(Canvas canvas, LayerModel layerModel);
 
 	@Override
 	public void freeResources() {

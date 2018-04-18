@@ -29,7 +29,7 @@ import android.util.DisplayMetrics;
 
 import org.catrobat.paintroid.FileIO;
 import org.catrobat.paintroid.PaintroidApplication;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class StampCommand extends BaseCommand {
 	protected final Point coordinates;
@@ -58,7 +58,7 @@ public class StampCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(Canvas canvas, LayerModel layerModel) {
 
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 		Context context = PaintroidApplication.applicationContext;

@@ -15,6 +15,7 @@ import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.command.LayerBitmapCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
 import org.catrobat.paintroid.listener.LayerListener;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.Tool;
 
@@ -25,11 +26,17 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 	public LinkedList<Command> commandList;
 	public LinkedList<Command> undoCommandList;
 	private Layer layer;
+	private LayerModel layerModel;
 
 	public LayerBitmapCommandImpl(LayerCommand layerCommand) {
 		layer = layerCommand.getLayer();
 		commandList = new LinkedList<>();
 		undoCommandList = new LinkedList<>();
+		layerModel = layerCommand.getLayerModel();
+	}
+
+	public LayerModel getLayerModel() {
+		return layerModel;
 	}
 
 	@Override
@@ -54,7 +61,7 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 
 				@Override
 				protected Void doInBackground(Void... params) {
-					command.run(canvas, layer);
+					command.run(canvas, layerModel);
 					return null;
 				}
 
@@ -123,7 +130,7 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 			if (!undoCommandList.isEmpty()) {
 				Command command = undoCommandList.removeFirst();
 				commandList.addLast(command);
-				command.run(PaintroidApplication.drawingSurface.getCanvas(), layer);
+				command.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
 				PaintroidApplication.currentTool.resetInternalState(Tool.StateChange.RESET_INTERNAL_STATE);
 				LayerListener.getInstance().refreshView();
 			}
@@ -178,7 +185,7 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 	@Override
 	public void runAllCommands() {
 		for (Command command : getLayerCommands()) {
-			command.run(PaintroidApplication.drawingSurface.getCanvas(), getLayer());
+			command.run(PaintroidApplication.drawingSurface.getCanvas(), getLayerModel());
 		}
 	}
 }

@@ -26,7 +26,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.Log;
 
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class FlipCommand extends BaseCommand {
 	private static final String TAG = FlipCommand.class.getSimpleName();
@@ -38,8 +38,8 @@ public class FlipCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
-		Bitmap bitmap = layer.getImage();
+	public void run(Canvas canvas, LayerModel layerModel) {
+		Bitmap bitmap = layerModel.getCurrentLayer().getImage();
 
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 		if (flipDirection == null) {

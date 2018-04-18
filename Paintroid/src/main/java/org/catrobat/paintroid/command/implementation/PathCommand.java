@@ -27,7 +27,7 @@ import android.graphics.RectF;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class PathCommand extends BaseCommand {
 	private static final String TAG = PathCommand.class.getSimpleName();
@@ -42,7 +42,7 @@ public class PathCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(Canvas canvas, LayerModel layerModel) {
 		if ((canvas == null) || path == null) {
 			Log.w(TAG, "Object must not be null in PathCommand.");
 			return;

@@ -26,7 +26,7 @@ import android.graphics.Paint;
 import android.util.Log;
 
 import org.catrobat.paintroid.PaintroidApplication;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class RotateCommand extends BaseCommand {
 	private static final String TAG = RotateCommand.class.getSimpleName();
@@ -39,8 +39,8 @@ public class RotateCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
-		Bitmap bitmap = layer.getImage();
+	public void run(Canvas canvas, LayerModel layerModel) {
+		Bitmap bitmap = layerModel.getCurrentLayer().getImage();
 
 		setChanged();
 		notifyStatus(NotifyStates.COMMAND_STARTED);
@@ -77,7 +77,7 @@ public class RotateCommand extends BaseCommand {
 
 		rotateCanvas.drawBitmap(bitmap, rotateMatrix, new Paint());
 
-		layer.setImage(rotatedBitmap);
+		layerModel.getCurrentLayer().setImage(rotatedBitmap);
 
 		setChanged();
 

@@ -29,6 +29,9 @@ public class LayerCommand extends BaseCommand {
 		oldLayerPosition = -1;
 	}
 
+	public LayerModel getLayerModel() {
+		return layerModel;
+	}
 	public Layer getLayer() {
 		return layerModel.getCurrentLayer();
 	}
@@ -62,6 +65,6 @@ public class LayerCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(Canvas canvas, LayerModel layerModel) {
 	}
 }

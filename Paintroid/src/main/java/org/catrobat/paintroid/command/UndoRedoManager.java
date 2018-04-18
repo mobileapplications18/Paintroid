@@ -109,7 +109,7 @@ public final class UndoRedoManager {
 			if (!undoCommands.isEmpty()) {
 				Command firstCommand = undoCommands.get(0);
 				if (firstCommand instanceof ResizeCommand) {
-					firstCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layer);
+					firstCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
 					layerBitmapCommand.addCommandToRedoList();
 					continue;
 				}
@@ -181,7 +181,7 @@ public final class UndoRedoManager {
 			if (!undoCommands.isEmpty()) {
 				Command firstCommand = undoCommands.get(0);
 				if (firstCommand instanceof RotateCommand) {
-					firstCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layer);
+					firstCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
 					layerBitmapCommand.addCommandToRedoList();
 					continue;
 				}
@@ -257,7 +257,7 @@ public final class UndoRedoManager {
 						layerBitmapCommand.clearLayerBitmap();
 
 						for (Command command : layerBitmapCommand.getLayerCommands()) {
-							command.run(canvas, layer);
+							command.run(canvas, layerModel);
 						}
 
 						// check for resize/rotate
@@ -361,7 +361,7 @@ public final class UndoRedoManager {
 				if (!isLayerCommand) {
 
 					if (lastUndoCommand != null) {
-						lastUndoCommand.run(canvas, layer);
+						lastUndoCommand.run(canvas, layerModel);
 					}
 
 					// check for resize/rotate

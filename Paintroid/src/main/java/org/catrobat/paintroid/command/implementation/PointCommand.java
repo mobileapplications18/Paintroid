@@ -25,7 +25,7 @@ import android.graphics.PointF;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class PointCommand extends BaseCommand {
 	private static final String TAG = PointCommand.class.getSimpleName();
@@ -40,7 +40,7 @@ public class PointCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(Canvas canvas, LayerModel layerModel) {
 		if (canvas == null || point == null) {
 			Log.w(TAG, "Object must not be null in PointCommand.");
 			return;
