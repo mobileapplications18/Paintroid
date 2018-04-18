@@ -15,6 +15,8 @@ class LayerModel(firstLayer: Bitmap?) : OnLayerEventListener {
 		const val MAX_LAYER = 4
 	}
 
+	var bitmapFactory: BitmapFactory = BitmapFactory() // todo DI
+
 	var currentLayer: Layer? = null
 
 	private val layerList: MutableList<Layer> = mutableListOf(Layer(0, firstLayer))
@@ -32,7 +34,7 @@ class LayerModel(firstLayer: Bitmap?) : OnLayerEventListener {
 	fun addLayer(): Boolean {
 		if (layerList.size < MAX_LAYER) {
 			val drawingSurface = PaintroidApplication.drawingSurface
-			val image = Bitmap.createBitmap(drawingSurface.bitmapWidth,
+			val image = bitmapFactory.createBitmap(drawingSurface.bitmapWidth,
 					drawingSurface.bitmapHeight, Bitmap.Config.ARGB_8888)
 
 			layerList.add(0, Layer(layerCounter, image))
@@ -78,7 +80,7 @@ class LayerModel(firstLayer: Bitmap?) : OnLayerEventListener {
 		val firstBitmap = firstLayer.image!!
 		val secondBitmap = secondLayer.image!!
 
-		val bmpOverlay = Bitmap.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
+		val bmpOverlay = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
 		val canvas = Canvas(bmpOverlay)
 
 		val overlayPaint = Paint()
@@ -142,7 +144,7 @@ class LayerModel(firstLayer: Bitmap?) : OnLayerEventListener {
 
 	fun getBitmapToSave(): Bitmap {
 		val firstBitmap = layerList[layerList.size - 1].image!! // todo !!
-		val bitmap = Bitmap.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
+		val bitmap = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
 		val canvas = Canvas(bitmap)
 		val overlayPaint = Paint()
 		overlayPaint.alpha = layerList[layerList.size - 1].scaledOpacity
