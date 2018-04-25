@@ -1,39 +1,34 @@
 package org.catrobat.paintroid.command.implementation;
 
 import android.graphics.Canvas;
-
+import android.support.annotation.NonNull;
 import org.catrobat.paintroid.command.LayerBitmapCommand;
+import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.Layer;
 
 import java.util.ArrayList;
 
 public class LayerCommand extends BaseCommand {
-	private LayerModel layerModel;
 	private ArrayList<Integer> listOfMergedLayerIds;
 	private ArrayList<LayerBitmapCommand> layersBitmapCommands;
 	private CommandManagerImplementation.CommandType layerCommandType;
 
 	private int oldLayerPosition;
 
-	public LayerCommand(LayerModel layerModel) {
-		this.layerModel = layerModel;
+	public LayerCommand() {
 		oldLayerPosition = -1;
 	}
 
-	public LayerCommand(LayerModel newLayerModel, ArrayList<Integer> listOfMergedLayerIds) {
-		layerModel = newLayerModel;
+	public LayerCommand(ArrayList<Integer> listOfMergedLayerIds) {
 		this.listOfMergedLayerIds = listOfMergedLayerIds;
-		layersBitmapCommands = new ArrayList<>(this.listOfMergedLayerIds.size());
-		layerCommandType = CommandManagerImplementation.CommandType.NO_LAYER_COMMAND;
-		oldLayerPosition = -1;
+		this.layersBitmapCommands = new ArrayList<>(listOfMergedLayerIds.size());
+		this.layerCommandType = CommandManagerImplementation.CommandType.NO_LAYER_COMMAND;
+		this.oldLayerPosition = -1;
 	}
 
-	public LayerModel getLayerModel() {
-		return layerModel;
-	}
 	public Layer getLayer() {
-		return layerModel.getCurrentLayer();
+		return getLayerModel().getCurrentLayer();
 	}
 
 	public ArrayList<Integer> getLayersToMerge() {
@@ -65,6 +60,10 @@ public class LayerCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, LayerModel layerModel) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
+	}
+
+	private LayerModel getLayerModel() {
+		return LayerListener.getInstance().getLayerModel();
 	}
 }

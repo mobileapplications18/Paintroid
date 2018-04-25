@@ -105,8 +105,9 @@ public class TopBar extends Observable implements View.OnClickListener, OnUpdate
 		redoButton.setEnabled(enabled);
 	}
 
+	@Deprecated
 	private LayerBitmapCommand getCurrentLayerBitmapCommand() {
-		LayerCommand layerCommand = new LayerCommand(LayerListener.getInstance().getLayerModel());
+		LayerCommand layerCommand = new LayerCommand();
 		return PaintroidApplication.commandManager.getLayerBitmapCommand(layerCommand);
 	}
 

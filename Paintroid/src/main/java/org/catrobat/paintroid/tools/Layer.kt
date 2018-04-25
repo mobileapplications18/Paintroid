@@ -3,11 +3,11 @@ package org.catrobat.paintroid.tools
 import android.graphics.Bitmap
 import org.catrobat.paintroid.PaintroidApplication
 
-class Layer(layerId: Int, bitmap: Bitmap?) {
+class Layer(layerId: Int, bitmap: Bitmap) {
 
 	val layerID: Int = layerId
 
-	var image: Bitmap? = bitmap
+	var image: Bitmap = bitmap
 		set(image) {
 			field = image
 			if (selected && PaintroidApplication.drawingSurface != null) {

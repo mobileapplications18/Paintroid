@@ -107,7 +107,7 @@ public class CommandManagerImplementation implements CommandManager, Observer {
 		synchronized (layerOperationsCommandList) {
 			clearUndoCommandList();
 
-			LayerBitmapCommand bitmapCommand = new LayerBitmapCommandImpl(layerCommand);
+			LayerBitmapCommand bitmapCommand = new LayerBitmapCommandImpl();
 			layerCommand.setLayersBitmapCommands(convertLayerBitmapCommandToList(bitmapCommand));
 
 			drawBitmapCommandsAtLayer.add(bitmapCommand);
@@ -162,7 +162,7 @@ public class CommandManagerImplementation implements CommandManager, Observer {
 			ArrayList<LayerBitmapCommand> result = getLayerBitmapCommands(layerCommand.getLayersToMerge());
 			layerCommand.setLayersBitmapCommands(result);
 
-			LayerBitmapCommand bitmapCommand = new LayerBitmapCommandImpl(layerCommand);
+			LayerBitmapCommand bitmapCommand = new LayerBitmapCommandImpl();
 			for (LayerBitmapCommand manager : result) {
 				bitmapCommand.copyLayerCommands(manager.getLayerCommands());
 				drawBitmapCommandsAtLayer.remove(manager);

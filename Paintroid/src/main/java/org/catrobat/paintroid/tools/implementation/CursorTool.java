@@ -39,7 +39,6 @@ import org.catrobat.paintroid.command.implementation.PointCommand;
 import org.catrobat.paintroid.listener.BrushPickerView;
 import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.model.LayerModel;
-import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.ToastFactory;
 
@@ -293,7 +292,7 @@ public class CursorTool extends BaseToolWithShape {
 		}
 		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
 		Command command = new PathCommand(BITMAP_PAINT, pathToDraw);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), command);
+		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
 		return true;
 	}
 
@@ -304,7 +303,7 @@ public class CursorTool extends BaseToolWithShape {
 		}
 		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
 		Command command = new PointCommand(BITMAP_PAINT, coordinate);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), command);
+		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
 		return true;
 	}
 

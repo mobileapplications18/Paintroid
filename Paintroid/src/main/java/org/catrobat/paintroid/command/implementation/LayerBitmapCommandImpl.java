@@ -8,14 +8,12 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-
 import org.catrobat.paintroid.NavigationDrawerMenuActivity;
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.command.LayerBitmapCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
 import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.Tool;
 
@@ -23,23 +21,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class LayerBitmapCommandImpl implements LayerBitmapCommand {
-	public LinkedList<Command> commandList;
-	public LinkedList<Command> undoCommandList;
-	private LayerModel layerModel;
 
-	public LayerBitmapCommandImpl(LayerCommand layerCommand) {
+	private final LinkedList<Command> commandList;
+	private final LinkedList<Command> undoCommandList;
+
+	public LayerBitmapCommandImpl() {
 		commandList = new LinkedList<>();
 		undoCommandList = new LinkedList<>();
-		layerModel = layerCommand.getLayerModel();
-	}
-
-	public LayerModel getLayerModel() {
-		return layerModel;
 	}
 
 	@Override
 	public Layer getLayer() {
-		return layerModel.getCurrentLayer();
+		return LayerListener.getInstance().getCurrentLayer();
 	}
 
 	@Override
@@ -59,7 +52,7 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 
 				@Override
 				protected Void doInBackground(Void... params) {
-					command.run(canvas, layerModel);
+					command.run(canvas, LayerListener.getInstance().getLayerModel());
 					return null;
 				}
 
@@ -128,7 +121,7 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 			if (!undoCommandList.isEmpty()) {
 				Command command = undoCommandList.removeFirst();
 				commandList.addLast(command);
-				command.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
+				command.run(PaintroidApplication.drawingSurface.getCanvas(), LayerListener.getInstance().getLayerModel());
 				PaintroidApplication.currentTool.resetInternalState(Tool.StateChange.RESET_INTERNAL_STATE);
 				LayerListener.getInstance().refreshView();
 			}
@@ -183,7 +176,7 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 	@Override
 	public void runAllCommands() {
 		for (Command command : getLayerCommands()) {
-			command.run(PaintroidApplication.drawingSurface.getCanvas(), getLayerModel());
+			command.run(PaintroidApplication.drawingSurface.getCanvas(), LayerListener.getInstance().getLayerModel());
 		}
 	}
 }

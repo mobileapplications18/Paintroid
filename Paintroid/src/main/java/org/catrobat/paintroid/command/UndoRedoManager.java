@@ -59,7 +59,7 @@ public final class UndoRedoManager {
 				continue;
 			}
 
-			LayerCommand layerCommand = new LayerCommand(layerModel);
+			LayerCommand layerCommand = new LayerCommand();
 			LayerBitmapCommand layerBitmapCommand = PaintroidApplication.commandManager.getLayerBitmapCommand(layerCommand);
 			List<Command> layerCommands = layerBitmapCommand.getLayerCommands();
 
@@ -87,7 +87,7 @@ public final class UndoRedoManager {
 					currentHeight - (undoCommand.getResizeCoordinateYBottom() - undoHeight),
 					undoCommand.getMaximumBitmapResolution());
 
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), resizeCommand);
+			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), resizeCommand);
 		}
 
 		if (!undoLayer.getSelected()) {
@@ -102,7 +102,7 @@ public final class UndoRedoManager {
 				continue;
 			}
 
-			LayerCommand layerCommand = new LayerCommand(layerModel);
+			LayerCommand layerCommand = new LayerCommand();
 			LayerBitmapCommand layerBitmapCommand = PaintroidApplication.commandManager.getLayerBitmapCommand(layerCommand);
 			List<Command> undoCommands = layerBitmapCommand.getLayerUndoCommands();
 
@@ -122,7 +122,7 @@ public final class UndoRedoManager {
 					redoCommand.getResizeCoordinateYBottom(),
 					redoCommand.getMaximumBitmapResolution());
 
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), resizeCommand);
+			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), resizeCommand);
 		}
 	}
 
@@ -133,7 +133,7 @@ public final class UndoRedoManager {
 				continue;
 			}
 
-			LayerCommand layerCommand = new LayerCommand(layerModel);
+			LayerCommand layerCommand = new LayerCommand();
 			LayerBitmapCommand layerBitmapCommand = PaintroidApplication.commandManager.getLayerBitmapCommand(layerCommand);
 			List<Command> layerCommands = layerBitmapCommand.getLayerCommands();
 
@@ -159,7 +159,7 @@ public final class UndoRedoManager {
 			}
 
 			Command rotateCommand = new RotateCommand(rotateDirection);
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), rotateCommand);
+			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), rotateCommand);
 		}
 
 		if (!undoLayer.getSelected()) {
@@ -174,7 +174,7 @@ public final class UndoRedoManager {
 				continue;
 			}
 
-			LayerCommand layerCommand = new LayerCommand(layerModel);
+			LayerCommand layerCommand = new LayerCommand();
 			LayerBitmapCommand layerBitmapCommand = PaintroidApplication.commandManager.getLayerBitmapCommand(layerCommand);
 			List<Command> undoCommands = layerBitmapCommand.getLayerUndoCommands();
 
@@ -188,7 +188,7 @@ public final class UndoRedoManager {
 			}
 
 			Command rotateCommand = new RotateCommand(redoCommand.getRotateDirection());
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), rotateCommand);
+			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), rotateCommand);
 		}
 	}
 
@@ -197,7 +197,7 @@ public final class UndoRedoManager {
 		synchronized (commandManager.getDrawBitmapCommandsAtLayer()) {
 			final Layer layer = LayerListener.getInstance().getCurrentLayer();
 			final LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-			LayerCommand layerCommand = new LayerCommand(layerModel);
+			LayerCommand layerCommand = new LayerCommand();
 			final LayerBitmapCommand layerBitmapCommand = commandManager.getLayerBitmapCommand(layerCommand);
 
 			final float scale = PaintroidApplication.perspective.getScale();
@@ -295,7 +295,7 @@ public final class UndoRedoManager {
 	public void performRedo() {
 		final Layer layer = LayerListener.getInstance().getCurrentLayer();
 		final LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		LayerCommand layerCommand = new LayerCommand(layerModel);
+		LayerCommand layerCommand = new LayerCommand();
 		final CommandManager commandManager = PaintroidApplication.commandManager;
 		LayerBitmapCommand layerBitmapCommand = commandManager.getLayerBitmapCommand(layerCommand);
 
@@ -393,7 +393,7 @@ public final class UndoRedoManager {
 
 	public void update() {
 		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		LayerCommand layerCommand = new LayerCommand(layerModel);
+		LayerCommand layerCommand = new LayerCommand();
 		LayerBitmapCommand layerBitmapCommand = PaintroidApplication.commandManager
 				.getLayerBitmapCommand(layerCommand);
 

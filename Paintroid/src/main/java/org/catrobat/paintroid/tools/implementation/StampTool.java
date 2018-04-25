@@ -40,7 +40,6 @@ import org.catrobat.paintroid.command.implementation.StampCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
 import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.model.LayerModel;
-import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.ToastFactory;
 
@@ -238,7 +237,7 @@ public class StampTool extends BaseToolWithRectangleShape {
 			((StampCommand) command).addObserver(this);
 			IndeterminateProgressDialog.getInstance().show();
 			LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), command);
+			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
 		}
 	}
 

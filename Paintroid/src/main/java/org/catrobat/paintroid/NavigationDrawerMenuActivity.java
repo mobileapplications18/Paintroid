@@ -37,7 +37,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.widget.Toast;
-
 import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.LoadCommand;
@@ -111,7 +110,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
-										int id) {
+													int id) {
 									saveTask.execute();
 									startLoadImageIntent();
 								}
@@ -120,7 +119,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
-										int id) {
+													int id) {
 									startLoadImageIntent();
 								}
 							});
@@ -312,8 +311,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 			@Override
 			public void run(Bitmap bitmap) {
 				Command command = new LoadCommand(bitmap);
-				PaintroidApplication.commandManager.commitCommandToLayer(
-						new LayerCommand(LayerListener.getInstance().getLayerModel()), command);
+				PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
 			}
 		});
 	}

@@ -173,15 +173,10 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 
 	private void initCurrentLayer() {
 		if (layerModel == null) {
-			Log.d(TAG, "ERROR, initCurrentLayer -> layerAdapter == null");
+			Log.d(TAG, "ERROR, initCurrentLayer -> layerModel == null");
 			layerModel = new LayerModel(PaintroidApplication.drawingSurface.getBitmapCopy());
 		}
-		layerModel.setCurrentLayer(layerModel.getLayer(0)); // todo
-		if (layerModel.getCurrentLayer() != null) {
-			selectLayer(layerModel.getCurrentLayer());
-			return;
-		}
-		Log.d(TAG, "CURRENT LAYER NOT INITIALIZED");
+		selectLayer(layerModel.getLayer(0));
 	}
 
 	public LayerModel getLayerModel() {
@@ -189,16 +184,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 	}
 
 	public void selectLayer(Layer toSelect) {
-		if (layerModel.getCurrentLayer() != null) {
-			layerModel.getCurrentLayer().setSelected(false);
-			layerModel.getCurrentLayer().setImage(PaintroidApplication.drawingSurface.getBitmapCopy());
-		}
-		layerModel.setCurrentLayer(toSelect);
-		layerModel.getCurrentLayer().setSelected(true); // todo 🙄
-
-		PaintroidApplication.drawingSurface.setLock(layerModel.getCurrentLayer().getLocked());
-		PaintroidApplication.drawingSurface.setVisible(layerModel.getCurrentLayer().getVisible());
-		PaintroidApplication.drawingSurface.setBitmap(layerModel.getCurrentLayer().getImage());
+		setCurrentLayer(toSelect);
 		((Activity) context).runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -208,17 +194,13 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 	}
 
 	public Layer getCurrentLayer() {
-		if (layerModel.getCurrentLayer() == null) {
-			initCurrentLayer();
-		}
 		return layerModel.getCurrentLayer();
 	}
 
 	public void setCurrentLayer(Layer toSelect) {
-		if (layerModel.getCurrentLayer() != null) {
-			layerModel.getCurrentLayer().setSelected(false);
-			layerModel.getCurrentLayer().setImage(PaintroidApplication.drawingSurface.getBitmapCopy());
-		}
+		layerModel.getCurrentLayer().setSelected(false);
+		layerModel.getCurrentLayer().setImage(PaintroidApplication.drawingSurface.getBitmapCopy());
+
 		layerModel.setCurrentLayer(toSelect);
 		layerModel.getCurrentLayer().setSelected(true); // todo 🙄
 
@@ -257,7 +239,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 		if (success) {
 			Layer layer = layerModel.getLayer(0);
 			selectLayer(layer);
-			commandManager.commitAddLayerCommand(new LayerCommand(layerModel));
+			commandManager.commitAddLayerCommand(new LayerCommand());
 			UndoRedoManager.getInstance().update();
 
 			layersAdapter.notifyDataSetChanged();
@@ -282,7 +264,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 			newPosition = currentPosition - 1;
 		}
 
-		PaintroidApplication.commandManager.commitRemoveLayerCommand(new LayerCommand(layerModel));
+		PaintroidApplication.commandManager.commitRemoveLayerCommand(new LayerCommand());
 		layerModel.removeLayer(layerModel.getCurrentLayer());
 		selectLayer(layerModel.getLayer(newPosition));
 
@@ -314,7 +296,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 			updateButtonResource();
 			refreshView();
 
-			PaintroidApplication.commandManager.commitMergeLayerCommand(new LayerCommand(layerModel, layerToMergeIds));
+			PaintroidApplication.commandManager.commitMergeLayerCommand(new LayerCommand(layerToMergeIds));
 			ToastFactory.makeText(context, R.string.layer_merged,
 					Toast.LENGTH_LONG).show();
 
@@ -326,7 +308,7 @@ public final class LayerListener implements OnRefreshLayerDialogListener, OnActi
 	public void resetLayer() {
 		Layer layer = layerModel.clearLayer();
 		selectLayer(layer);
-		PaintroidApplication.commandManager.commitAddLayerCommand(new LayerCommand(layerModel));
+		PaintroidApplication.commandManager.commitAddLayerCommand(new LayerCommand());
 		updateButtonResource();
 		refreshView();
 	}

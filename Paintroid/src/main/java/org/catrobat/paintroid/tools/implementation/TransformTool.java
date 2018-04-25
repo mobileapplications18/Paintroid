@@ -240,7 +240,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 					if (layer.getSelected()) {
 						((ResizeCommand) resizeCommand).addObserver(this);
 					}
-					PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), resizeCommand);
+					PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), resizeCommand);
 				}
 			} else {
 				cropRunFinished = true;
@@ -255,7 +255,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 		IndeterminateProgressDialog.getInstance().show();
 		((FlipCommand) command).addObserver(this);
 		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), command);
+		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
 	}
 
 	private void rotate(RotateCommand.RotateDirection rotateDirection) {
@@ -267,7 +267,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 			if (layer.getSelected()) {
 				((RotateCommand) command).addObserver(this);
 			}
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layerModel), command);
+			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
 		}
 	}
 

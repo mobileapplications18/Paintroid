@@ -9,7 +9,7 @@ import org.catrobat.paintroid.eventlistener.OnLayerEventListener
 import org.catrobat.paintroid.tools.Layer
 import java.util.*
 
-class LayerModel(firstLayer: Bitmap?) : OnLayerEventListener {
+class LayerModel(firstLayer: Bitmap) : OnLayerEventListener {
 
 	companion object {
 		const val MAX_LAYER = 4
@@ -17,10 +17,15 @@ class LayerModel(firstLayer: Bitmap?) : OnLayerEventListener {
 
 	var bitmapFactory: BitmapFactory = BitmapFactory() // todo DI
 
-	var currentLayer: Layer? = null
-
-	private val layerList: MutableList<Layer> = mutableListOf(Layer(0, firstLayer))
+	var currentLayer: Layer
+	private val layerList: MutableList<Layer> = mutableListOf()
 	private var layerCounter = 1
+
+	init {
+		val layer = Layer(0, firstLayer)
+		layerList.add(layer)
+		currentLayer = layer
+	}
 
 	fun getLayerCount() = layerList.size
 
@@ -61,7 +66,7 @@ class LayerModel(firstLayer: Bitmap?) : OnLayerEventListener {
 	}
 
 	fun mergeLayer(firstLayer: Layer, secondLayer: Layer): Layer {
-		val mergedBitmap: Bitmap? = when {
+		val mergedBitmap = when {
 			getPosition(firstLayer.layerID) > getPosition(secondLayer.layerID) -> mergeBitmaps(firstLayer, secondLayer)
 			else -> mergeBitmaps(secondLayer, firstLayer)
 		}
@@ -143,7 +148,7 @@ class LayerModel(firstLayer: Bitmap?) : OnLayerEventListener {
 	}
 
 	fun getBitmapToSave(): Bitmap {
-		val firstBitmap = layerList[layerList.size - 1].image!! // todo !!
+		val firstBitmap = layerList[layerList.size - 1].image
 		val bitmap = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
 		val canvas = Canvas(bitmap)
 		val overlayPaint = Paint()
