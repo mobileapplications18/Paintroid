@@ -25,11 +25,9 @@ import java.util.List;
 public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 	public LinkedList<Command> commandList;
 	public LinkedList<Command> undoCommandList;
-	private Layer layer;
 	private LayerModel layerModel;
 
 	public LayerBitmapCommandImpl(LayerCommand layerCommand) {
-		layer = layerCommand.getLayer();
 		commandList = new LinkedList<>();
 		undoCommandList = new LinkedList<>();
 		layerModel = layerCommand.getLayerModel();
@@ -41,7 +39,7 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 
 	@Override
 	public Layer getLayer() {
-		return layer;
+		return layerModel.getCurrentLayer();
 	}
 
 	@Override
@@ -173,7 +171,7 @@ public class LayerBitmapCommandImpl implements LayerBitmapCommand {
 			bitmap = Bitmap.createBitmap(dm.widthPixels, dm.heightPixels, Bitmap.Config.ARGB_8888);
 		}
 		bitmap.eraseColor(Color.TRANSPARENT);
-		layer.setImage(bitmap);
+		layerModel.getCurrentLayer().setImage(bitmap);
 		PaintroidApplication.drawingSurface.resetBitmap(bitmap);
 	}
 
