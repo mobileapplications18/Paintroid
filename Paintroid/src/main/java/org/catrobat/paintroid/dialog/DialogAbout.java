@@ -34,6 +34,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import org.catrobat.paintroid.BuildConfig;
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
 
@@ -52,7 +53,7 @@ public class DialogAbout extends AppCompatDialogFragment implements OnClickListe
 
 		TextView aboutVersionNameTextView = (TextView) view
 				.findViewById(R.id.dialog_about_version_name_text_view);
-		String versionName = PaintroidApplication.getVersionName(getActivity());
+		String versionName =  BuildConfig.VERSION_NAME;
 		aboutVersionNameTextView.setText(R.string.about_version);
 		aboutVersionNameTextView.append(" " + versionName);
 

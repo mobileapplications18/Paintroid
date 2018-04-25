@@ -25,15 +25,10 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.annotation.VisibleForTesting;
-
 import org.catrobat.paintroid.PaintroidApplication;
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.PathCommand;
 import org.catrobat.paintroid.command.implementation.PointCommand;
 import org.catrobat.paintroid.listener.BrushPickerView;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 
 public class DrawTool extends BaseTool {
@@ -123,7 +118,8 @@ public class DrawTool extends BaseTool {
 
 		drawToolMovedDistance.set(
 				drawToolMovedDistance.x + Math.abs(coordinate.x - previousEventCoordinate.x),
-				drawToolMovedDistance.y + Math.abs(coordinate.y - previousEventCoordinate.y));
+				drawToolMovedDistance.y + Math.abs(coordinate.y - previousEventCoordinate.y)
+		);
 		boolean returnValue;
 		if (MOVE_TOLERANCE < drawToolMovedDistance.x || MOVE_TOLERANCE < drawToolMovedDistance.y) {
 			returnValue = addPathCommand(coordinate);
@@ -139,9 +135,7 @@ public class DrawTool extends BaseTool {
 			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
 			return false;
 		}
-		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		Command command = new PathCommand(BITMAP_PAINT, pathToDraw);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
+		PaintroidApplication.commandManager.addCommand(new PathCommand(BITMAP_PAINT, pathToDraw));
 		return true;
 	}
 
@@ -150,9 +144,7 @@ public class DrawTool extends BaseTool {
 			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
 			return false;
 		}
-		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		Command command = new PointCommand(BITMAP_PAINT, coordinate);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
+		PaintroidApplication.commandManager.addCommand(new PointCommand(BITMAP_PAINT, coordinate));
 		return true;
 	}
 

@@ -45,11 +45,7 @@ import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.CommandManager;
-import org.catrobat.paintroid.command.UndoRedoManager;
-import org.catrobat.paintroid.command.implementation.CommandManagerImplementation;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
+import org.catrobat.paintroid.command.implementation.CommandManager;
 import org.catrobat.paintroid.command.implementation.LoadCommand;
 import org.catrobat.paintroid.common.Constants;
 import org.catrobat.paintroid.dialog.*;
@@ -133,57 +129,44 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		int colorPickerBackgroundColor = colorPickerInitialColor;
 		ColorPickerDialog.getInstance().setInitialColor(colorPickerBackgroundColor);
 
-		if (openedFromCatroid
-				&& catroidPicturePath != null
-				&& catroidPicturePath.length() > 0) {
-			initializeWhenOpenedFromCatroid();
+		initialiseNewBitmap();
+		LayerListener.init(this, layerSideNav, drawingSurface.getBitmapCopy());
 
-			loadBitmapFromUriAndRun(Uri.fromFile(new File(catroidPicturePath)),
-					new RunnableWithBitmap() {
-						@Override
-						public void run(Bitmap bitmap) {
-							if (!bitmap.hasAlpha()) {
-								bitmap.setHasAlpha(true);
+		if (openedFromCatroid) {
+			LayerListener.getInstance().resetLayer();
+			LayerListener.getInstance().refreshView();
+
+			if (catroidPicturePath != null && catroidPicturePath.length() > 0) {
+				loadBitmapFromUriAndRun(Uri.fromFile(new File(catroidPicturePath)),
+						new RunnableWithBitmap() {
+							@Override
+							public void run(Bitmap bitmap) {
+								if (!bitmap.hasAlpha()) {
+									bitmap.setHasAlpha(true);
+								}
+								handleAndAssignImage(bitmap);
 							}
-							handleAndAssignImage(bitmap);
-						}
 
-						private void handleAndAssignImage(Bitmap bitmap) {
-							Command command = new LoadCommand(bitmap);
-							PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
-						}
-					});
-		} else if (openedFromCatroid) {
-			initializeWhenOpenedFromCatroid();
-		} else {
-			initialiseNewBitmap();
+							private void handleAndAssignImage(Bitmap bitmap) {
+								PaintroidApplication.commandManager.addCommand(new LoadCommand(bitmap));
+							}
+						});
+			}
 		}
 
-		if (!openedFromCatroid) {
-			LayerListener.init(this, layerSideNav, drawingSurface.getBitmapCopy(), false);
-		}
-
-		if (!PaintroidApplication.commandManager.isCommandManagerInitialized() || openedFromCatroid) {
-			initCommandManager();
+		if (PaintroidApplication.commandManager == null || openedFromCatroid) {
+			PaintroidApplication.commandManager = initCommandManager();
 		}
 
 		initNavigationDrawer();
 		initKeyboardIsShownListener();
 	}
 
-	private void initCommandManager() {
-		CommandManager commandManager = new CommandManagerImplementation();
-		PaintroidApplication.commandManager = commandManager;
-
-		commandManager.setUpdateTopBarListener(topBar);
-		commandManager.addChangeActiveLayerListener(LayerListener.getInstance());
-		commandManager.setLayerEventListener(LayerListener.getInstance().getLayerModel());
-
-		commandManager.commitAddLayerCommand(new LayerCommand());
-
-		UndoRedoManager.getInstance().update();
-
-		commandManager.setInitialized(true);
+	private CommandManager initCommandManager() {
+		CommandManager commandManager = new CommandManager();
+		commandManager.addCommandListener(LayerListener.getInstance());
+		commandManager.addCommandListener(topBar);
+		return commandManager;
 	}
 
 	@Override
@@ -245,9 +228,7 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		NavigationDrawerMenuActivity.savedPictureUri = null;
 		saveCopy = false;
 
-		PaintroidApplication.commandManager.setInitialized(false);
-		PaintroidApplication.commandManager.resetAndClear(false);
-
+		PaintroidApplication.commandManager = null;
 		PaintroidApplication.currentTool = null;
 
 		colorPickerInitialColor = Color.BLACK;
@@ -266,6 +247,8 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 			Log.d(TAG, "MainActivity onConfigurationChanged called, but is finishing.");
 			return;
 		}
+
+		PaintroidApplication.commandManager.removeCommandListener(topBar);
 
 		initLocaleConfiguration();
 		final Resources resources = getApplicationContext().getResources();
@@ -305,13 +288,12 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		PaintroidApplication.perspective.resetScaleAndTranslation();
 		PaintroidApplication.currentTool.resetInternalState(Tool.StateChange.NEW_IMAGE_LOADED);
 
-		LayerListener.init(this, layerSideNav, drawingSurface.getBitmapCopy(), true);
+		LayerListener.initAfterOrientationChange(this, layerSideNav);
 		initNavigationDrawer();
 		initKeyboardIsShownListener();
 		setFullScreen(false);
 
-		PaintroidApplication.commandManager.setUpdateTopBarListener(topBar);
-		UndoRedoManager.getInstance().update();
+		PaintroidApplication.commandManager.addCommandListener(topBar);
 	}
 
 	@Override
@@ -625,16 +607,6 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 				isKeyboardShown = heightDiff > 300;
 			}
 		});
-	}
-
-	private void initializeWhenOpenedFromCatroid() {
-		LayerListener.init(this, layerSideNav, drawingSurface.getBitmapCopy(), false);
-		if (PaintroidApplication.commandManager != null) {
-			PaintroidApplication.commandManager.resetAndClear(false);
-		}
-		initialiseNewBitmap();
-		LayerListener.getInstance().resetLayer();
-		LayerListener.getInstance().refreshView();
 	}
 
 	private void initLocaleConfiguration() {

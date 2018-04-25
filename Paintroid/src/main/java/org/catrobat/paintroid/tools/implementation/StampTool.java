@@ -20,26 +20,16 @@
 package org.catrobat.paintroid.tools.implementation;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.*;
 import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.PointF;
-import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.Toast;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.StampCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.ToastFactory;
 
@@ -220,24 +210,26 @@ public class StampTool extends BaseToolWithRectangleShape {
 	}
 
 	private void paste() {
-		Point intPosition = new Point((int) toolPosition.x,
-				(int) toolPosition.y);
+		Point intPosition = new Point((int) toolPosition.x, (int) toolPosition.y);
 
-		int bitmapHeight = PaintroidApplication.drawingSurface
-				.getBitmapHeight();
+		int bitmapHeight = PaintroidApplication.drawingSurface.getBitmapHeight();
 		int bitmapWidth = PaintroidApplication.drawingSurface.getBitmapWidth();
 		if (toolPosition.x - boxWidth / 2 < bitmapWidth
 				&& toolPosition.y - boxHeight / 2 < bitmapHeight
 				&& toolPosition.x + boxWidth / 2 >= 0
 				&& toolPosition.y + boxHeight / 2 >= 0) {
 
-			Command command = new StampCommand(drawingBitmap, intPosition,
-					boxWidth, boxHeight, boxRotation);
+			StampCommand command = new StampCommand(
+					drawingBitmap,
+					intPosition,
+					boxWidth,
+					boxHeight,
+					boxRotation
+			);
 
-			((StampCommand) command).addObserver(this);
+			command.addObserver(this);
 			IndeterminateProgressDialog.getInstance().show();
-			LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
+			PaintroidApplication.commandManager.addCommand(command);
 		}
 	}
 

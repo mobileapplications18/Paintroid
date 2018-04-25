@@ -5,11 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import org.catrobat.paintroid.PaintroidApplication
-import org.catrobat.paintroid.eventlistener.OnLayerEventListener
 import org.catrobat.paintroid.tools.Layer
 import java.util.*
 
-class LayerModel(firstLayer: Bitmap) : OnLayerEventListener {
+class LayerModel(firstLayer: Bitmap) {
 
 	companion object {
 		const val MAX_LAYER = 4
@@ -133,18 +132,6 @@ class LayerModel(firstLayer: Bitmap) : OnLayerEventListener {
 				}
 			}
 		}
-	}
-
-	override fun onLayerAdded(layer: Layer) {
-		addLayer(layer)
-	}
-
-	override fun onLayerRemoved(layer: Layer) {
-		removeLayer(layer)
-	}
-
-	override fun onLayerMoved(startPos: Int, targetPos: Int) {
-		swapLayer(startPos, targetPos)
 	}
 
 	fun getBitmapToSave(): Bitmap {

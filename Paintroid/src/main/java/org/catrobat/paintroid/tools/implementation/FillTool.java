@@ -31,12 +31,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
 import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.command.implementation.FillCommand;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
@@ -98,7 +96,7 @@ public class FillTool extends BaseTool {
 		Command command = new FillCommand(new Point((int) coordinate.x, (int) coordinate.y), BITMAP_PAINT, colorTolerance);
 		((FillCommand) command).addObserver(this);
 		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
+		PaintroidApplication.commandManager.addCommand(command);
 
 		return true;
 	}

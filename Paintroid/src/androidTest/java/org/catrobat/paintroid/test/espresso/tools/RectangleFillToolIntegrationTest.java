@@ -164,7 +164,7 @@ public class RectangleFillToolIntegrationTest {
 		// now the point under test is diagonal from the center -> if its a circle there should be no color
 		colorAfterDrawing = PaintroidApplication.drawingSurface.getPixel(pointUnderTest);
 		assertTrue("Pixel should not have been filled for a circle", (colorPickerColor != colorAfterDrawing));
-		PaintroidApplication.commandManager.resetAndClear(true);
+		PaintroidApplication.commandManagerLegacy.resetAndClear(true);
 	}
 
 	@Test

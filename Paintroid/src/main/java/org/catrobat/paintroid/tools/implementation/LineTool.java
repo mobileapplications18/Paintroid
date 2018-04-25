@@ -24,14 +24,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PointF;
-
 import org.catrobat.paintroid.PaintroidApplication;
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.PathCommand;
 import org.catrobat.paintroid.listener.BrushPickerView;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 
 public class LineTool extends BaseTool {
@@ -54,14 +49,19 @@ public class LineTool extends BaseTool {
 		setPaintColor(CANVAS_PAINT.getColor());
 
 		canvas.save();
-		canvas.clipRect(0, 0,
+		canvas.clipRect(
+				0,
+				0,
 				PaintroidApplication.drawingSurface.getBitmapWidth(),
-				PaintroidApplication.drawingSurface.getBitmapHeight());
+				PaintroidApplication.drawingSurface.getBitmapHeight()
+		);
 		if (CANVAS_PAINT.getAlpha() == 0x00) {
 			CANVAS_PAINT.setColor(Color.BLACK);
-			canvas.drawLine(initialEventCoordinate.x,
+			canvas.drawLine(
+					initialEventCoordinate.x,
 					initialEventCoordinate.y, currentCoordinate.x,
-					currentCoordinate.y, CANVAS_PAINT);
+					currentCoordinate.y, CANVAS_PAINT
+			);
 			CANVAS_PAINT.setColor(Color.TRANSPARENT);
 		} else {
 			canvas.drawLine(initialEventCoordinate.x,
@@ -95,8 +95,7 @@ public class LineTool extends BaseTool {
 
 	@Override
 	public boolean handleUp(PointF coordinate) {
-		if (initialEventCoordinate == null || previousEventCoordinate == null
-				|| coordinate == null) {
+		if (initialEventCoordinate == null || previousEventCoordinate == null || coordinate == null) {
 			return false;
 		}
 		Path finalPath = new Path();
@@ -108,9 +107,7 @@ public class LineTool extends BaseTool {
 		}
 
 		if (pathInsideBitmap) {
-			Command command = new PathCommand(BITMAP_PAINT, finalPath);
-			LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
+			PaintroidApplication.commandManager.addCommand(new PathCommand(BITMAP_PAINT, finalPath));
 		}
 
 		return true;

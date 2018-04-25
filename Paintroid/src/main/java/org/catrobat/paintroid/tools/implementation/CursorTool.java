@@ -20,25 +20,16 @@
 package org.catrobat.paintroid.tools.implementation;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.*;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Style;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.RectF;
 import android.support.annotation.VisibleForTesting;
 import android.widget.Toast;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.PathCommand;
 import org.catrobat.paintroid.command.implementation.PointCommand;
 import org.catrobat.paintroid.listener.BrushPickerView;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.ToastFactory;
 
@@ -65,7 +56,7 @@ public class CursorTool extends BaseToolWithShape {
 		pathToDraw = new Path();
 		pathToDraw.incReserve(1);
 		cursorToolPrimaryShapeColor = context.getResources().getColor(
-						R.color.cursor_tool_deactive_primary_color);
+				R.color.cursor_tool_deactive_primary_color);
 		cursorToolSecondaryShapeColor = Color.LTGRAY;
 		pathInsideBitmap = false;
 	}
@@ -290,9 +281,7 @@ public class CursorTool extends BaseToolWithShape {
 			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
 			return false;
 		}
-		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		Command command = new PathCommand(BITMAP_PAINT, pathToDraw);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
+		PaintroidApplication.commandManager.addCommand(new PathCommand(BITMAP_PAINT, pathToDraw));
 		return true;
 	}
 
@@ -301,9 +290,7 @@ public class CursorTool extends BaseToolWithShape {
 			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
 			return false;
 		}
-		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		Command command = new PointCommand(BITMAP_PAINT, coordinate);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
+		PaintroidApplication.commandManager.addCommand(new PointCommand(BITMAP_PAINT, coordinate));
 		return true;
 	}
 

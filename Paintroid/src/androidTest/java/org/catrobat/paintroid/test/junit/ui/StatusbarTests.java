@@ -24,7 +24,6 @@ import android.support.test.rule.ActivityTestRule;
 
 import org.catrobat.paintroid.MainActivity;
 import org.catrobat.paintroid.PaintroidApplication;
-import org.catrobat.paintroid.test.junit.stubs.CommandManagerStub;
 import org.catrobat.paintroid.ui.TopBar;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,7 +49,7 @@ public class StatusbarTests {
 		MainActivity activity = activityTestRule.getActivity();
 		TopBar topBar = activity.topBar;
 		topBar.deleteObservers();
-		PaintroidApplication.commandManager = commandManagerStub;
+		PaintroidApplication.commandManagerLegacy = commandManagerStub;
 	}
 
 	@UiThreadTest

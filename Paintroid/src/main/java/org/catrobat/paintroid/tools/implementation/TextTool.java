@@ -1,30 +1,26 @@
 /**
- *  Paintroid: An image manipulation application for Android.
- *  Copyright (C) 2010-2015 The Catrobat Team
- *  (<http://developer.catrobat.org/credits>)
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Paintroid: An image manipulation application for Android.
+ * Copyright (C) 2010-2015 The Catrobat Team
+ * (<http://developer.catrobat.org/credits>)
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.catrobat.paintroid.tools.implementation;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.Typeface;
+import android.graphics.*;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
@@ -32,16 +28,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ToggleButton;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.TextToolCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
-import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.listener.TextToolOptionsListener;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.DrawingSurface;
 
@@ -130,8 +121,7 @@ public class TextTool extends BaseToolWithRectangleShape {
 		}
 		boxWidth = maxTextWidth + 2 * BOX_OFFSET;
 
-		Bitmap bitmap = Bitmap.createBitmap((int) boxWidth, (int) boxHeight,
-				Bitmap.Config.ARGB_8888);
+		Bitmap bitmap = Bitmap.createBitmap((int) boxWidth, (int) boxHeight, Bitmap.Config.ARGB_8888);
 		Canvas drawCanvas = new Canvas(bitmap);
 
 		for (int i = 0; i < multilineText.length; i++) {
@@ -280,13 +270,19 @@ public class TextTool extends BaseToolWithRectangleShape {
 	protected void onClickInBox() {
 		highlightBox();
 		PointF toolPosition = new PointF(this.toolPosition.x, this.toolPosition.y);
-		Command command = new TextToolCommand(getMultilineText(), textPaint, BOX_OFFSET, boxWidth,
-				boxHeight, toolPosition, boxRotation);
-		((TextToolCommand) command).addObserver(this);
+		TextToolCommand command = new TextToolCommand(
+				getMultilineText(),
+				textPaint,
+				BOX_OFFSET,
+				boxWidth,
+				boxHeight,
+				toolPosition,
+				boxRotation
+		);
+		command.addObserver(this);
 		IndeterminateProgressDialog.getInstance().show();
 
-		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(), command);
+		PaintroidApplication.commandManager.addCommand(command);
 	}
 
 	@VisibleForTesting

@@ -190,12 +190,10 @@ public class DrawingSurface extends SurfaceView implements
 	public void onRestoreInstanceState(Parcelable state) {
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
-			PaintroidApplication.perspective = (Perspective) bundle
-					.getSerializable(BUNDLE_PERSPECTIVE);
+			PaintroidApplication.perspective = (Perspective) bundle.getSerializable(BUNDLE_PERSPECTIVE);
 			resetBitmap((Bitmap) bundle.getParcelable(BUNDLE_WORKING_BITMAP));
 
-			super.onRestoreInstanceState(bundle
-					.getParcelable(BUNDLE_INSTANCE_STATE));
+			super.onRestoreInstanceState(bundle.getParcelable(BUNDLE_INSTANCE_STATE));
 		} else {
 			super.onRestoreInstanceState(state);
 		}
