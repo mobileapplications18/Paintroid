@@ -97,7 +97,7 @@ android {
                 'RtlSymmetry', 'GradleDynamicVersion', 'RtlHardcoded', 'HandlerLeak', 'IconMissingDensityFolder',
                 'WrongRegion', 'RelativeOverlap', 'IconColors', 'MissingTranslation', 'ExtraTranslation',
                 'GradleCompatible', 'WifiManagerLeak', 'ApplySharedPref', 'DefaultLocale', 'ObsoleteSdkInt',
-                'StaticFieldLeak' , 'AppCompatResource'
+                'StaticFieldLeak', 'AppCompatResource'
 
         textReport true
         xmlReport true
@@ -124,6 +124,9 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.18.3'
+    testCompile('com.nhaarman:mockito-kotlin:1.5.0') {
+        exclude group: 'org.jetbrains.kotlin' // still uses 1.0.7...
+    }
 
     pmd(
             'net.sourceforge.pmd:pmd-core:5.8.1',

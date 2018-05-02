@@ -211,12 +211,10 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 	}
 
 	public void dragEnded() {
-
 		if (outsideView && animationEnded) {
 			LayerListener.getInstance().moveLayer(currentDragLayerPos, startDragLayerPos);
 		}
 
-		LayerListener.getInstance().selectLayer(LayerListener.getInstance().getCurrentLayer());
 		positionWentOutsideView = -1;
 		dragEnded = true;
 	}
@@ -271,9 +269,6 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 					LayerListener.getInstance().refreshView();
 				}
 
-				if (dragEnded) {
-					LayerListener.getInstance().selectLayer(LayerListener.getInstance().getCurrentLayer());
-				}
 				animationEnded = true;
 			}
 

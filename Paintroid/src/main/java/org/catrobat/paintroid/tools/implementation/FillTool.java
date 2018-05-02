@@ -93,9 +93,8 @@ public class FillTool extends BaseTool {
 			return false;
 		}
 
-		Command command = new FillCommand(new Point((int) coordinate.x, (int) coordinate.y), BITMAP_PAINT, colorTolerance);
-		((FillCommand) command).addObserver(this);
-		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
+		FillCommand command = new FillCommand(new Point((int) coordinate.x, (int) coordinate.y), BITMAP_PAINT, colorTolerance);
+		command.addObserver(this);
 		PaintroidApplication.commandManager.addCommand(command);
 
 		return true;

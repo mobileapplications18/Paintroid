@@ -54,7 +54,6 @@ public class LayersAdapter extends BaseAdapter {
 		return 0;
 	}
 
-
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
@@ -65,11 +64,9 @@ public class LayersAdapter extends BaseAdapter {
 
 			Layer layer = layerModel.getLayer(position);
 			if (layer.getSelected()) {
-				layerButton.setBackgroundColor(
-						ContextCompat.getColor(context, R.color.color_chooser_blue1));
+				layerButton.setBackgroundColor(ContextCompat.getColor(context, R.color.color_chooser_blue1));
 			} else {
-				layerButton.setBackgroundColor(
-						ContextCompat.getColor(context, R.color.custom_background_color));
+				layerButton.setBackgroundColor(ContextCompat.getColor(context, R.color.custom_background_color));
 			}
 			ImageView imageView = (ImageView) convertView.findViewById(R.id.layer_button_image);
 			imageView.setImageBitmap(layer.getImage());

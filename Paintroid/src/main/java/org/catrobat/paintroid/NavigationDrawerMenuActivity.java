@@ -190,12 +190,10 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	private void onNewImage() {
 		PaintroidApplication.commandManager.resetAndClear();
 		initialiseNewBitmap();
-		LayerListener.getInstance().resetLayer();
 	}
 
 	private void onNewImageFromCamera() {
 		PaintroidApplication.commandManager.resetAndClear();
-		LayerListener.getInstance().resetLayer();
 		takePhoto();
 	}
 
@@ -205,7 +203,6 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 
 		if (resultCode == Activity.RESULT_OK) {
 			PaintroidApplication.commandManager.resetAndClear();
-			LayerListener.getInstance().resetLayer();
 
 			switch (requestCode) {
 				case REQUEST_CODE_LOAD_PICTURE:

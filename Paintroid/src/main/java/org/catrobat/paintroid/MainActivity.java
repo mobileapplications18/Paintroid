@@ -133,8 +133,7 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		LayerListener.init(this, layerSideNav, drawingSurface.getBitmapCopy());
 
 		if (openedFromCatroid) {
-			LayerListener.getInstance().resetLayer();
-			LayerListener.getInstance().refreshView();
+			PaintroidApplication.commandManager.resetAndClear();
 
 			if (catroidPicturePath != null && catroidPicturePath.length() > 0) {
 				loadBitmapFromUriAndRun(Uri.fromFile(new File(catroidPicturePath)),
