@@ -17,25 +17,8 @@ class Layer(layerId: Int, bitmap: Bitmap) {
 
 	var selected: Boolean = false
 
-	/* remove if not required
-	var name: String? = LAYER_PREFIX + layerId
-		set(nameTo) {
-			if (nameTo != null && nameTo.isNotEmpty()) {
-				field = nameTo
-			}
-		}
-	*/
-
-	var locked: Boolean = false
-	var visible: Boolean = true
-	var opacity: Int = 100
-
+	@Deprecated("always 255")
 	val scaledOpacity: Int
-		get() = Math.round((opacity * 255 / 100).toFloat())
+		get() = 255
 
-	/*
-	companion object {
-		private const val LAYER_PREFIX = "Layer "
-	}
-	*/
 }

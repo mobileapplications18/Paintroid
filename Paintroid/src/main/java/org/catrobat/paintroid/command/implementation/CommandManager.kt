@@ -1,25 +1,22 @@
 package org.catrobat.paintroid.command.implementation
 
-import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.PorterDuff
+import android.support.annotation.VisibleForTesting
 import org.catrobat.paintroid.PaintroidApplication
 import org.catrobat.paintroid.command.Command
-import org.catrobat.paintroid.listener.LayerListener
+import org.catrobat.paintroid.model.BitmapFactory
 import org.catrobat.paintroid.model.LayerModel
-import org.catrobat.paintroid.tools.Layer
-import org.catrobat.paintroid.tools.Tool
 import java.util.*
 
-class CommandManager {
+class CommandManager(private val layerModel: LayerModel) {
 
-	private val redoCommandList: LinkedList<Command> = LinkedList()
-	private val undoCommandList: LinkedList<Command> = LinkedList()
-	private val commandListener: MutableList<CommandListener> = mutableListOf()
+	@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+	var bitmapFactory = BitmapFactory()
 
-	private val layerModel get() = LayerListener.getInstance().layerModel
+	private val redoCommandList = Stack<Command>()
+	private val undoCommandList = Stack<Command>()
+	private val commandListener = mutableListOf<CommandListener>()
+
 	private val canvas get() = PaintroidApplication.drawingSurface.canvas
 
 	fun addCommandListener(commandListener: CommandListener) {
@@ -37,59 +34,50 @@ class CommandManager {
 	fun addCommand(command: Command) {
 		redoCommandList.clear()
 		undoCommandList.add(command)
+
 		command.run(canvas, layerModel)
 
 		commandListener.forEach(CommandListener::commandExecuted)
 	}
 
 	fun undo() {
-		redoCommandList.add(undoCommandList.last)
-		undoCommandList.removeLast()
+		val command = undoCommandList.pop()
+		redoCommandList.add(command)
 
 		clearCanvas()
-
-		for(command in undoCommandList)
-		{
-			command.run(canvas, layerModel)
+		undoCommandList.forEach {
+			it.run(canvas, layerModel)
 		}
 
 		commandListener.forEach(CommandListener::commandExecuted)
 	}
 
 	fun redo() {
-		val command = redoCommandList.last
-		redoCommandList.removeLast()
+		val command = redoCommandList.pop()
 		undoCommandList.add(command)
+
 		command.run(canvas, layerModel)
 
 		commandListener.forEach(CommandListener::commandExecuted)
 	}
 
 	fun resetAndClear() {
-		clearCanvas()
 		undoCommandList.clear()
 		redoCommandList.clear()
+
+		clearCanvas()
 		layerModel.clearLayer()
 
 		commandListener.forEach(CommandListener::commandExecuted)
 	}
 
-	fun clearCanvas() {
-		val resources = PaintroidApplication.applicationContext.resources
-		val dm = resources.displayMetrics
-		val bitmap: Bitmap
-		val orientation = resources.configuration.orientation
-		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			bitmap = Bitmap.createBitmap(dm.heightPixels, dm.widthPixels, Bitmap.Config.ARGB_8888)
-		} else {
-			bitmap = Bitmap.createBitmap(dm.widthPixels, dm.heightPixels, Bitmap.Config.ARGB_8888)
+	private fun clearCanvas() {
+		layerModel.getLayers().forEach { layer ->
+			layer.image.eraseColor(Color.TRANSPARENT)
 		}
-		bitmap.eraseColor(Color.TRANSPARENT)
-		for(layer in layerModel.getLayers())
-			layer.image = bitmap
-		PaintroidApplication.drawingSurface.resetBitmap(bitmap)
-	}
 
+		PaintroidApplication.drawingSurface.resetBitmap(layerModel.currentLayer.image)
+	}
 
 	interface CommandListener {
 		fun commandExecuted()

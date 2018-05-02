@@ -17,8 +17,14 @@ class LayerModel(firstLayer: Bitmap) {
 	var bitmapFactory: BitmapFactory = BitmapFactory() // todo DI
 
 	var currentLayer: Layer
+
+	// TODO not used anywhere
+	var layerCounter = 1
+		@Deprecated("Use getLayerCount() instead")
+		get
+		private set
+
 	private val layerList: MutableList<Layer> = mutableListOf()
-	private var layerCounter = 1
 
 	init {
 		val layer = Layer(0, firstLayer)
@@ -38,8 +44,7 @@ class LayerModel(firstLayer: Bitmap) {
 	fun addLayer(): Boolean {
 		if (layerList.size < MAX_LAYER) {
 			val drawingSurface = PaintroidApplication.drawingSurface
-			val image = bitmapFactory.createBitmap(drawingSurface.bitmapWidth,
-					drawingSurface.bitmapHeight, Bitmap.Config.ARGB_8888)
+			val image = bitmapFactory.createBitmap(drawingSurface.bitmapWidth, drawingSurface.bitmapHeight, Bitmap.Config.ARGB_8888)
 
 			layerList.add(0, Layer(layerCounter, image))
 			layerCounter++
@@ -74,15 +79,14 @@ class LayerModel(firstLayer: Bitmap) {
 		removeLayer(secondLayer)
 
 		val layer = Layer(layerCounter++, mergedBitmap)
-		layer.opacity = 100
 		addLayer(layer)
 
 		return layer
 	}
 
 	private fun mergeBitmaps(firstLayer: Layer, secondLayer: Layer): Bitmap {
-		val firstBitmap = firstLayer.image!!
-		val secondBitmap = secondLayer.image!!
+		val firstBitmap = firstLayer.image
+		val secondBitmap = secondLayer.image
 
 		val bmpOverlay = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
 		val canvas = Canvas(bmpOverlay)
@@ -98,6 +102,7 @@ class LayerModel(firstLayer: Bitmap) {
 	}
 
 	fun clearLayer(): Layer {
+		// TODO can be simplified massively
 		if (layerList.size >= 1) {
 			for (i in layerList.size - 1 downTo 0) {
 				layerList.removeAt(i)
@@ -107,17 +112,6 @@ class LayerModel(firstLayer: Bitmap) {
 		addLayer()
 		return layerList[0]
 	}
-
-	/* not used ??
-	fun copy(currentLayer: Int) {
-		if (layerList.size < MAX_LAYER) {
-			val image = layerList[getPosition(currentLayer)].image?.copy(layerList[currentLayer].image?.config, true) // TODO WHAT? once the currentLayer ^= id, once ^= index
-			layerList.add(0, Layer(layerCounter, image))
-			layerCounter++
-			notifyDataSetChanged()
-		}
-	}
-	*/
 
 	fun swapLayer(posMarkedLayer: Int, targetPosition: Int) {
 		if (posMarkedLayer >= 0 && posMarkedLayer < layerList.size
@@ -152,18 +146,4 @@ class LayerModel(firstLayer: Bitmap) {
 		return bitmap
 	}
 
-	fun checkAllLayerVisible(): Boolean {
-		for (layer in layerList) {
-			if (layer.visible) {
-				return false
-			}
-		}
-
-		return true
-	}
-
-	@Deprecated("Use getLayerCount() instead")
-	fun getLayerCounter(): Int {
-		return layerCounter
-	}
 }

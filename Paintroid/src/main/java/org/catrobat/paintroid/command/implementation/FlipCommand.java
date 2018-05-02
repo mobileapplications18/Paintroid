@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.catrobat.paintroid.model.LayerModel;
@@ -38,7 +39,7 @@ public class FlipCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, LayerModel layerModel) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 		Bitmap bitmap = layerModel.getCurrentLayer().getImage();
 
 		notifyStatus(NotifyStates.COMMAND_STARTED);

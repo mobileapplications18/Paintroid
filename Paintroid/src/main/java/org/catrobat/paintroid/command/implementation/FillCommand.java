@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 
+import android.support.annotation.NonNull;
 import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.helper.FillAlgorithm;
 
@@ -47,7 +48,7 @@ public class FillCommand extends BaseCommand {
 			int targetColor, int replacementColor, int colorToleranceThresholdSquared);
 
 	@Override
-	public void run(Canvas canvas, LayerModel layerModel) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 		Bitmap bitmap = layerModel.getCurrentLayer().getImage();
 
 		notifyStatus(NotifyStates.COMMAND_STARTED);

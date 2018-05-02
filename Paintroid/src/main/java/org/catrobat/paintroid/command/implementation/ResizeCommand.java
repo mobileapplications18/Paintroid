@@ -21,6 +21,7 @@ package org.catrobat.paintroid.command.implementation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.catrobat.paintroid.model.LayerModel;
@@ -45,7 +46,7 @@ public class ResizeCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, LayerModel layerModel) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 
 		try {

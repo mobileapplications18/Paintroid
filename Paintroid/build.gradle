@@ -79,10 +79,6 @@ android {
 
     externalNativeBuild.cmake.path 'CMakeLists.txt'
 
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
-
     lintOptions {
         // specific ignores should be defined via lint.xml file, all general ignores should be added here
         lintConfig file('config/lint.xml')

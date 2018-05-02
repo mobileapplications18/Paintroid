@@ -37,7 +37,9 @@ import java.util.Observable;
 import java.util.Random;
 
 public abstract class BaseCommand extends Observable implements Command {
+
 	private static final String TAG = BaseCommand.class.getSimpleName();
+
 	@VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
 	public Paint paint;
 	@VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
@@ -77,8 +79,7 @@ public abstract class BaseCommand extends Observable implements Command {
 	protected final void storeBitmap(File cacheDir) {
 		Random random = new Random();
 		random.setSeed(System.currentTimeMillis());
-		fileToStoredBitmap = new File(cacheDir.getAbsolutePath(),
-				Long.toString(random.nextLong()));
+		fileToStoredBitmap = new File(cacheDir.getAbsolutePath(), Long.toString(random.nextLong()));
 		try {
 			FileOutputStream fos = new FileOutputStream(fileToStoredBitmap);
 			bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);

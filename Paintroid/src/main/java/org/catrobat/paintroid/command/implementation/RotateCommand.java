@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.catrobat.paintroid.PaintroidApplication;
@@ -39,7 +40,7 @@ public class RotateCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, LayerModel layerModel) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 		Bitmap bitmap = layerModel.getCurrentLayer().getImage();
 
 		setChanged();

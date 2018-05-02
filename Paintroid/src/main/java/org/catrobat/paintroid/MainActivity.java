@@ -162,8 +162,10 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 	}
 
 	private CommandManager initCommandManager() {
-		CommandManager commandManager = new CommandManager();
-		commandManager.addCommandListener(LayerListener.getInstance());
+		LayerListener layerListener = LayerListener.getInstance();
+
+		CommandManager commandManager = new CommandManager(layerListener.getLayerModel());
+		commandManager.addCommandListener(layerListener);
 		commandManager.addCommandListener(topBar);
 		return commandManager;
 	}

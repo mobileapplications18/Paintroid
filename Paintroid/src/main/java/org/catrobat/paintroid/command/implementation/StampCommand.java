@@ -25,6 +25,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 
 import org.catrobat.paintroid.FileIO;
@@ -58,7 +59,7 @@ public class StampCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, LayerModel layerModel) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 		Context context = PaintroidApplication.applicationContext;

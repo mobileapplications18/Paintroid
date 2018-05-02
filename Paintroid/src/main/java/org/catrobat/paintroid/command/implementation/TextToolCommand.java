@@ -25,6 +25,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
+import android.support.annotation.NonNull;
 import org.catrobat.paintroid.model.LayerModel;
 
 public class TextToolCommand extends BaseCommand {
@@ -51,7 +52,7 @@ public class TextToolCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, LayerModel layerModel) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 
 		canvas.save();

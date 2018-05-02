@@ -35,7 +35,6 @@ import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
 import org.catrobat.paintroid.command.implementation.AddLayerCommand;
 import org.catrobat.paintroid.command.implementation.CommandManager;
-import org.catrobat.paintroid.command.implementation.MergeLayerCommand;
 import org.catrobat.paintroid.command.implementation.RemoveLayerCommand;
 import org.catrobat.paintroid.command.implementation.SelectLayerCommand;
 import org.catrobat.paintroid.model.LayerModel;
@@ -198,10 +197,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	public void deleteLayer() {
 		PaintroidApplication.commandManager.addCommand(new RemoveLayerCommand());
-
-		if (layerModel.checkAllLayerVisible()) {
-			ToastFactory.makeText(activity, R.string.layer_invisible, Toast.LENGTH_LONG).show();
-		}
+		ToastFactory.makeText(activity, R.string.layer_invisible, Toast.LENGTH_LONG).show();
 	}
 
 	public void moveLayer(int layerToMovePosition, int targetPosition) {
