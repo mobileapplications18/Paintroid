@@ -23,7 +23,7 @@ import android.graphics.Color;
 import android.support.test.annotation.UiThreadTest;
 import android.support.test.rule.ActivityTestRule;
 import org.catrobat.paintroid.MainActivity;
-import org.catrobat.paintroid.command.UndoRedoManager;
+import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.listener.LayerListener;
 import org.junit.Rule;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class LayerTest {
 		assertEquals("Color should be blue", Color.BLUE, LayerListener.getInstance().getCurrentLayer().getImage().getPixel(2, 1));
 		assertEquals("Color should be blue", Color.BLUE, LayerListener.getInstance().getCurrentLayer().getImage().getPixel(1, 1));
 
-		UndoRedoManager.getInstance().performUndo();
+		PaintroidApplication.commandManager.undo();
 		int numLayersAfterUndo = LayerListener.getInstance().getLayerModel().getLayerCount();
 
 		assertEquals("Two Layers should exist", 2, numLayersAfterUndo);
@@ -90,7 +90,7 @@ public class LayerTest {
 		assertEquals("Color should be black", Color.BLACK, LayerListener.getInstance().getLayerModel().getLayer(1).getImage().getPixel(1, 2));
 		assertEquals("Color should be blue", Color.BLACK, LayerListener.getInstance().getLayerModel().getLayer(1).getImage().getPixel(1, 1));
 
-		UndoRedoManager.getInstance().performRedo();
+		PaintroidApplication.commandManager.redo();
 		int numLayersAfterRedo = LayerListener.getInstance().getLayerModel().getLayerCount();
 
 		assertEquals("Only one Layer should exist", 1, numLayersAfterRedo);
