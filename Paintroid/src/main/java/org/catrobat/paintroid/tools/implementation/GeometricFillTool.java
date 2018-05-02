@@ -217,7 +217,6 @@ public class GeometricFillTool extends BaseToolWithRectangleShape {
 					geometricFillCommandPaint
 			);
 
-			IndeterminateProgressDialog.getInstance().show();
 			PaintroidApplication.commandManager.addCommand(command);
 			highlightBox();
 		}
