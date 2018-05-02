@@ -66,7 +66,10 @@ class CommandManager {
 	}
 
 	fun resetAndClear() {
-		TODO()
+		clearCanvas()
+		undoCommandList.clear()
+		redoCommandList.clear()
+		layerModel.clearLayer()
 
 		commandListener.forEach(CommandListener::commandExecuted)
 	}
