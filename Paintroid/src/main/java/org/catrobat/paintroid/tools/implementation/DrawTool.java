@@ -131,20 +131,14 @@ public class DrawTool extends BaseTool {
 
 	protected boolean addPathCommand(PointF coordinate) {
 		pathToDraw.lineTo(coordinate.x, coordinate.y);
-		if (!pathInsideBitmap) {
-			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
-			return false;
-		}
 		PaintroidApplication.commandManager.addCommand(new PathCommand(BITMAP_PAINT, pathToDraw));
+		resetInternalState(StateChange.RESET_INTERNAL_STATE);
 		return true;
 	}
 
 	protected boolean addPointCommand(PointF coordinate) {
-		if (!pathInsideBitmap) {
-			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
-			return false;
-		}
 		PaintroidApplication.commandManager.addCommand(new PointCommand(BITMAP_PAINT, coordinate));
+		resetInternalState(StateChange.RESET_INTERNAL_STATE);
 		return true;
 	}
 

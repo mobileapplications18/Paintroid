@@ -293,7 +293,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	@Override
 	public void commandExecuted() {
-		// TODO !!!!
+		refreshView();
 	}
 
 	private void refreshDrawingSurface() {
