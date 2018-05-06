@@ -25,7 +25,7 @@ import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.model.BitmapFactory;
 import org.catrobat.paintroid.model.LayerModel;
 
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.ui.DrawingSurface;
 import org.junit.After;
 import org.junit.Before;

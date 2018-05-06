@@ -25,7 +25,7 @@ import android.support.test.espresso.contrib.DrawerActions;
 import android.view.Gravity;
 
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.Layer;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;

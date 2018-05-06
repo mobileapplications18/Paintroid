@@ -25,7 +25,7 @@ import android.graphics.PointF;
 import android.support.test.annotation.UiThreadTest;
 import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.model.LayerModel;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.tools.implementation.PipetteTool;
 import org.junit.After;

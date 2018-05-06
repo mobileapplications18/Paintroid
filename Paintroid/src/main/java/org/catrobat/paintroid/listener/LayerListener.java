@@ -38,7 +38,7 @@ import org.catrobat.paintroid.command.implementation.CommandManager;
 import org.catrobat.paintroid.command.implementation.RemoveLayerCommand;
 import org.catrobat.paintroid.command.implementation.SelectLayerCommand;
 import org.catrobat.paintroid.model.LayerModel;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.ui.ToastFactory;
 import org.catrobat.paintroid.ui.button.LayersAdapter;
 import org.catrobat.paintroid.ui.dragndrop.BrickDragAndDropLayerMenu;

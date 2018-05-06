@@ -28,7 +28,6 @@ import android.support.test.annotation.UiThreadTest;
 
 import org.catrobat.paintroid.command.implementation.FillCommand;
 import org.catrobat.paintroid.model.LayerModel;
-import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.tools.helper.FillAlgorithm;
 import org.catrobat.paintroid.tools.implementation.FillTool;

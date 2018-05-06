@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import org.catrobat.paintroid.PaintroidApplication
-import org.catrobat.paintroid.tools.Layer
 import java.util.*
 
 class LayerModel(firstLayer: Bitmap) {

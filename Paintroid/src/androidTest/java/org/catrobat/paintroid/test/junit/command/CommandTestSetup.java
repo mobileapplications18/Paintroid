@@ -29,7 +29,6 @@ import android.graphics.PointF;
 
 import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.model.LayerModel;
-import org.catrobat.paintroid.tools.Layer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

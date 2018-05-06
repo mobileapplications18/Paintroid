@@ -1,4 +1,4 @@
-package org.catrobat.paintroid.tools
+package org.catrobat.paintroid.model
 
 import android.graphics.Bitmap
 import org.catrobat.paintroid.PaintroidApplication
