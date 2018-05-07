@@ -37,8 +37,8 @@ import org.catrobat.paintroid.command.implementation.AddLayerCommand;
 import org.catrobat.paintroid.command.implementation.CommandManager;
 import org.catrobat.paintroid.command.implementation.RemoveLayerCommand;
 import org.catrobat.paintroid.command.implementation.SelectLayerCommand;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.model.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.ui.ToastFactory;
 import org.catrobat.paintroid.ui.button.LayersAdapter;
 import org.catrobat.paintroid.ui.dragndrop.BrickDragAndDropLayerMenu;
@@ -139,7 +139,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		delButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				View layerItem = listView.getChildAt(layerModel.getPosition(getCurrentLayer().getLayerID()));
+				View layerItem = listView.getChildAt(layerModel.getPosition(layerModel.getCurrentLayer().getLayerID()));
 				Animation translateAnimation = new TranslateAnimation(0f, layerItem.getWidth(), 0f, 0f);
 				translateAnimation.setDuration(ANIMATION_TIME);
 				translateAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -171,6 +171,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		return layerModel;
 	}
 
+	@Deprecated
 	public Layer getCurrentLayer() {
 		return layerModel.getCurrentLayer();
 	}
@@ -183,7 +184,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		} else {
 			Log.d(TAG, "LAYERGRIDVIEW NOT INITIALIZED");
 		}
-		refreshDrawingSurface();
+		PaintroidApplication.drawingSurface.refreshDrawingSurface();
 	}
 
 	public void updateButtonResource() {
@@ -218,10 +219,6 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		}
 	}
 
-	public Bitmap getBitmapOfAllLayersToSave() {
-		return layerModel.getBitmapToSave();
-	}
-
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Layer layer = layerModel.getLayer(position);
@@ -233,9 +230,5 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 	@Override
 	public void commandExecuted() {
 		refreshView();
-	}
-
-	private void refreshDrawingSurface() {
-		PaintroidApplication.drawingSurface.refreshDrawingSurface();
 	}
 }

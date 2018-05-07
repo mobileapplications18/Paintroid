@@ -75,7 +75,7 @@ public class PipetteTool extends BaseTool {
 	}
 
 	public void updateSurfaceBitmap() {
-		surfaceBitmap = LayerListener.getInstance().getBitmapOfAllLayersToSave();
+		surfaceBitmap = LayerListener.getInstance().getLayerModel().getBitmapToSave();
 	}
 
 	@Override

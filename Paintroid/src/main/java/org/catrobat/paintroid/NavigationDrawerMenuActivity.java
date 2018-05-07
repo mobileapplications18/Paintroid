@@ -32,7 +32,6 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.IntDef;
 import android.support.annotation.VisibleForTesting;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -62,6 +61,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	static final int REQUEST_CODE_FINISH = 3;
 	static final int REQUEST_CODE_TAKE_PICTURE = 4;
 	static final int REQUEST_CODE_LANGUAGE = 5;
+
 	public static boolean isSaved = true;
 	public static Uri savedPictureUri = null;
 
@@ -84,7 +84,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	public boolean openedFromCatroid;
 
 	boolean imageHasBeenModified() {
-		if (LayerListener.getInstance().getLayerModel().getLayerCount() != 1) return true;
+		if (LayerListener.getInstance().getLayerModel().getLayerCount() != 1) return true; // TODO replace LayerModel
 		if (!isPlainImage) return true;
 		if (PaintroidApplication.commandManager.isUndoAvailable()) return true;
 		return false;
@@ -95,36 +95,29 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	}
 
 	protected void onLoadImage() {
-
 		if (!imageHasBeenModified() || imageHasBeenSaved()) {
 			startLoadImageIntent();
 		} else {
-
 			final SaveTask saveTask = new SaveTask(this);
 
-			AlertDialog.Builder alertLoadDialogBuilder = new CustomAlertDialogBuilder(this);
-			alertLoadDialogBuilder
+			new CustomAlertDialogBuilder(this)
 					.setTitle(R.string.menu_load_image)
 					.setMessage(R.string.dialog_warning_new_image)
 					.setCancelable(true)
-					.setPositiveButton(R.string.save_button_text,
-							new DialogInterface.OnClickListener() {
+					.setPositiveButton(R.string.save_button_text, new DialogInterface.OnClickListener() {
 								@Override
-								public void onClick(DialogInterface dialog,
-													int id) {
+						public void onClick(DialogInterface dialog, int id) {
 									saveTask.execute();
 									startLoadImageIntent();
 								}
 							})
-					.setNegativeButton(R.string.discard_button_text,
-							new DialogInterface.OnClickListener() {
+					.setNegativeButton(R.string.discard_button_text, new DialogInterface.OnClickListener() {
 								@Override
-								public void onClick(DialogInterface dialog,
-													int id) {
+						public void onClick(DialogInterface dialog, int id) {
 									startLoadImageIntent();
 								}
-							});
-			alertLoadDialogBuilder.show();
+					})
+					.show();
 		}
 	}
 
@@ -139,39 +132,33 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		if (!imageHasBeenModified() && !openedFromCatroid || imageHasBeenSaved()) {
 			chooseNewImage();
 		} else {
-
 			final SaveTask saveTask = new SaveTask(this);
 
-			AlertDialog.Builder newCameraImageAlertDialogBuilder = new CustomAlertDialogBuilder(this);
-			newCameraImageAlertDialogBuilder
+			new CustomAlertDialogBuilder(this)
 					.setTitle(R.string.menu_new_image)
 					.setMessage(R.string.dialog_warning_new_image)
 					.setCancelable(true)
-					.setPositiveButton(R.string.save_button_text,
-							new DialogInterface.OnClickListener() {
+					.setPositiveButton(R.string.save_button_text, new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int id) {
 									saveTask.execute();
 									chooseNewImage();
 								}
 							})
-					.setNegativeButton(R.string.discard_button_text,
-							new DialogInterface.OnClickListener() {
+					.setNegativeButton(R.string.discard_button_text, new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int id) {
 									chooseNewImage();
 								}
-							});
-			newCameraImageAlertDialogBuilder.show();
+					})
+					.show();
 		}
 	}
 
 	protected void chooseNewImage() {
-
-		AlertDialog.Builder alertChooseNewBuilder = new CustomAlertDialogBuilder(this);
-		alertChooseNewBuilder.setTitle(R.string.menu_new_image).setItems(
-				R.array.new_image, new DialogInterface.OnClickListener() {
-
+		new CustomAlertDialogBuilder(this)
+				.setTitle(R.string.menu_new_image)
+				.setItems(R.array.new_image, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
@@ -183,8 +170,8 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 								break;
 						}
 					}
-				});
-		alertChooseNewBuilder.show();
+				})
+				.show();
 	}
 
 	private void onNewImage() {
@@ -222,8 +209,12 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 			isPlainImage = false;
 			isSaved = false;
 			savedPictureUri = null;
+
+			// TODO ? should work through commands
+			/*
 			LayerListener.getInstance().getCurrentLayer().setImage(PaintroidApplication.drawingSurface.getBitmapCopy());
 			LayerListener.getInstance().refreshView();
+			*/
 		}
 	}
 
@@ -246,9 +237,8 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	}
 
 	protected void loadBitmapFromUriAndRun(final Uri uri, final RunnableWithBitmap runnable) {
-		String loadMessge = getResources().getString(R.string.dialog_load);
-		final ProgressDialog dialog = ProgressDialog.show(
-				this, "", loadMessge, true);
+		String loadMessage = getResources().getString(R.string.dialog_load);
+		final ProgressDialog dialog = ProgressDialog.show(this, "", loadMessage, true);
 
 		Thread thread = new Thread("loadBitmapFromUriAndRun") {
 			@Override
@@ -267,8 +257,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 					loadBitmapFailed = true;
 				}
 				dialog.dismiss();
-				PaintroidApplication.currentTool
-						.resetInternalState(StateChange.NEW_IMAGE_LOADED);
+				PaintroidApplication.currentTool.resetInternalState(StateChange.NEW_IMAGE_LOADED);
 				if (loadBitmapFailed) {
 					loadBitmapFailed = false;
 					InfoDialog.newInstance(DialogType.WARNING,
@@ -288,8 +277,8 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 
 	// if needed use Async Task
 	public void saveFile() {
-
-		if (!FileIO.saveBitmap(this, LayerListener.getInstance().getBitmapOfAllLayersToSave(), null, saveCopy)) {
+		// TODO replace with LayerModel
+		if (!FileIO.saveBitmap(this, LayerListener.getInstance().getLayerModel().getBitmapToSave(), null, saveCopy)) {
 			InfoDialog.newInstance(DialogType.WARNING,
 					R.string.dialog_error_sdcard_text,
 					R.string.dialog_error_save_title).show(
@@ -363,11 +352,9 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		protected void onPostExecute(Void Result) {
 			IndeterminateProgressDialog.getInstance().dismiss();
 			if (!saveCopy) {
-				ToastFactory.makeText(context, R.string.saved, Toast.LENGTH_LONG)
-						.show();
+				ToastFactory.makeText(context, R.string.saved, Toast.LENGTH_LONG).show();
 			} else {
-				ToastFactory.makeText(context, R.string.copy, Toast.LENGTH_LONG)
-						.show();
+				ToastFactory.makeText(context, R.string.copy, Toast.LENGTH_LONG).show();
 				saveCopy = false;
 			}
 		}

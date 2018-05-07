@@ -6,6 +6,7 @@ import org.catrobat.paintroid.PaintroidApplication
 import org.catrobat.paintroid.command.Command
 import org.catrobat.paintroid.model.BitmapFactory
 import org.catrobat.paintroid.model.LayerModel
+import java.lang.ref.WeakReference
 import java.util.*
 
 class CommandManager(private val layerModel: LayerModel) {
@@ -15,16 +16,16 @@ class CommandManager(private val layerModel: LayerModel) {
 
 	private val redoCommandList = Stack<Command>()
 	private val undoCommandList = Stack<Command>()
-	private val commandListener = mutableListOf<CommandListener>()
+	private val commandListener = mutableListOf<WeakReference<CommandListener>>()
 
 	private val canvas get() = PaintroidApplication.drawingSurface.canvas
 
 	fun addCommandListener(commandListener: CommandListener) {
-		this.commandListener.add(commandListener)
+		this.commandListener.add(WeakReference(commandListener))
 	}
 
 	fun removeCommandListener(commandListener: CommandListener) {
-		this.commandListener.remove(commandListener)
+		this.commandListener.removeAll { it.get() == commandListener }
 	}
 
 	fun isUndoAvailable() = undoCommandList.isNotEmpty()
@@ -37,7 +38,7 @@ class CommandManager(private val layerModel: LayerModel) {
 
 		command.run(canvas, layerModel)
 
-		commandListener.forEach(CommandListener::commandExecuted)
+		notifyCommandExecuted()
 	}
 
 	fun undo() {
@@ -49,7 +50,7 @@ class CommandManager(private val layerModel: LayerModel) {
 			it.run(canvas, layerModel)
 		}
 
-		commandListener.forEach(CommandListener::commandExecuted)
+		notifyCommandExecuted()
 	}
 
 	fun redo() {
@@ -58,7 +59,7 @@ class CommandManager(private val layerModel: LayerModel) {
 
 		command.run(canvas, layerModel)
 
-		commandListener.forEach(CommandListener::commandExecuted)
+		notifyCommandExecuted()
 	}
 
 	fun resetAndClear() {
@@ -68,7 +69,13 @@ class CommandManager(private val layerModel: LayerModel) {
 		clearCanvas()
 		layerModel.clearLayer()
 
-		commandListener.forEach(CommandListener::commandExecuted)
+		notifyCommandExecuted()
+	}
+
+	private fun notifyCommandExecuted() {
+		commandListener.forEach {
+			it.get()?.commandExecuted()
+		}
 	}
 
 	private fun clearCanvas() {

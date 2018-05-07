@@ -273,7 +273,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 			@Override
 			protected Void doInBackground(Void... params) {
-				Rect shapeBounds = cropAlgorithmSnail(LayerListener.getInstance().getBitmapOfAllLayersToSave());
+				Rect shapeBounds = cropAlgorithmSnail(LayerListener.getInstance().getLayerModel().getBitmapToSave());
 				if (shapeBounds != null) {
 					boxWidth = shapeBounds.width() + 1;
 					boxHeight = shapeBounds.height() + 1;
