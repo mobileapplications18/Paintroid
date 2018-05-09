@@ -40,7 +40,7 @@ class CommandManagerTest {
 		Assert.assertFalse(commandManager.isUndoAvailable())
 		Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand())
+		commandManager.addCommand(AddLayerCommand(bitmapFactory))
 		Assert.assertTrue(commandManager.isUndoAvailable())
 		Assert.assertFalse(commandManager.isRedoAvailable())
 	}
@@ -53,11 +53,11 @@ class CommandManagerTest {
 		Assert.assertFalse(commandManager.isUndoAvailable())
 		Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand())
+		commandManager.addCommand(AddLayerCommand(bitmapFactory))
 		Assert.assertTrue(commandManager.isUndoAvailable())
 		Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand())
+		commandManager.addCommand(AddLayerCommand(bitmapFactory))
 		Assert.assertTrue(commandManager.isUndoAvailable())
 		Assert.assertFalse(commandManager.isRedoAvailable())
 
@@ -86,11 +86,11 @@ class CommandManagerTest {
 		Assert.assertFalse(commandManager.isUndoAvailable())
 		Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand())
+		commandManager.addCommand(AddLayerCommand(bitmapFactory))
 		Assert.assertTrue(commandManager.isUndoAvailable())
 		Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand())
+		commandManager.addCommand(AddLayerCommand(bitmapFactory))
 		Assert.assertTrue(commandManager.isUndoAvailable())
 		Assert.assertFalse(commandManager.isRedoAvailable())
 

@@ -37,6 +37,7 @@ import org.catrobat.paintroid.command.implementation.AddLayerCommand;
 import org.catrobat.paintroid.command.implementation.CommandManager;
 import org.catrobat.paintroid.command.implementation.RemoveLayerCommand;
 import org.catrobat.paintroid.command.implementation.SelectLayerCommand;
+import org.catrobat.paintroid.model.BitmapFactory;
 import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.ui.ToastFactory;
@@ -193,7 +194,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 	}
 
 	public void createLayer() {
-		PaintroidApplication.commandManager.addCommand(new AddLayerCommand());
+		PaintroidApplication.commandManager.addCommand(new AddLayerCommand(new BitmapFactory()));
 	}
 
 	public void deleteLayer() {

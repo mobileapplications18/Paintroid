@@ -31,7 +31,7 @@ class SelectLayerCommandTest {
 	fun testSelect() {
 		val firstLayer = layerModel.currentLayer
 
-		AddLayerCommand().run(canvas, layerModel)
+		AddLayerCommand(bitmapFactory).run(canvas, layerModel)
 		Assert.assertEquals(2, layerModel.getLayerCount())
 
 		val secondLayer = layerModel.currentLayer

@@ -65,6 +65,7 @@ class LayerModel(firstLayer: Bitmap) {
 	fun removeLayer(layer: Layer) {
 		if (layerList.size > 0) {
 			layerList.remove(layer)
+			layerCounter--;
 		}
 	}
 
@@ -127,7 +128,7 @@ class LayerModel(firstLayer: Bitmap) {
 		}
 	}
 
-	fun getBitmapToSave(): Bitmap {
+    fun getBitmapToSave(): Bitmap {
 		val firstBitmap = layerList[layerList.size - 1].image
 		val bitmap = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
 		val canvas = Canvas(bitmap)
