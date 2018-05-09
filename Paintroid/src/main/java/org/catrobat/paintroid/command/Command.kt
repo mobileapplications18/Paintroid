@@ -1,7 +1,7 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
- * (<http:></http:>//developer.catrobat.org/credits>)
+ * Copyright (C) 2010-2018 The Catrobat Team
+ * (<http://developer.catrobat.org/credits>)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -14,7 +14,7 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http:></http:>//www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.catrobat.paintroid.command

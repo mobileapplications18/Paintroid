@@ -23,9 +23,9 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.support.test.annotation.UiThreadTest;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.model.LayerModel;
+import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.model.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.tools.implementation.PipetteTool;
 import org.junit.After;
@@ -53,8 +53,7 @@ public class PipetteToolTest extends BaseToolTest {
 		toolToTest = new PipetteTool(getActivity(), ToolType.PIPETTE);
 		super.setUp();
 
-		LayerListener layerListener = LayerListener.getInstance();
-		LayerModel layerModel = layerListener.getLayerModel();
+		LayerModel layerModel = PaintroidApplication.layerModel;
 		Layer layer = layerModel.getLayer(0);
 		Bitmap bitmap = layer.getImage();
 		bitmap.setPixel(X_COORDINATE_RED, 0, Color.RED);

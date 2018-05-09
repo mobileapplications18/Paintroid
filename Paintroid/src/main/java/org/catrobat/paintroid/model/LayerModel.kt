@@ -13,16 +13,10 @@ class LayerModel(firstLayer: Bitmap) {
 		const val MAX_LAYER = 4
 	}
 
-	var bitmapFactory: BitmapFactory = BitmapFactory() // todo DI
-
+	var bitmapFactory: BitmapFactory = BitmapFactory()
 	var currentLayer: Layer
 
-	// TODO not used anywhere
-	var layerCounter = 1
-		@Deprecated("Use getLayerCount() instead")
-		get
-		private set
-
+	private var layerCounter = 1
 	private val layerList: MutableList<Layer> = mutableListOf()
 
 	init {
@@ -128,22 +122,19 @@ class LayerModel(firstLayer: Bitmap) {
 		}
 	}
 
-    fun getBitmapToSave(): Bitmap {
-		val firstBitmap = layerList[layerList.size - 1].image
-		val bitmap = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
-		val canvas = Canvas(bitmap)
+	fun getBitmapToSave(): Bitmap? {
 		val overlayPaint = Paint()
-		overlayPaint.alpha = layerList[layerList.size - 1].scaledOpacity
-		canvas.drawBitmap(firstBitmap, Matrix(), overlayPaint)
 
-		if (layerList.size > 1) {
-			for (i in layerList.size - 2 downTo 0) { // todo: what? -2 ?
-				overlayPaint.alpha = layerList[i].scaledOpacity
-				canvas.drawBitmap(layerList[i].image, 0f, 0f, overlayPaint)
-			}
+		val result = layerList.foldRight<Layer, Pair<Bitmap, Canvas>?>(null) { layer, acc ->
+			val bitmap = layer.image
+			val pair = acc
+					?: bitmapFactory.createBitmap(bitmap.width, bitmap.height, bitmap.config).let { it to Canvas(it) }
+
+			pair.second.drawBitmap(bitmap, Matrix(), overlayPaint)
+
+			return@foldRight pair
 		}
 
-		return bitmap
+		return result?.first
 	}
-
 }

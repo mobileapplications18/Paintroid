@@ -200,8 +200,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	private void resetScaleAndTranslation() {
 		PaintroidApplication.perspective.resetScaleAndTranslation();
-		float zoomFactor = PaintroidApplication.perspective
-				.getScaleForCenterBitmap() * START_ZOOM_FACTOR;
+		float zoomFactor = PaintroidApplication.perspective.getScaleForCenterBitmap() * START_ZOOM_FACTOR;
 		PaintroidApplication.perspective.setScale(zoomFactor);
 	}
 
@@ -221,7 +220,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 			cropRunFinished = false;
 			initResizeBounds();
 			if (areResizeBordersValid()) {
-				LayerModel layerModel = LayerListener.getInstance().getLayerModel();
+				LayerModel layerModel = PaintroidApplication.layerModel;
 				for (Layer layer : layerModel.getLayers()) { // TODO implement in ResizeCommand once
 					ResizeCommand resizeCommand = new ResizeCommand(
 							(int) Math.floor(resizeBoundWidthXLeft),
@@ -253,7 +252,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	private void rotate(RotateCommand.RotateDirection rotateDirection) {
 		IndeterminateProgressDialog.getInstance().show();
-		LayerModel layerModel = LayerListener.getInstance().getLayerModel();
+		LayerModel layerModel = PaintroidApplication.layerModel;
 		for (Layer layer : layerModel.getLayers()) { // TODO implement in ResizeCommand once
 			RotateCommand command = new RotateCommand(rotateDirection);
 
@@ -273,7 +272,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 			@Override
 			protected Void doInBackground(Void... params) {
-				Rect shapeBounds = cropAlgorithmSnail(LayerListener.getInstance().getLayerModel().getBitmapToSave());
+				Rect shapeBounds = cropAlgorithmSnail(PaintroidApplication.layerModel.getBitmapToSave());
 				if (shapeBounds != null) {
 					boxWidth = shapeBounds.width() + 1;
 					boxHeight = shapeBounds.height() + 1;

@@ -1,18 +1,18 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
+ * Copyright (C) 2010-2018 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,7 +41,6 @@ import org.catrobat.paintroid.dialog.CustomAlertDialogBuilder;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
 import org.catrobat.paintroid.dialog.InfoDialog;
 import org.catrobat.paintroid.dialog.InfoDialog.DialogType;
-import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.tools.Tool.StateChange;
 import org.catrobat.paintroid.tools.implementation.ImportTool;
 import org.catrobat.paintroid.ui.ToastFactory;
@@ -84,7 +83,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	public boolean openedFromCatroid;
 
 	boolean imageHasBeenModified() {
-		if (LayerListener.getInstance().getLayerModel().getLayerCount() != 1) return true; // TODO replace LayerModel
+		if (PaintroidApplication.layerModel.getLayerCount() != 1) return true;
 		if (!isPlainImage) return true;
 		if (PaintroidApplication.commandManager.isUndoAvailable()) return true;
 		return false;
@@ -105,17 +104,17 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 					.setMessage(R.string.dialog_warning_new_image)
 					.setCancelable(true)
 					.setPositiveButton(R.string.save_button_text, new DialogInterface.OnClickListener() {
-								@Override
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
-									saveTask.execute();
-									startLoadImageIntent();
-								}
-							})
+							saveTask.execute();
+							startLoadImageIntent();
+						}
+					})
 					.setNegativeButton(R.string.discard_button_text, new DialogInterface.OnClickListener() {
-								@Override
+						@Override
 						public void onClick(DialogInterface dialog, int id) {
-									startLoadImageIntent();
-								}
+							startLoadImageIntent();
+						}
 					})
 					.show();
 		}
@@ -139,17 +138,17 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 					.setMessage(R.string.dialog_warning_new_image)
 					.setCancelable(true)
 					.setPositiveButton(R.string.save_button_text, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									saveTask.execute();
-									chooseNewImage();
-								}
-							})
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							saveTask.execute();
+							chooseNewImage();
+						}
+					})
 					.setNegativeButton(R.string.discard_button_text, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									chooseNewImage();
-								}
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							chooseNewImage();
+						}
 					})
 					.show();
 		}
@@ -277,8 +276,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 
 	// if needed use Async Task
 	public void saveFile() {
-		// TODO replace with LayerModel
-		if (!FileIO.saveBitmap(this, LayerListener.getInstance().getLayerModel().getBitmapToSave(), null, saveCopy)) {
+		if (!FileIO.saveBitmap(this, PaintroidApplication.layerModel.getBitmapToSave(), null, saveCopy)) {
 			InfoDialog.newInstance(DialogType.WARNING,
 					R.string.dialog_error_sdcard_text,
 					R.string.dialog_error_save_title).show(

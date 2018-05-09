@@ -1,18 +1,18 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
+ * Copyright (C) 2010-2018 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,6 @@
 package org.catrobat.paintroid.listener;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.util.Log;
@@ -49,11 +48,9 @@ import org.catrobat.paintroid.ui.dragndrop.OnDragListener;
 public final class LayerListener implements AdapterView.OnItemClickListener, CommandManager.CommandListener {
 
 	private static final String TAG = LayerListener.class.getSimpleName();
-	private static final String NOT_INITIALIZED_ERROR_MESSAGE = "LayerListener has not been initialized. Call init() first!";
+
 	private static final int ANIMATION_TIME = 300;
 	private static final int LAYER_UNDO_LIMIT = 10;
-
-	private static LayerListener instance;
 
 	private Activity activity;
 	private NavigationView navigationView;
@@ -64,35 +61,10 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 	@NonNull
 	private LayersAdapter layersAdapter;
 
-	@NonNull
-	private LayerModel layerModel;
-
-	private LayerListener(Activity activity, NavigationView view, Bitmap firstLayer) {
-		this.layerModel = new LayerModel(firstLayer);
-		this.layersAdapter = new LayersAdapter(layerModel);
-
-		setupLayerListener(activity, view);
-		refreshView();
-	}
-
-	public static LayerListener getInstance() {
-		if (instance == null) {
-			throw new IllegalStateException(NOT_INITIALIZED_ERROR_MESSAGE);
-		}
-		return instance;
-	}
-
-	public static void init(Activity activity, NavigationView view, Bitmap firstLayer) {
-		instance = new LayerListener(activity, view, firstLayer);
-	}
-
-	public static void initAfterOrientationChange(Activity activity, NavigationView view) {
-		getInstance().setupLayerListener(activity, view);
-	}
-
-	private void setupLayerListener(Activity activity, NavigationView view) {
+	public LayerListener(Activity activity, NavigationView view) {
 		this.activity = activity;
 		this.navigationView = view;
+		this.layersAdapter = new LayersAdapter(PaintroidApplication.layerModel);
 
 		final ListView listView = (ListView) view.findViewById(R.id.nav_layer_list);
 		listView.setAdapter(layersAdapter);
@@ -106,7 +78,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView v, View arg1, int pos, long id) {
+			public boolean onItemLongClick(AdapterView adapterView, View view, int pos, long id) {
 				listView.getChildAt(pos).setVisibility(View.INVISIBLE);
 				/*
 				Layer layer = layerModel.getLayer(pos);
@@ -116,14 +88,10 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 				*/
 				brickLayer.setDragStartPosition(pos);
 
-				MyDragShadowBuilder myShadow = new MyDragShadowBuilder(listView.getChildAt(pos));
-				myShadow.setDragPos(pos);
+				MyDragShadowBuilder shadowBuilder = new MyDragShadowBuilder(listView.getChildAt(pos));
+				shadowBuilder.setDragPos(pos);
 
-				v.startDrag(null,  // the data to be dragged (dragData)
-						myShadow,  // the drag shadow builder
-						null,      // no need to use local data
-						0          // flags (not currently used, set to 0)
-				);
+				adapterView.startDrag(null, shadowBuilder, null, 0);
 
 				return true;
 			}
@@ -140,7 +108,8 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		delButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				View layerItem = listView.getChildAt(layerModel.getPosition(layerModel.getCurrentLayer().getLayerID()));
+				int layerID = getLayerModel().getCurrentLayer().getLayerID();
+				View layerItem = listView.getChildAt(getLayerModel().getPosition(layerID));
 				Animation translateAnimation = new TranslateAnimation(0f, layerItem.getWidth(), 0f, 0f);
 				translateAnimation.setDuration(ANIMATION_TIME);
 				translateAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -158,7 +127,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 					}
 				});
 
-				if (layerModel.getLayerCount() > 1) {
+				if (getLayerModel().getLayerCount() > 1) {
 					layerItem.startAnimation(translateAnimation);
 				}
 			}
@@ -169,47 +138,30 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	@NonNull
 	public LayerModel getLayerModel() {
-		return layerModel;
+		return PaintroidApplication.layerModel;
 	}
 
 	@Deprecated
-	public Layer getCurrentLayer() {
-		return layerModel.getCurrentLayer();
-	}
-
-	public void refreshView() {
-		ListView listView = (ListView) navigationView.findViewById(R.id.nav_layer_list);
-		if (listView != null) {
-			layersAdapter.notifyDataSetChanged();
-			listView.setAdapter(layersAdapter);
-		} else {
-			Log.d(TAG, "LAYERGRIDVIEW NOT INITIALIZED");
-		}
-		PaintroidApplication.drawingSurface.refreshDrawingSurface();
-	}
-
-	public void updateButtonResource() {
-		addButton.setEnabled(layerModel.getLayerCount() < LayerModel.MAX_LAYER);
-		delButton.setEnabled(layerModel.getLayerCount() > 1);
-	}
-
 	public void createLayer() {
 		PaintroidApplication.commandManager.addCommand(new AddLayerCommand(new BitmapFactory()));
 	}
 
+	@Deprecated
 	public void deleteLayer() {
 		PaintroidApplication.commandManager.addCommand(new RemoveLayerCommand());
 		ToastFactory.makeText(activity, R.string.layer_invisible, Toast.LENGTH_LONG).show();
 	}
 
+	@Deprecated
 	public void moveLayer(int layerToMovePosition, int targetPosition) {
 		// TODO: uncomment when BrickDragAndDropLayerMenu / ListView has a temporary list for modification
 		// PaintroidApplication.commandManager.addCommand(new MoveLayerCommand(layerToMovePosition, targetPosition));
 	}
 
+	@Deprecated
 	public void mergeLayer(int firstLayer, int secondLayer) {
-		int firstLayerId = layerModel.getLayer(firstLayer).getLayerID();
-		int secondLayerId = layerModel.getLayer(secondLayer).getLayerID();
+		int firstLayerId = getLayerModel().getLayer(firstLayer).getLayerID();
+		int secondLayerId = getLayerModel().getLayer(secondLayer).getLayerID();
 
 		if (firstLayerId != secondLayerId) {
 			// TODO: uncomment when BrickDragAndDropLayerMenu / ListView has a temporary list for modification
@@ -222,8 +174,8 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Layer layer = layerModel.getLayer(position);
-		if (layerModel.getCurrentLayer().getLayerID() != layer.getLayerID()) {
+		Layer layer = getLayerModel().getLayer(position);
+		if (getLayerModel().getCurrentLayer().getLayerID() != layer.getLayerID()) {
 			PaintroidApplication.commandManager.addCommand(new SelectLayerCommand(layer.getLayerID()));
 		}
 	}
@@ -231,5 +183,21 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 	@Override
 	public void commandExecuted() {
 		refreshView();
+	}
+
+	private void refreshView() {
+		ListView listView = (ListView) navigationView.findViewById(R.id.nav_layer_list);
+		if (listView != null) {
+			layersAdapter.notifyDataSetChanged();
+			listView.setAdapter(layersAdapter);
+		} else {
+			Log.d(TAG, "LAYERGRIDVIEW NOT INITIALIZED");
+		}
+		PaintroidApplication.drawingSurface.refreshDrawingSurface();
+	}
+
+	private void updateButtonResource() {
+		addButton.setEnabled(getLayerModel().getLayerCount() < LayerModel.MAX_LAYER);
+		delButton.setEnabled(getLayerModel().getLayerCount() > 1);
 	}
 }

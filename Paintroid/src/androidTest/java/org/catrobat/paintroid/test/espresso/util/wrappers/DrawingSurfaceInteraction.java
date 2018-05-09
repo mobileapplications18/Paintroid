@@ -73,7 +73,7 @@ public final class DrawingSurfaceInteraction extends CustomViewInteraction {
 	}
 
 	public DrawingSurfaceInteraction checkThatLayerDimensions(Matcher<Integer> matchesWidth, Matcher<Integer> matchesHeight) {
-		List<Layer> layers = LayerListener.getInstance().getLayerModel().getLayers();
+		List<Layer> layers = PaintroidApplication.layerModel.getLayers();
 		for (Layer layer : layers) {
 			Bitmap bitmap = layer.getImage();
 			assertThat(bitmap.getWidth(), matchesWidth);
@@ -88,7 +88,7 @@ public final class DrawingSurfaceInteraction extends CustomViewInteraction {
 	}
 
 	private void assertLayerDimensions(int expectedWidth, int expectedHeight) {
-		List<Layer> layers = LayerListener.getInstance().getLayerModel().getLayers();
+		List<Layer> layers = PaintroidApplication.layerModel.getLayers();
 		for (Layer layer : layers) {
 			assertBitmapDimensions(layer.getImage(), expectedWidth, expectedHeight);
 		}

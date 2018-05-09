@@ -48,16 +48,16 @@ public class LayerTest {
 	@Test
 	public void testMoveLayer() {
 		LayerListener.getInstance().createLayer();
-		int idLayerOne = LayerListener.getInstance().getLayerModel().getLayer(0).getLayerID();
-		int idLayerTwo = LayerListener.getInstance().getLayerModel().getLayer(1).getLayerID();
-		int posLayerOne = LayerListener.getInstance().getLayerModel().getPosition(idLayerOne);
-		int posLayerTwo = LayerListener.getInstance().getLayerModel().getPosition(idLayerTwo);
+		int idLayerOne = PaintroidApplication.layerModel.getLayer(0).getLayerID();
+		int idLayerTwo = PaintroidApplication.layerModel.getLayer(1).getLayerID();
+		int posLayerOne = PaintroidApplication.layerModel.getPosition(idLayerOne);
+		int posLayerTwo = PaintroidApplication.layerModel.getPosition(idLayerTwo);
 
 		assertTrue("Layer One should be at an higher position", posLayerOne < posLayerTwo);
 		LayerListener.getInstance().moveLayer(0, 1);
 
-		posLayerOne = LayerListener.getInstance().getLayerModel().getPosition(idLayerOne);
-		posLayerTwo = LayerListener.getInstance().getLayerModel().getPosition(idLayerTwo);
+		posLayerOne = PaintroidApplication.layerModel.getPosition(idLayerOne);
+		posLayerTwo = PaintroidApplication.layerModel.getPosition(idLayerTwo);
 		assertTrue("Positions should have been switched", posLayerOne > posLayerTwo);
 	}
 
@@ -74,7 +74,7 @@ public class LayerTest {
 		LayerListener.getInstance().getCurrentLayer().getImage().setPixel(1, 1, Color.BLUE);
 		LayerListener.getInstance().getCurrentLayer().getImage().setPixel(2, 1, Color.BLUE);
 		LayerListener.getInstance().mergeLayer(0, 1);
-		int numLayersAfterMerge = LayerListener.getInstance().getLayerModel().getLayerCount();
+		int numLayersAfterMerge = PaintroidApplication.layerModel.getLayerCount();
 
 		assertEquals("Only one Layer should exist", 1, numLayersAfterMerge);
 		assertEquals("Color should be black", Color.BLACK, LayerListener.getInstance().getCurrentLayer().getImage().getPixel(1, 2));
@@ -82,16 +82,16 @@ public class LayerTest {
 		assertEquals("Color should be blue", Color.BLUE, LayerListener.getInstance().getCurrentLayer().getImage().getPixel(1, 1));
 
 		PaintroidApplication.commandManager.undo();
-		int numLayersAfterUndo = LayerListener.getInstance().getLayerModel().getLayerCount();
+		int numLayersAfterUndo = PaintroidApplication.layerModel.getLayerCount();
 
 		assertEquals("Two Layers should exist", 2, numLayersAfterUndo);
-		assertEquals("Color should be blue", Color.BLUE, LayerListener.getInstance().getLayerModel().getLayer(0).getImage().getPixel(2, 1));
-		assertEquals("Color should be blue", Color.BLUE, LayerListener.getInstance().getLayerModel().getLayer(0).getImage().getPixel(1, 1));
-		assertEquals("Color should be black", Color.BLACK, LayerListener.getInstance().getLayerModel().getLayer(1).getImage().getPixel(1, 2));
-		assertEquals("Color should be blue", Color.BLACK, LayerListener.getInstance().getLayerModel().getLayer(1).getImage().getPixel(1, 1));
+		assertEquals("Color should be blue", Color.BLUE, PaintroidApplication.layerModel.getLayer(0).getImage().getPixel(2, 1));
+		assertEquals("Color should be blue", Color.BLUE, PaintroidApplication.layerModel.getLayer(0).getImage().getPixel(1, 1));
+		assertEquals("Color should be black", Color.BLACK, PaintroidApplication.layerModel.getLayer(1).getImage().getPixel(1, 2));
+		assertEquals("Color should be blue", Color.BLACK, PaintroidApplication.layerModel.getLayer(1).getImage().getPixel(1, 1));
 
 		PaintroidApplication.commandManager.redo();
-		int numLayersAfterRedo = LayerListener.getInstance().getLayerModel().getLayerCount();
+		int numLayersAfterRedo = PaintroidApplication.layerModel.getLayerCount();
 
 		assertEquals("Only one Layer should exist", 1, numLayersAfterRedo);
 		assertEquals("Color should be black", Color.BLACK, LayerListener.getInstance().getCurrentLayer().getImage().getPixel(1, 2));
