@@ -39,15 +39,14 @@ public class AddLayerCommand extends BaseCommand {
 	@Override
 	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 		DrawingSurface drawingSurface = PaintroidApplication.drawingSurface;
-		Bitmap image = bitmapFactory.createBitmap(drawingSurface.getBitmapWidth(),
-				drawingSurface.getBitmapHeight(), Bitmap.Config.ARGB_8888);
+		int width = drawingSurface.getBitmapWidth();
+		int height = drawingSurface.getBitmapHeight();
 
-		Layer layer = new Layer(image);
-
+		Layer layer = new Layer(bitmapFactory.createBitmap(width, height, Bitmap.Config.ARGB_8888));
 		layerModel.addLayer(layer);
 		layerModel.setCurrentLayer(layer);
 
-		PaintroidApplication.drawingSurface.refreshDrawingSurface();
+		drawingSurface.refreshDrawingSurface();
 	}
 
 	@Override

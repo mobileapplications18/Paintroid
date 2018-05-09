@@ -163,7 +163,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		if (firstLayer != secondLayer) {
 			// TODO: uncomment when BrickDragAndDropLayerMenu / ListView has a temporary list for modification
 			/*
-			PaintroidApplication.commandManager.addCommand(new MergeLayerCommand(firstLayerId, secondLayerId));
+			PaintroidApplication.commandManager.addCommand(new MergeLayerCommand(firstLayerPosition, secondLayerPosition));
 			ToastFactory.makeText(activity, R.string.layer_merged, Toast.LENGTH_LONG).show();
 			*/
 		}

@@ -258,8 +258,7 @@ public class DrawingSurface extends SurfaceView implements SurfaceHolder.Callbac
 		return Color.TRANSPARENT;
 	}
 
-	public void getPixels(int[] pixels, int offset, int stride, int x, int y,
-						  int width, int height) {
+	public void getPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {
 		if (!isWorkingBitmapRecycled()) {
 			workingBitmap.getPixels(pixels, offset, stride, x, y, width, height);
 		}

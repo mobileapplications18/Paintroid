@@ -54,11 +54,11 @@ public class PaintroidApplication extends Application {
 		applicationContext = getApplicationContext();
 		defaultSystemLanguage = Locale.getDefault().getLanguage();
 
-		layerModel = new LayerModel(blankBitmap());
+		layerModel = new LayerModel(getBlankBitmap());
 		commandManager = new CommandManager(layerModel);
 	}
 
-	private Bitmap blankBitmap() {
+	private Bitmap getBlankBitmap() {
 		WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 		Display display = windowManager.getDefaultDisplay();
 		Point size = new Point();
