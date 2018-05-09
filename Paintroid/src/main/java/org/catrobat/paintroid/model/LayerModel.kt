@@ -59,7 +59,6 @@ class LayerModel(firstLayer: Bitmap) {
 	fun removeLayer(layer: Layer) {
 		if (layerList.size > 0) {
 			layerList.remove(layer)
-			layerCounter--;
 		}
 	}
 
