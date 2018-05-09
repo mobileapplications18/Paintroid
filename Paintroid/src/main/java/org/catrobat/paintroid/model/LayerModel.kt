@@ -4,10 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
-import org.catrobat.paintroid.PaintroidApplication
 import java.util.*
 
-class LayerModel(firstLayer: Bitmap) {
+class LayerModel(initialBitmap: Bitmap) {
 
 	companion object {
 		const val MAX_LAYER = 4
@@ -16,12 +15,11 @@ class LayerModel(firstLayer: Bitmap) {
 	var bitmapFactory: BitmapFactory = BitmapFactory()
 	var currentLayer: Layer
 
-	private var layerCounter = 1
 	private val layerList: MutableList<Layer> = mutableListOf()
 
 	init {
-		val layer = Layer(firstLayer)
-		layerList.add(layer)
+		val layer = Layer(initialBitmap)
+		addLayer(layer)
 		currentLayer = layer
 	}
 
@@ -29,24 +27,12 @@ class LayerModel(firstLayer: Bitmap) {
 
 	fun getLayer(index: Int) = layerList[index]
 
-	fun getPosition(layer: Layer) = layerList.indexOfFirst { it == layer}
-	fun getCurrentPosition() = layerList.indexOfFirst { it == currentLayer}
+	fun getPosition(layer: Layer) = layerList.indexOf(layer)
+
+	fun getCurrentPosition() = layerList.indexOf(currentLayer)
 
 	@Deprecated("Do not access layerList directly")
 	fun getLayers(): List<Layer> = layerList
-
-	fun addLayer(): Boolean {
-		if (layerList.size < MAX_LAYER) {
-			val drawingSurface = PaintroidApplication.drawingSurface
-			val image = bitmapFactory.createBitmap(drawingSurface.bitmapWidth, drawingSurface.bitmapHeight, Bitmap.Config.ARGB_8888)
-
-			layerList.add(0, Layer(image))
-			layerCounter++
-			return true
-		}
-
-		return false
-	}
 
 	fun addLayer(existingLayer: Layer): Boolean {
 		if (layerList.size < MAX_LAYER) {
@@ -58,9 +44,7 @@ class LayerModel(firstLayer: Bitmap) {
 	}
 
 	fun removeLayer(layer: Layer) {
-		if (layerList.size > 0) {
-			layerList.remove(layer)
-		}
+		layerList.remove(layer)
 	}
 
 	fun mergeLayer(firstLayer: Layer, secondLayer: Layer): Layer {
@@ -95,17 +79,14 @@ class LayerModel(firstLayer: Bitmap) {
 		return bmpOverlay
 	}
 
-	fun clearLayer(): Layer {
-		// TODO can be simplified massively
-		if (layerList.size >= 1) {
-			for (i in layerList.size - 1 downTo 0) {
-				layerList.removeAt(i)
-			}
-		}
-		layerCounter = 0
-		addLayer()
+	fun clearLayer() {
+		val oldBitmap = layerList.first().image
+		val image = bitmapFactory.createBitmap(oldBitmap.width, oldBitmap.height, Bitmap.Config.ARGB_8888)
 
-		return layerList[0]
+		layerList.clear()
+		val layer = Layer(image)
+		addLayer(layer)
+		currentLayer = layer
 	}
 
 	fun swapLayer(posMarkedLayer: Int, targetPosition: Int) {
