@@ -148,7 +148,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 	@Deprecated
 	public void deleteLayer() {
 		PaintroidApplication.commandManager.addCommand(new RemoveLayerCommand());
-		ToastFactory.makeText(activity, R.string.layer_invisible, Toast.LENGTH_LONG).show();
+		//ToastFactory.makeText(activity, R.string.layer_invisible, Toast.LENGTH_LONG).show();
 	}
 
 	@Deprecated
@@ -159,10 +159,8 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	@Deprecated
 	public void mergeLayer(int firstLayer, int secondLayer) {
-		int firstLayerId = getLayerModel().getLayer(firstLayer).getLayerID();
-		int secondLayerId = getLayerModel().getLayer(secondLayer).getLayerID();
 
-		if (firstLayerId != secondLayerId) {
+		if (firstLayer != secondLayer) {
 			// TODO: uncomment when BrickDragAndDropLayerMenu / ListView has a temporary list for modification
 			/*
 			PaintroidApplication.commandManager.addCommand(new MergeLayerCommand(firstLayerId, secondLayerId));

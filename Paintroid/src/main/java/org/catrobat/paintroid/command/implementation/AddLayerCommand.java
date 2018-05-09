@@ -42,7 +42,7 @@ public class AddLayerCommand extends BaseCommand {
 		Bitmap image = bitmapFactory.createBitmap(drawingSurface.getBitmapWidth(),
 				drawingSurface.getBitmapHeight(), Bitmap.Config.ARGB_8888);
 
-		Layer layer = new Layer(layerModel.getLayerCount(), image);
+		Layer layer = new Layer(image);
 
 		layerModel.addLayer(layer);
 		layerModel.setCurrentLayer(layer);
