@@ -25,11 +25,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 
 import org.catrobat.paintroid.FileIO;
 import org.catrobat.paintroid.PaintroidApplication;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class StampCommand extends BaseCommand {
 	protected final Point coordinates;
@@ -58,7 +59,7 @@ public class StampCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 		Context context = PaintroidApplication.applicationContext;

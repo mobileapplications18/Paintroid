@@ -24,13 +24,17 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.support.test.annotation.UiThreadTest;
 
+import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.command.Command;
+import org.catrobat.paintroid.command.implementation.CommandManager;
 import org.catrobat.paintroid.command.implementation.PointCommand;
 import org.catrobat.paintroid.test.junit.stubs.PathStub;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.tools.implementation.CursorTool;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -39,6 +43,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class CursorToolTest extends BaseToolTest {
 
@@ -65,6 +72,8 @@ public class CursorToolTest extends BaseToolTest {
 	@UiThreadTest
 	@Test
 	public void testShouldActivateCursorOnTabEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF point = new PointF(5, 5);
 
 		boolean handleDownEventResult = this.toolToTest.handleDown(point);
@@ -73,8 +82,10 @@ public class CursorToolTest extends BaseToolTest {
 		assertTrue(handleDownEventResult);
 		assertTrue(handleUpEventResult);
 
-		assertEquals(1, commandManagerStub.getCallCount("commitCommandToLayer"));
-		Command command = (Command) commandManagerStub.getCall("commitCommandToLayer", 0).get(1);
+		ArgumentCaptor<Command> argumentCaptor = ArgumentCaptor.forClass(Command.class);
+		verify(PaintroidApplication.commandManager, times(1)).addCommand(argumentCaptor.capture());
+		Command command = argumentCaptor.getValue();
+
 		assertTrue(command instanceof PointCommand);
 		boolean draw = ((CursorTool) toolToTest).toolInDrawMode;
 		assertTrue(draw);
@@ -83,6 +94,8 @@ public class CursorToolTest extends BaseToolTest {
 	@UiThreadTest
 	@Test
 	public void testShouldNotActivateCursorOnTabEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF pointDown = new PointF(0, 0);
 		PointF pointUp = new PointF(pointDown.x + MOVE_TOLERANCE + 1, pointDown.y + MOVE_TOLERANCE + 1);
 
@@ -93,7 +106,7 @@ public class CursorToolTest extends BaseToolTest {
 		assertTrue(handleDownEventResult);
 		assertTrue(handleUpEventResult);
 
-		assertEquals(0, commandManagerStub.getCallCount("commitCommandToLayer"));
+		verify(PaintroidApplication.commandManager, times(0)).addCommand(any(Command.class));
 		boolean draw = ((CursorTool) toolToTest).toolInDrawMode;
 		assertFalse(draw);
 
@@ -106,7 +119,7 @@ public class CursorToolTest extends BaseToolTest {
 		assertTrue(handleDownEventResult);
 		assertTrue(handleUpEventResult);
 
-		assertEquals(0, commandManagerStub.getCallCount("commitCommandToLayer"));
+		verify(PaintroidApplication.commandManager, times(0)).addCommand(any(Command.class));
 
 		draw = ((CursorTool) toolToTest).toolInDrawMode;
 		assertFalse(draw);
@@ -119,7 +132,7 @@ public class CursorToolTest extends BaseToolTest {
 		assertTrue(handleDownEventResult);
 		assertTrue(handleUpEventResult);
 
-		assertEquals(0, commandManagerStub.getCallCount("commitCommandToLayer"));
+		verify(PaintroidApplication.commandManager, times(0)).addCommand(any(Command.class));
 		draw = ((CursorTool) toolToTest).toolInDrawMode;
 		assertFalse(draw);
 
@@ -131,7 +144,7 @@ public class CursorToolTest extends BaseToolTest {
 		assertTrue(handleDownEventResult);
 		assertTrue(handleUpEventResult);
 
-		assertEquals(0, commandManagerStub.getCallCount("commitCommandToLayer"));
+		verify(PaintroidApplication.commandManager, times(0)).addCommand(any(Command.class));
 		draw = ((CursorTool) toolToTest).toolInDrawMode;
 		assertFalse(draw);
 	}

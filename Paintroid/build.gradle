@@ -93,7 +93,7 @@ android {
                 'RtlSymmetry', 'GradleDynamicVersion', 'RtlHardcoded', 'HandlerLeak', 'IconMissingDensityFolder',
                 'WrongRegion', 'RelativeOverlap', 'IconColors', 'MissingTranslation', 'ExtraTranslation',
                 'GradleCompatible', 'WifiManagerLeak', 'ApplySharedPref', 'DefaultLocale', 'ObsoleteSdkInt',
-                'StaticFieldLeak' , 'AppCompatResource'
+                'StaticFieldLeak', 'AppCompatResource'
 
         textReport true
         xmlReport true
@@ -112,13 +112,17 @@ dependencies {
 
     androidTestCompile 'com.android.support.test:runner:1.0.1'
     androidTestCompile 'com.android.support.test:rules:1.0.1'
+    androidTestCompile 'org.mockito:mockito-android:2.18.3'
 
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-contrib:3.0.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:3.0.1'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.mockito:mockito-core:2.18.3'
+    testCompile('com.nhaarman:mockito-kotlin:1.5.0') {
+        exclude group: 'org.jetbrains.kotlin' // still uses 1.0.7...
+    }
 
     pmd(
             'net.sourceforge.pmd:pmd-core:5.8.1',

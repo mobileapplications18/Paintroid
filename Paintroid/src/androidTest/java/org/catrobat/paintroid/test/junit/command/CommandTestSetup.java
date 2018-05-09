@@ -28,7 +28,7 @@ import android.graphics.Paint.Cap;
 import android.graphics.PointF;
 
 import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public abstract class CommandTestSetup {
 	PointF pointUnderTest;
 	Canvas canvasUnderTest;
 	Bitmap bitmapUnderTest;
-	Layer layerUnderTest;
+	LayerModel layerModelUnderTest;
 	Bitmap canvasBitmapUnderTest;
 
 	@Before
@@ -57,7 +57,7 @@ public abstract class CommandTestSetup {
 		canvasBitmapUnderTest = Bitmap.createBitmap(80, 80, Config.ARGB_8888);
 		canvasBitmapUnderTest.eraseColor(BITMAP_BASE_COLOR);
 		bitmapUnderTest = canvasBitmapUnderTest.copy(Config.ARGB_8888, true);
-		layerUnderTest = new Layer(0, bitmapUnderTest);
+		layerModelUnderTest = new LayerModel(bitmapUnderTest);
 		canvasUnderTest.setBitmap(canvasBitmapUnderTest);
 		paintUnderTest = new Paint();
 		paintUnderTest.setColor(PAINT_BASE_COLOR);
@@ -74,7 +74,7 @@ public abstract class CommandTestSetup {
 		canvasBitmapUnderTest = null;
 		bitmapUnderTest.recycle();
 		bitmapUnderTest = null;
-		layerUnderTest = null;
+		layerModelUnderTest = null;
 		paintUnderTest = null;
 		pointUnderTest = null;
 	}
@@ -85,7 +85,7 @@ public abstract class CommandTestSetup {
 			commandUnderTestNull.run(null, null);
 			commandUnderTestNull.run(null, null);
 			commandUnderTestNull.run(canvasUnderTest, null);
-			commandUnderTestNull.run(null, layerUnderTest);
+			commandUnderTestNull.run(null, layerModelUnderTest);
 		}
 	}
 }

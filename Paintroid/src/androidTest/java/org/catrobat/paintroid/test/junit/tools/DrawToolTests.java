@@ -24,9 +24,10 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.test.annotation.UiThreadTest;
-
+import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.command.implementation.BaseCommand;
+import org.catrobat.paintroid.command.implementation.CommandManager;
 import org.catrobat.paintroid.command.implementation.PathCommand;
 import org.catrobat.paintroid.command.implementation.PointCommand;
 import org.catrobat.paintroid.dialog.colorpicker.ColorPickerDialog;
@@ -41,15 +42,18 @@ import org.catrobat.paintroid.tools.implementation.DrawTool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockSettings;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.catrobat.paintroid.test.utils.PaintroidAsserts.assertPaintEquals;
 import static org.catrobat.paintroid.test.utils.PaintroidAsserts.assertPathEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class DrawToolTests extends BaseToolTest {
 
@@ -61,8 +65,8 @@ public class DrawToolTests extends BaseToolTest {
 	@Override
 	@Before
 	public void setUp() throws Exception {
-		toolToTest = new DrawTool(this.getActivity(), ToolType.BRUSH);
 		super.setUp();
+		toolToTest = new DrawTool(this.getActivity(), ToolType.BRUSH);
 	}
 
 	@UiThreadTest
@@ -71,7 +75,6 @@ public class DrawToolTests extends BaseToolTest {
 	public void tearDown() throws Exception {
 		toolToTest = null;
 		paint = null;
-		commandManagerStub = null;
 		getActivity().finish();
 		super.tearDown();
 	}
@@ -80,7 +83,6 @@ public class DrawToolTests extends BaseToolTest {
 	@Test
 	public void testShouldReturnCorrectToolType() {
 		ToolType toolType = toolToTest.getToolType();
-
 		assertEquals(ToolType.BRUSH, toolType);
 	}
 
@@ -114,12 +116,14 @@ public class DrawToolTests extends BaseToolTest {
 	@UiThreadTest
 	@Test
 	public void testShouldNotAddCommandOnDownEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF event = new PointF(0, 0);
 
 		boolean returnValue = toolToTest.handleDown(event);
 
 		assertTrue(returnValue);
-		assertEquals(0, commandManagerStub.getCallCount("commitCommandToLayer"));
+		verify(PaintroidApplication.commandManager, times(0)).addCommand(any(Command.class));
 	}
 
 	@UiThreadTest
@@ -159,13 +163,15 @@ public class DrawToolTests extends BaseToolTest {
 	@UiThreadTest
 	@Test
 	public void testShouldNotAddCommandOnMoveEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF event = new PointF(0, 0);
 
 		toolToTest.handleDown(event);
 		boolean returnValue = toolToTest.handleMove(event);
 
 		assertTrue(returnValue);
-		assertEquals(0, commandManagerStub.getCallCount("commitCommandToLayer"));
+		verify(PaintroidApplication.commandManager, times(0)).addCommand(any(Command.class));
 	}
 
 	@UiThreadTest
@@ -222,6 +228,8 @@ public class DrawToolTests extends BaseToolTest {
 	@UiThreadTest
 	@Test
 	public void testShouldAddCommandOnUpEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF event = new PointF(0, 0);
 		PointF event1 = new PointF(MOVE_TOLERANCE + 0.1f, 0);
 		PointF event2 = new PointF(MOVE_TOLERANCE + 2, MOVE_TOLERANCE + 2);
@@ -231,10 +239,12 @@ public class DrawToolTests extends BaseToolTest {
 		toolToTest.handleDown(event);
 		toolToTest.handleMove(event1);
 		boolean returnValue = toolToTest.handleUp(event2);
-
 		assertTrue(returnValue);
-		assertEquals(1, commandManagerStub.getCallCount("commitCommandToLayer"));
-		Command command = (Command) commandManagerStub.getCall("commitCommandToLayer", 0).get(1);
+
+		ArgumentCaptor<Command> argumentCaptor = ArgumentCaptor.forClass(Command.class);
+		verify(PaintroidApplication.commandManager, times(1)).addCommand(argumentCaptor.capture());
+		Command command = argumentCaptor.getValue();
+
 		assertTrue(command instanceof PathCommand);
 		Path path = ((PathCommand) command).path;
 		assertPathEquals(pathStub, path);
@@ -245,6 +255,8 @@ public class DrawToolTests extends BaseToolTest {
 	@UiThreadTest
 	@Test
 	public void testShouldNotAddCommandIfNoCoordinateOnUpEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF event = new PointF(0, 0);
 
 		toolToTest.handleDown(event);
@@ -252,12 +264,14 @@ public class DrawToolTests extends BaseToolTest {
 		boolean returnValue = toolToTest.handleUp(null);
 
 		assertFalse(returnValue);
-		assertEquals(0, commandManagerStub.getCallCount("commitCommandToLayer"));
+		verify(PaintroidApplication.commandManager, times(0)).addCommand(any(Command.class));
 	}
 
 	@UiThreadTest
 	@Test
 	public void testShouldAddCommandOnTabEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF tab = new PointF(5, 5);
 
 		boolean returnValue1 = toolToTest.handleDown(tab);
@@ -265,8 +279,11 @@ public class DrawToolTests extends BaseToolTest {
 
 		assertTrue(returnValue1);
 		assertTrue(returnValue2);
-		assertEquals(1, commandManagerStub.getCallCount("commitCommandToLayer"));
-		Command command = (Command) commandManagerStub.getCall("commitCommandToLayer", 0).get(1);
+
+		ArgumentCaptor<Command> argumentCaptor = ArgumentCaptor.forClass(Command.class);
+		verify(PaintroidApplication.commandManager, times(1)).addCommand(argumentCaptor.capture());
+		Command command = argumentCaptor.getValue();
+
 		assertTrue(command instanceof PointCommand);
 		PointF point = ((PointCommand) command).point;
 		assertEquals(tab, point);
@@ -277,6 +294,8 @@ public class DrawToolTests extends BaseToolTest {
 	@UiThreadTest
 	@Test
 	public void testShouldAddCommandOnTabWithinTolleranceEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF tab1 = new PointF(0, 0);
 		PointF tab2 = new PointF(MOVE_TOLERANCE - 0.1f, 0);
 		PointF tab3 = new PointF(MOVE_TOLERANCE - 0.1f, MOVE_TOLERANCE - 0.1f);
@@ -288,8 +307,11 @@ public class DrawToolTests extends BaseToolTest {
 		assertTrue(returnValue1);
 		assertTrue(returnValue2);
 		assertTrue(returnValue3);
-		assertEquals(1, commandManagerStub.getCallCount("commitCommandToLayer"));
-		Command command = (Command) commandManagerStub.getCall("commitCommandToLayer", 0).get(1);
+
+		ArgumentCaptor<Command> argumentCaptor = ArgumentCaptor.forClass(Command.class);
+		verify(PaintroidApplication.commandManager, times(1)).addCommand(argumentCaptor.capture());
+		Command command = argumentCaptor.getValue();
+
 		assertTrue(command instanceof PointCommand);
 		PointF point = ((PointCommand) command).point;
 		assertEquals(tab1, point);
@@ -300,6 +322,8 @@ public class DrawToolTests extends BaseToolTest {
 	@UiThreadTest
 	@Test
 	public void testShouldAddPathCommandOnMultipleMovesWithinTolleranceEvent() {
+		PaintroidApplication.commandManager = Mockito.mock(CommandManager.class);
+
 		PointF tab1 = new PointF(7, 7);
 		PointF tab2 = new PointF(7, MOVE_TOLERANCE - 0.1f);
 		PointF tab3 = new PointF(7, 7);
@@ -312,8 +336,10 @@ public class DrawToolTests extends BaseToolTest {
 		toolToTest.handleMove(tab4);
 		toolToTest.handleUp(tab5);
 
-		assertEquals(1, commandManagerStub.getCallCount("commitCommandToLayer"));
-		Command command = (Command) commandManagerStub.getCall("commitCommandToLayer", 0).get(1);
+		ArgumentCaptor<Command> argumentCaptor = ArgumentCaptor.forClass(Command.class);
+		verify(PaintroidApplication.commandManager, times(1)).addCommand(argumentCaptor.capture());
+		Command command = argumentCaptor.getValue();
+
 		assertTrue(command instanceof PathCommand);
 	}
 
@@ -354,7 +380,7 @@ public class DrawToolTests extends BaseToolTest {
 
 	@UiThreadTest
 	@Test
-	public void testShouldChangePaintFromBrushPicker() throws NoSuchFieldException, IllegalAccessException {
+	public void testShouldChangePaintFromBrushPicker() {
 		toolToTest.setupToolOptions();
 		toolToTest.setDrawPaint(this.paint);
 		BrushPickerView brushPicker = ((DrawTool) toolToTest).brushPickerView;

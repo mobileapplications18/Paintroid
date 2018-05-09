@@ -1,18 +1,18 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
+ * Copyright (C) 2010-2018 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,25 +20,16 @@
 package org.catrobat.paintroid.tools.implementation;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.*;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Style;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.RectF;
 import android.support.annotation.VisibleForTesting;
 import android.widget.Toast;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.PathCommand;
 import org.catrobat.paintroid.command.implementation.PointCommand;
 import org.catrobat.paintroid.listener.BrushPickerView;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.ToastFactory;
 
@@ -65,7 +56,7 @@ public class CursorTool extends BaseToolWithShape {
 		pathToDraw = new Path();
 		pathToDraw.incReserve(1);
 		cursorToolPrimaryShapeColor = context.getResources().getColor(
-						R.color.cursor_tool_deactive_primary_color);
+				R.color.cursor_tool_deactive_primary_color);
 		cursorToolSecondaryShapeColor = Color.LTGRAY;
 		pathInsideBitmap = false;
 	}
@@ -286,24 +277,14 @@ public class CursorTool extends BaseToolWithShape {
 
 	protected boolean addPathCommand(PointF coordinate) {
 		pathToDraw.lineTo(coordinate.x, coordinate.y);
-		if (!pathInsideBitmap) {
-			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
-			return false;
-		}
-		Layer layer = LayerListener.getInstance().getCurrentLayer();
-		Command command = new PathCommand(BITMAP_PAINT, pathToDraw);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+		PaintroidApplication.commandManager.addCommand(new PathCommand(BITMAP_PAINT, pathToDraw));
+		resetInternalState(StateChange.RESET_INTERNAL_STATE);
 		return true;
 	}
 
 	protected boolean addPointCommand(PointF coordinate) {
-		if (!pathInsideBitmap) {
-			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
-			return false;
-		}
-		Layer layer = LayerListener.getInstance().getCurrentLayer();
-		Command command = new PointCommand(BITMAP_PAINT, coordinate);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+		PaintroidApplication.commandManager.addCommand(new PointCommand(BITMAP_PAINT, coordinate));
+		resetInternalState(StateChange.RESET_INTERNAL_STATE);
 		return true;
 	}
 

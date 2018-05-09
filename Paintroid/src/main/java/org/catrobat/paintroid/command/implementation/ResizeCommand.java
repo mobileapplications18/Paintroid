@@ -1,18 +1,18 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
+ * Copyright (C) 2010-2018 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,9 +21,10 @@ package org.catrobat.paintroid.command.implementation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class ResizeCommand extends BaseCommand {
 	private static final String TAG = ResizeCommand.class.getSimpleName();
@@ -45,11 +46,11 @@ public class ResizeCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 
 		try {
-			Bitmap bitmap = layer.getImage();
+			Bitmap bitmap = layerModel.getCurrentLayer().getImage();
 
 			if (resizeCoordinateXRight < resizeCoordinateXLeft) {
 				Log.e(TAG, "coordinate X right must be larger than coordinate X left");
@@ -109,7 +110,7 @@ public class ResizeCommand extends BaseCommand {
 			bitmap.getPixels(pixelsToCopy, 0, copyFromWidth, copyFromXLeft, copyFromYTop, copyFromWidth, copyFromHeight);
 			resizedBitmap.setPixels(pixelsToCopy, 0, copyToWidth, copyToXLeft, copyToYTop, copyToWidth, copyToHeight);
 
-			layer.setImage(resizedBitmap);
+			layerModel.getCurrentLayer().setImage(resizedBitmap);
 
 			setChanged();
 		} catch (Exception e) {

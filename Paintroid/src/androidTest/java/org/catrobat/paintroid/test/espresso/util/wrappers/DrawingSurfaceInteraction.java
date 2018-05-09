@@ -25,20 +25,18 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.test.InstrumentationRegistry;
 import android.support.v4.content.ContextCompat;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
 import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.test.espresso.util.BitmapLocationProvider;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.ui.DrawingSurface;
 import org.hamcrest.Matcher;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-
 import static org.catrobat.paintroid.test.espresso.util.EspressoUtils.getWorkingBitmap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -75,7 +73,7 @@ public final class DrawingSurfaceInteraction extends CustomViewInteraction {
 	}
 
 	public DrawingSurfaceInteraction checkThatLayerDimensions(Matcher<Integer> matchesWidth, Matcher<Integer> matchesHeight) {
-		ArrayList<Layer> layers = LayerListener.getInstance().getAdapter().getLayers();
+		List<Layer> layers = PaintroidApplication.layerModel.getLayers();
 		for (Layer layer : layers) {
 			Bitmap bitmap = layer.getImage();
 			assertThat(bitmap.getWidth(), matchesWidth);
@@ -90,7 +88,7 @@ public final class DrawingSurfaceInteraction extends CustomViewInteraction {
 	}
 
 	private void assertLayerDimensions(int expectedWidth, int expectedHeight) {
-		ArrayList<Layer> layers = LayerListener.getInstance().getAdapter().getLayers();
+		List<Layer> layers = PaintroidApplication.layerModel.getLayers();
 		for (Layer layer : layers) {
 			assertBitmapDimensions(layer.getImage(), expectedWidth, expectedHeight);
 		}

@@ -43,7 +43,7 @@ public class FlipCommandTest extends CommandTestSetup {
 	public void testVerticalFlip() {
 		commandUnderTest = new FlipCommand(FlipDirection.FLIP_VERTICAL);
 		bitmapUnderTest.setPixel(0, bitmapHeight / 2, PAINT_BASE_COLOR);
-		commandUnderTest.run(canvasUnderTest, layerUnderTest);
+		commandUnderTest.run(canvasUnderTest, layerModelUnderTest);
 		int pixel = bitmapUnderTest.getPixel(bitmapWidth - 1, bitmapWidth / 2);
 		assertEquals("pixel should be paint_base_color", PAINT_BASE_COLOR, pixel);
 	}
@@ -52,7 +52,7 @@ public class FlipCommandTest extends CommandTestSetup {
 	public void testHorizontalFlip() {
 		commandUnderTest = new FlipCommand(FlipDirection.FLIP_HORIZONTAL);
 		bitmapUnderTest.setPixel(bitmapWidth / 2, 0, PAINT_BASE_COLOR);
-		commandUnderTest.run(canvasUnderTest, layerUnderTest);
+		commandUnderTest.run(canvasUnderTest, layerModelUnderTest);
 		int pixel = bitmapUnderTest.getPixel(bitmapWidth / 2, bitmapWidth - 1);
 		assertEquals("pixel should be paint_base_color", PAINT_BASE_COLOR, pixel);
 	}

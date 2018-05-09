@@ -1,18 +1,18 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
+ * Copyright (C) 2010-2018 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,15 +25,10 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.annotation.VisibleForTesting;
-
 import org.catrobat.paintroid.PaintroidApplication;
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.PathCommand;
 import org.catrobat.paintroid.command.implementation.PointCommand;
 import org.catrobat.paintroid.listener.BrushPickerView;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.tools.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 
 public class DrawTool extends BaseTool {
@@ -123,7 +118,8 @@ public class DrawTool extends BaseTool {
 
 		drawToolMovedDistance.set(
 				drawToolMovedDistance.x + Math.abs(coordinate.x - previousEventCoordinate.x),
-				drawToolMovedDistance.y + Math.abs(coordinate.y - previousEventCoordinate.y));
+				drawToolMovedDistance.y + Math.abs(coordinate.y - previousEventCoordinate.y)
+		);
 		boolean returnValue;
 		if (MOVE_TOLERANCE < drawToolMovedDistance.x || MOVE_TOLERANCE < drawToolMovedDistance.y) {
 			returnValue = addPathCommand(coordinate);
@@ -135,24 +131,14 @@ public class DrawTool extends BaseTool {
 
 	protected boolean addPathCommand(PointF coordinate) {
 		pathToDraw.lineTo(coordinate.x, coordinate.y);
-		if (!pathInsideBitmap) {
-			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
-			return false;
-		}
-		Layer layer = LayerListener.getInstance().getCurrentLayer();
-		Command command = new PathCommand(BITMAP_PAINT, pathToDraw);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+		PaintroidApplication.commandManager.addCommand(new PathCommand(BITMAP_PAINT, pathToDraw));
+		resetInternalState(StateChange.RESET_INTERNAL_STATE);
 		return true;
 	}
 
 	protected boolean addPointCommand(PointF coordinate) {
-		if (!pathInsideBitmap) {
-			PaintroidApplication.currentTool.resetInternalState(StateChange.RESET_INTERNAL_STATE);
-			return false;
-		}
-		Layer layer = LayerListener.getInstance().getCurrentLayer();
-		Command command = new PointCommand(BITMAP_PAINT, coordinate);
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+		PaintroidApplication.commandManager.addCommand(new PointCommand(BITMAP_PAINT, coordinate));
+		resetInternalState(StateChange.RESET_INTERNAL_STATE);
 		return true;
 	}
 

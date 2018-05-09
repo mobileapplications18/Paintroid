@@ -1,18 +1,18 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
+ * Copyright (C) 2010-2018 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,18 +20,7 @@
 package org.catrobat.paintroid.ui;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.Region;
-import android.graphics.Shader;
+import android.graphics.*;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.VisibleForTesting;
@@ -39,22 +28,22 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
 import org.catrobat.paintroid.listener.DrawingSurfaceListener;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.Layer;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class DrawingSurface extends SurfaceView implements
-		SurfaceHolder.Callback {
+public class DrawingSurface extends SurfaceView implements SurfaceHolder.Callback {
+
+	private static final String TAG = DrawingSurface.class.getSimpleName();
+
 	protected static final String BUNDLE_INSTANCE_STATE = "BUNDLE_INSTANCE_STATE";
 	protected static final String BUNDLE_PERSPECTIVE = "BUNDLE_PERSPECTIVE";
 	protected static final String BUNDLE_WORKING_BITMAP = "BUNDLE_WORKING_BITMAP";
 	protected static final int BACKGROUND_COLOR = Color.LTGRAY;
-	private static final String TAG = DrawingSurface.class.getSimpleName();
+
 	private final Object drawingLock = new Object();
 	protected boolean surfaceCanBeUsed;
 	private DrawingSurfaceThread drawingThread;
@@ -116,13 +105,10 @@ public class DrawingSurface extends SurfaceView implements
 			surfaceViewCanvas.drawRect(workingBitmapRect, checkeredPattern);
 			surfaceViewCanvas.drawRect(workingBitmapRect, framePaint);
 
-			if (workingBitmap != null && !workingBitmap.isRecycled()
-					&& surfaceCanBeUsed) {
-
-				ArrayList<Layer> layers = LayerListener.getInstance().getAdapter().getLayers();
-
-				for (int i = layers.size() - 1; i >= 0; i--) {
-					surfaceViewCanvas.drawBitmap(layers.get(i).getImage(), 0, 0, opacityPaint);
+			if (workingBitmap != null && !workingBitmap.isRecycled() && surfaceCanBeUsed) {
+				List<Layer> layers = PaintroidApplication.layerModel.getLayers();
+				for (Layer layer : layers) {
+					surfaceViewCanvas.drawBitmap(layer.getImage(), 0, 0, opacityPaint);
 				}
 				PaintroidApplication.currentTool.draw(surfaceViewCanvas);
 			}
@@ -189,12 +175,10 @@ public class DrawingSurface extends SurfaceView implements
 	public void onRestoreInstanceState(Parcelable state) {
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
-			PaintroidApplication.perspective = (Perspective) bundle
-					.getSerializable(BUNDLE_PERSPECTIVE);
+			PaintroidApplication.perspective = (Perspective) bundle.getSerializable(BUNDLE_PERSPECTIVE);
 			resetBitmap((Bitmap) bundle.getParcelable(BUNDLE_WORKING_BITMAP));
 
-			super.onRestoreInstanceState(bundle
-					.getParcelable(BUNDLE_INSTANCE_STATE));
+			super.onRestoreInstanceState(bundle.getParcelable(BUNDLE_INSTANCE_STATE));
 		} else {
 			super.onRestoreInstanceState(state);
 		}
@@ -275,7 +259,7 @@ public class DrawingSurface extends SurfaceView implements
 	}
 
 	public void getPixels(int[] pixels, int offset, int stride, int x, int y,
-			int width, int height) {
+						  int width, int height) {
 		if (!isWorkingBitmapRecycled()) {
 			workingBitmap.getPixels(pixels, offset, stride, x, y, width, height);
 		}

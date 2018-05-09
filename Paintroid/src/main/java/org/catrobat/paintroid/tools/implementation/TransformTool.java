@@ -20,12 +20,7 @@
 package org.catrobat.paintroid.tools.implementation;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PointF;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.os.AsyncTask;
 import android.support.annotation.VisibleForTesting;
 import android.util.DisplayMetrics;
@@ -33,18 +28,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.command.Command;
 import org.catrobat.paintroid.command.implementation.BaseCommand;
 import org.catrobat.paintroid.command.implementation.FlipCommand;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.ResizeCommand;
 import org.catrobat.paintroid.command.implementation.RotateCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
 import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
+import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.DrawingSurface;
 import org.catrobat.paintroid.ui.ToastFactory;
@@ -207,8 +200,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	private void resetScaleAndTranslation() {
 		PaintroidApplication.perspective.resetScaleAndTranslation();
-		float zoomFactor = PaintroidApplication.perspective
-				.getScaleForCenterBitmap() * START_ZOOM_FACTOR;
+		float zoomFactor = PaintroidApplication.perspective.getScaleForCenterBitmap() * START_ZOOM_FACTOR;
 		PaintroidApplication.perspective.setScale(zoomFactor);
 	}
 
@@ -228,18 +220,20 @@ public class TransformTool extends BaseToolWithRectangleShape {
 			cropRunFinished = false;
 			initResizeBounds();
 			if (areResizeBordersValid()) {
-
-				for (Layer layer : LayerListener.getInstance().getAdapter().getLayers()) {
-					Command resizeCommand = new ResizeCommand((int) Math.floor(resizeBoundWidthXLeft),
+				LayerModel layerModel = PaintroidApplication.layerModel;
+				for (Layer layer : layerModel.getLayers()) { // TODO implement in ResizeCommand once
+					ResizeCommand resizeCommand = new ResizeCommand(
+							(int) Math.floor(resizeBoundWidthXLeft),
 							(int) Math.floor(resizeBoundHeightYTop),
 							(int) Math.floor(resizeBoundWidthXRight),
 							(int) Math.floor(resizeBoundHeightYBottom),
-							(int) maximumBoxResolution);
+							(int) maximumBoxResolution
+					);
 
 					if (layer.getSelected()) {
-						((ResizeCommand) resizeCommand).addObserver(this);
+						resizeCommand.addObserver(this);
 					}
-					PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), resizeCommand);
+					PaintroidApplication.commandManager.addCommand(resizeCommand);
 				}
 			} else {
 				cropRunFinished = true;
@@ -250,22 +244,22 @@ public class TransformTool extends BaseToolWithRectangleShape {
 	}
 
 	private void flip(FlipCommand.FlipDirection flipDirection) {
-		Command command = new FlipCommand(flipDirection);
+		FlipCommand command = new FlipCommand(flipDirection);
 		IndeterminateProgressDialog.getInstance().show();
-		((FlipCommand) command).addObserver(this);
-		Layer layer = LayerListener.getInstance().getCurrentLayer();
-		PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+		command.addObserver(this);
+		PaintroidApplication.commandManager.addCommand(command);
 	}
 
 	private void rotate(RotateCommand.RotateDirection rotateDirection) {
 		IndeterminateProgressDialog.getInstance().show();
-		for (Layer layer : LayerListener.getInstance().getAdapter().getLayers()) {
-			Command command = new RotateCommand(rotateDirection);
+		LayerModel layerModel = PaintroidApplication.layerModel;
+		for (Layer layer : layerModel.getLayers()) { // TODO implement in ResizeCommand once
+			RotateCommand command = new RotateCommand(rotateDirection);
 
 			if (layer.getSelected()) {
-				((RotateCommand) command).addObserver(this);
+				command.addObserver(this);
 			}
-			PaintroidApplication.commandManager.commitCommandToLayer(new LayerCommand(layer), command);
+			PaintroidApplication.commandManager.addCommand(command);
 		}
 	}
 
@@ -278,7 +272,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 			@Override
 			protected Void doInBackground(Void... params) {
-				Rect shapeBounds = cropAlgorithmSnail(LayerListener.getInstance().getBitmapOfAllLayersToSave());
+				Rect shapeBounds = cropAlgorithmSnail(PaintroidApplication.layerModel.getBitmapToSave());
 				if (shapeBounds != null) {
 					boxWidth = shapeBounds.width() + 1;
 					boxHeight = shapeBounds.height() + 1;
@@ -311,12 +305,8 @@ public class TransformTool extends BaseToolWithRectangleShape {
 				&& resizeBoundHeightYBottom == PaintroidApplication.drawingSurface.getBitmapHeight() - 1) {
 			return false;
 		}
-		if ((resizeBoundWidthXRight + 1 - resizeBoundWidthXLeft)
-				* (resizeBoundHeightYBottom + 1 - resizeBoundHeightYTop) > maximumBoxResolution) {
-			return false;
-		}
-
-		return true;
+		return !((resizeBoundWidthXRight + 1 - resizeBoundWidthXLeft)
+				* (resizeBoundHeightYBottom + 1 - resizeBoundHeightYTop) > maximumBoxResolution);
 	}
 
 	@Override
@@ -359,7 +349,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	@Override
 	protected void preventThatBoxGetsTooLarge(float oldWidth, float oldHeight,
-			float oldPosX, float oldPosY) {
+											  float oldPosX, float oldPosY) {
 		super.preventThatBoxGetsTooLarge(oldWidth, oldHeight, oldPosX, oldPosY);
 		if (!maxImageResolutionInformationAlreadyShown) {
 			ToastFactory.makeText(context, R.string.resize_max_image_resolution_reached,

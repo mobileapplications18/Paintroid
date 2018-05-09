@@ -27,7 +27,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 
-import org.catrobat.paintroid.tools.Layer;
+import android.support.annotation.NonNull;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class GeometricFillCommand extends BaseCommand {
 	protected final Point coordinates;
@@ -55,7 +56,7 @@ public class GeometricFillCommand extends BaseCommand {
 	}
 
 	@Override
-	public void run(Canvas canvas, Layer layer) {
+	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 

@@ -27,7 +27,7 @@ import android.graphics.Point;
 import android.support.test.annotation.UiThreadTest;
 
 import org.catrobat.paintroid.command.implementation.FillCommand;
-import org.catrobat.paintroid.tools.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.tools.helper.FillAlgorithm;
 import org.catrobat.paintroid.tools.implementation.FillTool;
@@ -101,7 +101,7 @@ public class FillToolTests extends BaseToolTest {
 		int width = 10;
 		int height = 20;
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Layer layer = new Layer(0, bitmap);
+		LayerModel layerModel = new LayerModel(bitmap);
 		bitmap.eraseColor(Color.WHITE);
 		Point clickedPixel = new Point(width / 2, height / 2);
 		int targetColor = Color.BLACK;
@@ -109,7 +109,7 @@ public class FillToolTests extends BaseToolTest {
 		paint.setColor(targetColor);
 
 		FillCommand fillCommand = new FillCommand(clickedPixel, paint, NO_TOLERANCE);
-		fillCommand.run(new Canvas(), layer);
+		fillCommand.run(new Canvas(), layerModel);
 
 		int[][] pixels = getPixelsFromBitmap(bitmap);
 		assertEquals("Wrong array size", height, pixels.length);
@@ -130,7 +130,7 @@ public class FillToolTests extends BaseToolTest {
 		int targetColor = Color.GREEN;
 		int boundaryColor = Color.RED;
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Layer layer = new Layer(0, bitmap);
+		LayerModel layerModel = new LayerModel(bitmap);
 
 		Paint paint = new Paint();
 		paint.setColor(targetColor);
@@ -141,7 +141,7 @@ public class FillToolTests extends BaseToolTest {
 		putPixelsToBitmap(bitmap, pixels);
 
 		FillCommand fillCommand = new FillCommand(clickedPixel, paint, NO_TOLERANCE);
-		fillCommand.run(new Canvas(), layer);
+		fillCommand.run(new Canvas(), layerModel);
 
 		pixels = getPixelsFromBitmap(bitmap);
 		assertEquals("Color of upper left pixel should not have been replaced", 0, pixels[0][0]);
@@ -171,7 +171,7 @@ public class FillToolTests extends BaseToolTest {
 		int maxTolerancePerChannel = 0xFF;
 		int boundaryColor = Color.argb(maxTolerancePerChannel, maxTolerancePerChannel, maxTolerancePerChannel, maxTolerancePerChannel);
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Layer layer = new Layer(0, bitmap);
+		LayerModel layerModel = new LayerModel(bitmap);
 		bitmap.eraseColor(replacementColor);
 		Paint paint = new Paint();
 		paint.setColor(targetColor);
@@ -182,7 +182,7 @@ public class FillToolTests extends BaseToolTest {
 		putPixelsToBitmap(bitmap, pixels);
 
 		FillCommand fillCommand = new FillCommand(clickedPixel, paint, MAX_TOLERANCE);
-		fillCommand.run(new Canvas(), layer);
+		fillCommand.run(new Canvas(), layerModel);
 
 		pixels = getPixelsFromBitmap(bitmap);
 
@@ -204,7 +204,7 @@ public class FillToolTests extends BaseToolTest {
 		int maxTolerancePerChannel = 0xFF;
 		int boundaryColor = Color.argb(maxTolerancePerChannel, maxTolerancePerChannel, maxTolerancePerChannel, maxTolerancePerChannel);
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Layer layer = new Layer(0, bitmap);
+		LayerModel layerModel = new LayerModel(bitmap);
 		bitmap.eraseColor(replacementColor);
 		Paint paint = new Paint();
 		paint.setColor(targetColor);
@@ -215,7 +215,7 @@ public class FillToolTests extends BaseToolTest {
 		putPixelsToBitmap(bitmap, pixels);
 
 		FillCommand fillCommand = new FillCommand(clickedPixel, paint, MAX_TOLERANCE - 1);
-		fillCommand.run(new Canvas(), layer);
+		fillCommand.run(new Canvas(), layerModel);
 
 		pixels = getPixelsFromBitmap(bitmap);
 
@@ -238,7 +238,7 @@ public class FillToolTests extends BaseToolTest {
 		Point clickedPixel = new Point(width / 2, height / 2);
 		Point boundaryPixel = new Point(width / 4, height / 4);
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Layer layer = new Layer(0, bitmap);
+		LayerModel layerModel = new LayerModel(bitmap);
 		int targetColor = 0;
 		int boundaryColor = Color.argb(0xFF, 0xFF, 0xFF, 0xFF);
 		bitmap.eraseColor(targetColor);
@@ -250,7 +250,7 @@ public class FillToolTests extends BaseToolTest {
 		putPixelsToBitmap(bitmap, pixels);
 
 		FillCommand fillCommand = new FillCommand(clickedPixel, paint, HALF_TOLERANCE);
-		fillCommand.run(new Canvas(), layer);
+		fillCommand.run(new Canvas(), layerModel);
 
 		pixels = getPixelsFromBitmap(bitmap);
 
@@ -276,7 +276,7 @@ public class FillToolTests extends BaseToolTest {
 
 		Point topLeftQuarterPixel = new Point(width / 4, height / 4);
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Layer layer = new Layer(0, bitmap);
+		LayerModel layerModel = new LayerModel(bitmap);
 		bitmap.eraseColor(replacementColor);
 		Paint paint = new Paint();
 		paint.setColor(targetColor);
@@ -289,7 +289,7 @@ public class FillToolTests extends BaseToolTest {
 		pixels[boundaryPixel.y][boundaryPixel.x] = boundaryColor;
 		putPixelsToBitmap(bitmap, pixels);
 		FillCommand fillCommand = new FillCommand(topLeftQuarterPixel, paint, HALF_TOLERANCE);
-		fillCommand.run(new Canvas(), layer);
+		fillCommand.run(new Canvas(), layerModel);
 
 		int[][] actualPixels = getPixelsFromBitmap(bitmap);
 		for (int row = 0; row < height; row++) {
@@ -315,14 +315,14 @@ public class FillToolTests extends BaseToolTest {
 		int width = pixels[0].length;
 		Point clickedPixel = new Point(1, 1);
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Layer layer = new Layer(0, bitmap);
+		LayerModel layerModel = new LayerModel(bitmap);
 		bitmap.eraseColor(replacementColor);
 		Paint paint = new Paint();
 		paint.setColor(targetColor);
 
 		putPixelsToBitmap(bitmap, pixels);
 		FillCommand fillCommand = new FillCommand(clickedPixel, paint, HALF_TOLERANCE);
-		fillCommand.run(new Canvas(), layer);
+		fillCommand.run(new Canvas(), layerModel);
 
 		int[][] actualPixels = getPixelsFromBitmap(bitmap);
 		int[][] expectedPixels = createPixelArrayAndDrawSpiral(targetColor, boundaryColor);
@@ -361,11 +361,11 @@ public class FillToolTests extends BaseToolTest {
 		for (Point clickedPixel : clickedPixels) {
 			pixels = createPixelArrayForComplexTest(replacementColor, boundaryColor);
 			Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-			Layer layer = new Layer(0, bitmap);
+			LayerModel layerModel = new LayerModel(bitmap);
 			bitmap.eraseColor(replacementColor);
 			putPixelsToBitmap(bitmap, pixels);
 			FillCommand fillCommand = new FillCommand(clickedPixel, paint, HALF_TOLERANCE);
-			fillCommand.run(new Canvas(), layer);
+			fillCommand.run(new Canvas(), layerModel);
 
 			int[][] actualPixels = getPixelsFromBitmap(bitmap);
 			int[][] expectedPixels = createPixelArrayForComplexTest(targetColor, boundaryColor);
@@ -395,11 +395,11 @@ public class FillToolTests extends BaseToolTest {
 
 		pixels = createPixelArrayForSkipPixelTest(replacementColor, boundaryColor);
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Layer layer = new Layer(0, bitmap);
+		LayerModel layerModel = new LayerModel(bitmap);
 		bitmap.eraseColor(replacementColor);
 		putPixelsToBitmap(bitmap, pixels);
 		FillCommand fillCommand = new FillCommand(clickedPixel, paint, HALF_TOLERANCE);
-		fillCommand.run(new Canvas(), layer);
+		fillCommand.run(new Canvas(), layerModel);
 
 		int[][] actualPixels = getPixelsFromBitmap(bitmap);
 		int[][] expectedPixels = createPixelArrayForSkipPixelTest(targetColor, boundaryColor);

@@ -1,18 +1,18 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
+ * Copyright (C) 2010-2018 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,20 +32,15 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.IntDef;
 import android.support.annotation.VisibleForTesting;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.widget.Toast;
-
-import org.catrobat.paintroid.command.Command;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
 import org.catrobat.paintroid.command.implementation.LoadCommand;
 import org.catrobat.paintroid.dialog.CustomAlertDialogBuilder;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
 import org.catrobat.paintroid.dialog.InfoDialog;
 import org.catrobat.paintroid.dialog.InfoDialog.DialogType;
-import org.catrobat.paintroid.listener.LayerListener;
 import org.catrobat.paintroid.tools.Tool.StateChange;
 import org.catrobat.paintroid.tools.implementation.ImportTool;
 import org.catrobat.paintroid.ui.ToastFactory;
@@ -55,6 +50,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
+
 	private static final String TAG = NavigationDrawerMenuActivity.class.getSimpleName();
 
 	public static final float ACTION_BAR_HEIGHT = 50.0f;
@@ -64,6 +60,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	static final int REQUEST_CODE_FINISH = 3;
 	static final int REQUEST_CODE_TAKE_PICTURE = 4;
 	static final int REQUEST_CODE_LANGUAGE = 5;
+
 	public static boolean isSaved = true;
 	public static Uri savedPictureUri = null;
 
@@ -86,8 +83,10 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	public boolean openedFromCatroid;
 
 	boolean imageHasBeenModified() {
-		return (!(LayerListener.getInstance().getAdapter().getLayers().size() == 1)
-				|| !isPlainImage || PaintroidApplication.commandManager.checkIfDrawn());
+		if (PaintroidApplication.layerModel.getLayerCount() != 1) return true;
+		if (!isPlainImage) return true;
+		if (PaintroidApplication.commandManager.isUndoAvailable()) return true;
+		return false;
 	}
 
 	boolean imageHasBeenSaved() {
@@ -95,36 +94,29 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	}
 
 	protected void onLoadImage() {
-
 		if (!imageHasBeenModified() || imageHasBeenSaved()) {
 			startLoadImageIntent();
 		} else {
-
 			final SaveTask saveTask = new SaveTask(this);
 
-			AlertDialog.Builder alertLoadDialogBuilder = new CustomAlertDialogBuilder(this);
-			alertLoadDialogBuilder
+			new CustomAlertDialogBuilder(this)
 					.setTitle(R.string.menu_load_image)
 					.setMessage(R.string.dialog_warning_new_image)
 					.setCancelable(true)
-					.setPositiveButton(R.string.save_button_text,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									saveTask.execute();
-									startLoadImageIntent();
-								}
-							})
-					.setNegativeButton(R.string.discard_button_text,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int id) {
-									startLoadImageIntent();
-								}
-							});
-			alertLoadDialogBuilder.show();
+					.setPositiveButton(R.string.save_button_text, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							saveTask.execute();
+							startLoadImageIntent();
+						}
+					})
+					.setNegativeButton(R.string.discard_button_text, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							startLoadImageIntent();
+						}
+					})
+					.show();
 		}
 	}
 
@@ -139,39 +131,33 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		if (!imageHasBeenModified() && !openedFromCatroid || imageHasBeenSaved()) {
 			chooseNewImage();
 		} else {
-
 			final SaveTask saveTask = new SaveTask(this);
 
-			AlertDialog.Builder newCameraImageAlertDialogBuilder = new CustomAlertDialogBuilder(this);
-			newCameraImageAlertDialogBuilder
+			new CustomAlertDialogBuilder(this)
 					.setTitle(R.string.menu_new_image)
 					.setMessage(R.string.dialog_warning_new_image)
 					.setCancelable(true)
-					.setPositiveButton(R.string.save_button_text,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									saveTask.execute();
-									chooseNewImage();
-								}
-							})
-					.setNegativeButton(R.string.discard_button_text,
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int id) {
-									chooseNewImage();
-								}
-							});
-			newCameraImageAlertDialogBuilder.show();
+					.setPositiveButton(R.string.save_button_text, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							saveTask.execute();
+							chooseNewImage();
+						}
+					})
+					.setNegativeButton(R.string.discard_button_text, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							chooseNewImage();
+						}
+					})
+					.show();
 		}
 	}
 
 	protected void chooseNewImage() {
-
-		AlertDialog.Builder alertChooseNewBuilder = new CustomAlertDialogBuilder(this);
-		alertChooseNewBuilder.setTitle(R.string.menu_new_image).setItems(
-				R.array.new_image, new DialogInterface.OnClickListener() {
-
+		new CustomAlertDialogBuilder(this)
+				.setTitle(R.string.menu_new_image)
+				.setItems(R.array.new_image, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
@@ -183,19 +169,17 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 								break;
 						}
 					}
-				});
-		alertChooseNewBuilder.show();
+				})
+				.show();
 	}
 
 	private void onNewImage() {
-		PaintroidApplication.commandManager.resetAndClear(false);
+		PaintroidApplication.commandManager.resetAndClear();
 		initialiseNewBitmap();
-		LayerListener.getInstance().resetLayer();
 	}
 
 	private void onNewImageFromCamera() {
-		PaintroidApplication.commandManager.resetAndClear(false);
-		LayerListener.getInstance().resetLayer();
+		PaintroidApplication.commandManager.resetAndClear();
 		takePhoto();
 	}
 
@@ -204,8 +188,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (resultCode == Activity.RESULT_OK) {
-			PaintroidApplication.commandManager.resetAndClear(false);
-			LayerListener.getInstance().resetLayer();
+			PaintroidApplication.commandManager.resetAndClear();
 
 			switch (requestCode) {
 				case REQUEST_CODE_LOAD_PICTURE:
@@ -225,8 +208,12 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 			isPlainImage = false;
 			isSaved = false;
 			savedPictureUri = null;
+
+			// TODO ? should work through commands
+			/*
 			LayerListener.getInstance().getCurrentLayer().setImage(PaintroidApplication.drawingSurface.getBitmapCopy());
 			LayerListener.getInstance().refreshView();
+			*/
 		}
 	}
 
@@ -249,9 +236,8 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 	}
 
 	protected void loadBitmapFromUriAndRun(final Uri uri, final RunnableWithBitmap runnable) {
-		String loadMessge = getResources().getString(R.string.dialog_load);
-		final ProgressDialog dialog = ProgressDialog.show(
-				this, "", loadMessge, true);
+		String loadMessage = getResources().getString(R.string.dialog_load);
+		final ProgressDialog dialog = ProgressDialog.show(this, "", loadMessage, true);
 
 		Thread thread = new Thread("loadBitmapFromUriAndRun") {
 			@Override
@@ -270,8 +256,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 					loadBitmapFailed = true;
 				}
 				dialog.dismiss();
-				PaintroidApplication.currentTool
-						.resetInternalState(StateChange.NEW_IMAGE_LOADED);
+				PaintroidApplication.currentTool.resetInternalState(StateChange.NEW_IMAGE_LOADED);
 				if (loadBitmapFailed) {
 					loadBitmapFailed = false;
 					InfoDialog.newInstance(DialogType.WARNING,
@@ -291,8 +276,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 
 	// if needed use Async Task
 	public void saveFile() {
-
-		if (!FileIO.saveBitmap(this, LayerListener.getInstance().getBitmapOfAllLayersToSave(), null, saveCopy)) {
+		if (!FileIO.saveBitmap(this, PaintroidApplication.layerModel.getBitmapToSave(), null, saveCopy)) {
 			InfoDialog.newInstance(DialogType.WARNING,
 					R.string.dialog_error_sdcard_text,
 					R.string.dialog_error_save_title).show(
@@ -311,9 +295,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		loadBitmapFromUriAndRun(uri, new RunnableWithBitmap() {
 			@Override
 			public void run(Bitmap bitmap) {
-				Command command = new LoadCommand(bitmap);
-				PaintroidApplication.commandManager.commitCommandToLayer(
-						new LayerCommand(LayerListener.getInstance().getCurrentLayer()), command);
+				PaintroidApplication.commandManager.addCommand(new LoadCommand(bitmap));
 			}
 		});
 	}
@@ -322,16 +304,20 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
 		display.getSize(size);
+
 		Log.d("PAINTROID - MFA", "init new bitmap with: w: " + size.x + " h:" + size.y);
+
 		Bitmap bitmap = Bitmap.createBitmap(size.x, size.y, Config.ARGB_8888);
 		bitmap.eraseColor(Color.TRANSPARENT);
+
 		PaintroidApplication.drawingSurface.resetBitmap(bitmap);
 		PaintroidApplication.perspective.resetScaleAndTranslation();
-		PaintroidApplication.currentTool
-				.resetInternalState(StateChange.NEW_IMAGE_LOADED);
+		PaintroidApplication.currentTool.resetInternalState(StateChange.NEW_IMAGE_LOADED);
+
 		isPlainImage = true;
 		isSaved = false;
 		savedPictureUri = null;
+
 		PaintroidApplication.drawingSurface.refreshDrawingSurface();
 	}
 
@@ -350,8 +336,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		@Override
 		protected void onPreExecute() {
 			IndeterminateProgressDialog.getInstance().show();
-			Log.d(TAG, "async tast prgDialog isShowing"
-					+ IndeterminateProgressDialog.getInstance().isShowing());
+			Log.d(TAG, "async task prgDialog isShowing" + IndeterminateProgressDialog.getInstance().isShowing());
 		}
 
 		@Override
@@ -364,11 +349,9 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		protected void onPostExecute(Void Result) {
 			IndeterminateProgressDialog.getInstance().dismiss();
 			if (!saveCopy) {
-				ToastFactory.makeText(context, R.string.saved, Toast.LENGTH_LONG)
-						.show();
+				ToastFactory.makeText(context, R.string.saved, Toast.LENGTH_LONG).show();
 			} else {
-				ToastFactory.makeText(context, R.string.copy, Toast.LENGTH_LONG)
-						.show();
+				ToastFactory.makeText(context, R.string.copy, Toast.LENGTH_LONG).show();
 				saveCopy = false;
 			}
 		}

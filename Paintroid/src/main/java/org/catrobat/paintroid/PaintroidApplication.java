@@ -1,6 +1,6 @@
-/**
+/*
  * Paintroid: An image manipulation application for Android.
- * Copyright (C) 2010-2015 The Catrobat Team
+ * Copyright (C) 2010-2018 The Catrobat Team
  * (<http://developer.catrobat.org/credits>)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,55 +21,52 @@ package org.catrobat.paintroid;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.util.Log;
-
-import org.catrobat.paintroid.command.CommandManager;
-import org.catrobat.paintroid.command.LayerBitmapCommand;
-import org.catrobat.paintroid.command.implementation.CommandManagerImplementation;
-import org.catrobat.paintroid.command.implementation.LayerCommand;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
+import org.catrobat.paintroid.command.implementation.CommandManager;
+import org.catrobat.paintroid.model.BitmapFactory;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.Tool;
 import org.catrobat.paintroid.ui.DrawingSurface;
 import org.catrobat.paintroid.ui.Perspective;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Locale;
 
 public class PaintroidApplication extends Application {
-	private static final String TAG = PaintroidApplication.class.getSimpleName();
 
 	public static Context applicationContext;
-	public static DrawingSurface drawingSurface;
-	public static CommandManager commandManager;
-	public static Tool currentTool;
-	public static Perspective perspective;
-	public static LinkedList<LayerCommand> layerOperationsCommandList;
-	public static LinkedList<LayerCommand> layerOperationsUndoCommandList;
-	public static ArrayList<LayerBitmapCommand> drawBitmapCommandsAtLayer;
 	public static String defaultSystemLanguage;
 
-	public static String getVersionName(Context context) {
-		String versionName = "unknown";
-		try {
-			PackageInfo packageInfo = context.getPackageManager()
-					.getPackageInfo(context.getPackageName(),
-							PackageManager.GET_META_DATA);
-			versionName = packageInfo.versionName;
-		} catch (NameNotFoundException nameNotFoundException) {
-			Log.e(PaintroidApplication.TAG, "Name not found", nameNotFoundException);
-		}
-		return versionName;
-	}
+	public static LayerModel layerModel;
+	public static CommandManager commandManager;
+
+	public static DrawingSurface drawingSurface;
+	public static Tool currentTool;
+	public static Perspective perspective;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		applicationContext = getApplicationContext();
-		commandManager = new CommandManagerImplementation();
 
+		applicationContext = getApplicationContext();
 		defaultSystemLanguage = Locale.getDefault().getLanguage();
+
+		layerModel = new LayerModel(blankBitmap());
+		commandManager = new CommandManager(layerModel);
+	}
+
+	private Bitmap blankBitmap() {
+		WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+		Display display = windowManager.getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+
+		Bitmap bitmap = new BitmapFactory().createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888);
+		bitmap.eraseColor(Color.TRANSPARENT);
+
+		return bitmap;
 	}
 }
