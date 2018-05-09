@@ -103,6 +103,7 @@ class LayerModel(firstLayer: Bitmap) {
 		}
 		layerCounter = 0
 		addLayer()
+
 		return layerList[0]
 	}
 

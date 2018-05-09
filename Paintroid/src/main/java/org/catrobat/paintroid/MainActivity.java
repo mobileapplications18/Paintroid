@@ -116,8 +116,7 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 			openedFromCatroid = false;
 		}
 
-		// TODO
-		initialiseNewBitmap();
+		initialiseNewBitmap(); // TODO
 
 		if (openedFromCatroid) {
 			PaintroidApplication.commandManager.resetAndClear();
@@ -165,9 +164,6 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		if (isProgressDialogShowing) {
 			IndeterminateProgressDialog.getInstance().show();
 		}
-
-		drawingSurface.resetBitmap(PaintroidApplication.layerModel.getCurrentLayer().getImage());
-		// todo pfui
 
 		PaintroidApplication.perspective.resetScaleAndTranslation();
 		PaintroidApplication.currentTool.resetInternalState(Tool.StateChange.NEW_IMAGE_LOADED);
@@ -281,26 +277,14 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		super.onDetachedFromWindow();
 	}
 
-	/*
-	 * TODO
-	 *
-	 * - OnDestroy() - PaintroidApplication and member cleanup / why at all?
-	 * - drawingSurface.resetBitmap(PaintroidApplication.layerModel.getCurrentLayer().getImage());
-	 * - initialiseNewBitmap()
-	 *
-	 */
-
 	@Override
 	protected void onDestroy() {
+		// !! PaintStroke is set static in the tools !! don't remove these lines
 		PaintroidApplication.currentTool.changePaintStrokeCap(Cap.ROUND);
 		PaintroidApplication.currentTool.changePaintStrokeWidth(25);
-		PaintroidApplication.currentTool = null; // todo ?!
+		PaintroidApplication.currentTool = null;
 
 		NavigationDrawerMenuActivity.savedPictureUri = null;
-
-		isPlainImage = true;
-		saveCopy = false;
-		colorPickerInitialColor = Color.BLACK;
 
 		onDestroyView();
 		super.onDestroy();

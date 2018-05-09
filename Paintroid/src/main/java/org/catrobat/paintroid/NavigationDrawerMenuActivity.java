@@ -336,8 +336,7 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 		@Override
 		protected void onPreExecute() {
 			IndeterminateProgressDialog.getInstance().show();
-			Log.d(TAG, "async tast prgDialog isShowing"
-					+ IndeterminateProgressDialog.getInstance().isShowing());
+			Log.d(TAG, "async task prgDialog isShowing" + IndeterminateProgressDialog.getInstance().isShowing());
 		}
 
 		@Override
