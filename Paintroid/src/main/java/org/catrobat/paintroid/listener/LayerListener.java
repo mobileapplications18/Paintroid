@@ -108,8 +108,8 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		delButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int layerID = getLayerModel().getCurrentLayer().getLayerID();
-				View layerItem = listView.getChildAt(getLayerModel().getPosition(layerID));
+				Layer layer = getLayerModel().getCurrentLayer();
+				View layerItem = listView.getChildAt(getLayerModel().getPosition(layer));
 				Animation translateAnimation = new TranslateAnimation(0f, layerItem.getWidth(), 0f, 0f);
 				translateAnimation.setDuration(ANIMATION_TIME);
 				translateAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -132,7 +132,6 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 				}
 			}
 		});
-		updateButtonResource();
 		refreshView();
 	}
 
@@ -174,9 +173,8 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Layer layer = getLayerModel().getLayer(position);
-		if (getLayerModel().getCurrentLayer().getLayerID() != layer.getLayerID()) {
-			PaintroidApplication.commandManager.addCommand(new SelectLayerCommand(layer.getLayerID()));
+		if (getLayerModel().getCurrentPosition() != position) {
+			PaintroidApplication.commandManager.addCommand(new SelectLayerCommand(position));
 		}
 	}
 
@@ -193,6 +191,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		} else {
 			Log.d(TAG, "LAYERGRIDVIEW NOT INITIALIZED");
 		}
+		updateButtonResource();
 		PaintroidApplication.drawingSurface.refreshDrawingSurface();
 	}
 

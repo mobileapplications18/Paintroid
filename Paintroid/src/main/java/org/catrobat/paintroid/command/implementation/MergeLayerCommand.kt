@@ -17,7 +17,7 @@ class MergeLayerCommand(var firstLayerId : Int, var secondLayerId: Int, var bitm
         var secondLayer : Layer = layerModel.getLayer(secondLayerId)
 
         val mergedBitmap = when {
-            layerModel.getPosition(firstLayerId) > layerModel.getPosition(secondLayerId)
+            layerModel.getPosition(firstLayer) > layerModel.getPosition(secondLayer)
             -> mergeBitmaps(firstLayer,secondLayer)
             else -> mergeBitmaps(secondLayer, firstLayer)
         }

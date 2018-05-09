@@ -29,7 +29,8 @@ class LayerModel(firstLayer: Bitmap) {
 
 	fun getLayer(index: Int) = layerList[index]
 
-	fun getPosition(layerID: Int) = layerList.indexOfFirst { it.layerID == layerID }
+	fun getPosition(layer: Layer) = layerList.indexOfFirst { it == layer}
+	fun getCurrentPosition() = layerList.indexOfFirst { it == currentLayer}
 
 	@Deprecated("Do not access layerList directly")
 	fun getLayers(): List<Layer> = layerList
@@ -64,7 +65,7 @@ class LayerModel(firstLayer: Bitmap) {
 
 	fun mergeLayer(firstLayer: Layer, secondLayer: Layer): Layer {
 		val mergedBitmap = when {
-			getPosition(firstLayer.layerID) > getPosition(secondLayer.layerID) -> mergeBitmaps(firstLayer, secondLayer)
+			getPosition(firstLayer) > getPosition(secondLayer) -> mergeBitmaps(firstLayer, secondLayer)
 			else -> mergeBitmaps(secondLayer, firstLayer)
 		}
 
