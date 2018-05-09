@@ -19,6 +19,7 @@
 
 package org.catrobat.paintroid.command.implementation
 
+import android.graphics.Canvas
 import android.graphics.Color
 import android.support.annotation.VisibleForTesting
 import org.catrobat.paintroid.PaintroidApplication
@@ -37,7 +38,7 @@ class CommandManager(private val layerModel: LayerModel) {
 	private val undoCommandList = Stack<Command>()
 	private val commandListener = mutableListOf<WeakReference<CommandListener>>()
 
-	private val canvas get() = PaintroidApplication.drawingSurface.canvas
+	private val canvas get() = Canvas(layerModel.currentLayer.image)
 
 	fun addCommandListener(commandListener: CommandListener) {
 		this.commandListener.add(WeakReference(commandListener))
@@ -65,6 +66,7 @@ class CommandManager(private val layerModel: LayerModel) {
 		redoCommandList.add(command)
 
 		clearCanvas()
+		layerModel.clearLayer()
 		undoCommandList.forEach {
 			it.run(canvas, layerModel)
 		}

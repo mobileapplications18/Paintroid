@@ -63,7 +63,7 @@ public class LayersAdapter extends BaseAdapter {
 			LinearLayout layerButton = (LinearLayout) convertView.findViewById(R.id.layer_button);
 
 			Layer layer = layerModel.getLayer(position);
-			if (layer.getSelected()) {
+			if (layer == layerModel.getCurrentLayer()) {
 				layerButton.setBackgroundColor(ContextCompat.getColor(context, R.color.color_chooser_blue1));
 			} else {
 				layerButton.setBackgroundColor(ContextCompat.getColor(context, R.color.custom_background_color));
