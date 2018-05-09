@@ -26,7 +26,7 @@ class MergeLayerCommand(var firstLayerId : Int, var secondLayerId: Int, var bitm
         layerModel.removeLayer(secondLayer)
 
 
-        val layer = Layer(layerModel.getLayerCount()+1, mergedBitmap)
+        val layer = Layer(mergedBitmap)
         layerModel.addLayer(layer)
     }
 

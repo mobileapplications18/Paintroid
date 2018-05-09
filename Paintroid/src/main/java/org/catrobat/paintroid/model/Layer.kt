@@ -3,10 +3,7 @@ package org.catrobat.paintroid.model
 import android.graphics.Bitmap
 import org.catrobat.paintroid.PaintroidApplication
 
-class Layer(layerId: Int, bitmap: Bitmap) {
-
-	val layerID: Int = layerId
-
+class Layer(bitmap: Bitmap) {
 	var image: Bitmap = bitmap
 		set(image) {
 			field = image

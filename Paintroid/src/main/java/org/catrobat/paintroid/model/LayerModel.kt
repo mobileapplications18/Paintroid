@@ -20,7 +20,7 @@ class LayerModel(firstLayer: Bitmap) {
 	private val layerList: MutableList<Layer> = mutableListOf()
 
 	init {
-		val layer = Layer(0, firstLayer)
+		val layer = Layer(firstLayer)
 		layerList.add(layer)
 		currentLayer = layer
 	}
@@ -40,7 +40,7 @@ class LayerModel(firstLayer: Bitmap) {
 			val drawingSurface = PaintroidApplication.drawingSurface
 			val image = bitmapFactory.createBitmap(drawingSurface.bitmapWidth, drawingSurface.bitmapHeight, Bitmap.Config.ARGB_8888)
 
-			layerList.add(0, Layer(layerCounter, image))
+			layerList.add(0, Layer(image))
 			layerCounter++
 			return true
 		}
@@ -72,7 +72,7 @@ class LayerModel(firstLayer: Bitmap) {
 		removeLayer(firstLayer)
 		removeLayer(secondLayer)
 
-		val layer = Layer(layerCounter++, mergedBitmap)
+		val layer = Layer(mergedBitmap)
 		addLayer(layer)
 
 		return layer
