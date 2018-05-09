@@ -17,7 +17,15 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true">
 
     <org.catrobat.paintroid.ui.tools.DrawerPreview
         android:id="@+id/drawer_preview"
@@ -65,16 +73,19 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="24dp" />
 
-        <TextView
+        <EditText
             android:id="@+id/stroke_width_width_text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4"
+            android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
+            android:inputType="number"
+            android:imeOptions="actionDone"
             android:textColor="@color/dialog_title_color"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="LabelFor" />
     </LinearLayout>
 
     <TextView
@@ -98,50 +109,28 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp" />
 
-    <RadioGroup
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="15dp"
         android:orientation="horizontal" >
-
-        <RadioButton
-            android:id="@+id/stroke_rbtn_rect"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:buttonTint="@color/dialog_stroke_element_color"
-            android:layout_marginEnd="5dp" />
-
-        <ImageButton
-            android:id="@+id/stroke_ibtn_rect"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@color/transparent"
-            android:tint="@color/dialog_stroke_element_color"
-            android:minHeight="32dip"
-            android:minWidth="32dip"
-            android:src="@drawable/square"
-            android:layout_marginEnd="20dp" />
-
-        <RadioButton
-            android:id="@+id/stroke_rbtn_circle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:checked="true"
-            android:buttonTint="@color/dialog_stroke_element_color"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="5dp" />
 
         <ImageButton
             android:id="@+id/stroke_ibtn_circle"
+            style="@style/SelectableButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/transparent"
-            android:tint="@color/dialog_stroke_element_color"
-            android:minHeight="32dip"
-            android:minWidth="32dip"
-            android:src="@drawable/circle" />
-    </RadioGroup>
+            android:padding="16dp"
+            android:src="@drawable/ic_circle_black_24dp" />
 
-</merge>
+        <ImageButton
+            android:id="@+id/stroke_ibtn_rect"
+            style="@style/SelectableButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:src="@drawable/ic_square_black_24dp" />
+    </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

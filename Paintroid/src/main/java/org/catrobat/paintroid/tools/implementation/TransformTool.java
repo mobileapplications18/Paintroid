@@ -19,30 +19,34 @@
 
 package org.catrobat.paintroid.tools.implementation;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.*;
 import android.os.AsyncTask;
 import android.support.annotation.VisibleForTesting;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.command.implementation.BaseCommand;
 import org.catrobat.paintroid.command.implementation.FlipCommand;
 import org.catrobat.paintroid.command.implementation.ResizeCommand;
 import org.catrobat.paintroid.command.implementation.RotateCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
-import org.catrobat.paintroid.listener.LayerListener;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.model.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.DrawingSurface;
 import org.catrobat.paintroid.ui.ToastFactory;
+import org.catrobat.paintroid.ui.tools.NumberRangeFilter;
 
-import java.util.Observable;
+import java.util.Locale;
 
 public class TransformTool extends BaseToolWithRectangleShape {
 
@@ -66,6 +70,15 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	private boolean cropRunFinished = false;
 	private boolean maxImageResolutionInformationAlreadyShown = false;
+
+	private EditText widthEditText;
+	private EditText heightEditText;
+
+	private TextWatcher textWatcherHeight;
+	private TextWatcher textWatcherWidth;
+
+	private NumberRangeFilter rangeFilterHeight;
+	private NumberRangeFilter rangeFilterWidth;
 
 	private View transformToolOptionView;
 
@@ -160,7 +173,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	@Override
 	public void resetInternalState() {
-		resetScaleAndTranslation();
+		initialiseResizingState();
 	}
 
 	@Override
@@ -195,6 +208,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 				boxHeight = boxWidth;
 				boxWidth = tempHeight;
 			}
+			setWidthAndHeightTexts(boxHeight, boxWidth);
 		}
 	}
 
@@ -206,13 +220,21 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	private void initialiseResizingState() {
 		cropRunFinished = false;
+		final DrawingSurface drawingSurface = PaintroidApplication.drawingSurface;
 		resizeBoundWidthXRight = 0;
 		resizeBoundHeightYBottom = 0;
-		resizeBoundWidthXLeft = PaintroidApplication.drawingSurface
-				.getBitmapWidth();
-		resizeBoundHeightYTop = PaintroidApplication.drawingSurface
-				.getBitmapHeight();
+		resizeBoundWidthXLeft = drawingSurface.getBitmapWidth();
+		resizeBoundHeightYTop = drawingSurface.getBitmapHeight();
 		resetScaleAndTranslation();
+		resizeBoundWidthXRight = drawingSurface.getBitmapWidth() - 1;
+		resizeBoundHeightYBottom = drawingSurface.getBitmapHeight() - 1;
+		resizeBoundWidthXLeft = 0f;
+		resizeBoundHeightYTop = 0f;
+		setRectangle(new RectF(resizeBoundWidthXLeft,
+				resizeBoundHeightYTop, resizeBoundWidthXRight,
+				resizeBoundHeightYBottom));
+		cropRunFinished = true;
+		setWidthAndHeightTexts(boxHeight, boxWidth);
 	}
 
 	private void executeResizeCommand() {
@@ -260,6 +282,10 @@ public class TransformTool extends BaseToolWithRectangleShape {
 				command.addObserver(this);
 			}
 			PaintroidApplication.commandManager.addCommand(command);
+			float tempBoxWidth = boxWidth;
+			float tempBoxHeight = boxHeight;
+			boxWidth = tempBoxHeight;
+			boxHeight = tempBoxWidth;
 		}
 	}
 
@@ -286,6 +312,7 @@ public class TransformTool extends BaseToolWithRectangleShape {
 			protected void onPostExecute(Void result) {
 				PaintroidApplication.drawingSurface.refreshDrawingSurface();
 				IndeterminateProgressDialog.getInstance().dismiss();
+				setWidthAndHeightTexts(boxHeight, boxWidth);
 			}
 		}.execute();
 	}
@@ -307,25 +334,6 @@ public class TransformTool extends BaseToolWithRectangleShape {
 		}
 		return !((resizeBoundWidthXRight + 1 - resizeBoundWidthXLeft)
 				* (resizeBoundHeightYBottom + 1 - resizeBoundHeightYTop) > maximumBoxResolution);
-	}
-
-	@Override
-	public void update(Observable observable, Object data) {
-		super.update(observable, data);
-		if (data instanceof BaseCommand.NotifyStates
-				&& (BaseCommand.NotifyStates.COMMAND_DONE == data
-				|| BaseCommand.NotifyStates.COMMAND_FAILED == data)) {
-			initialiseResizingState();
-			final DrawingSurface drawingSurface = PaintroidApplication.drawingSurface;
-			resizeBoundWidthXRight = drawingSurface.getBitmapWidth() - 1;
-			resizeBoundHeightYBottom = drawingSurface.getBitmapHeight() - 1;
-			resizeBoundWidthXLeft = 0f;
-			resizeBoundHeightYTop = 0f;
-			setRectangle(new RectF(resizeBoundWidthXLeft,
-					resizeBoundHeightYTop, resizeBoundWidthXRight,
-					resizeBoundHeightYBottom));
-			cropRunFinished = true;
-		}
 	}
 
 	private void setRectangle(RectF rectangle) {
@@ -362,6 +370,53 @@ public class TransformTool extends BaseToolWithRectangleShape {
 	public void setupToolOptions() {
 		LayoutInflater inflater = LayoutInflater.from(context);
 		transformToolOptionView = inflater.inflate(R.layout.dialog_transform_tool, toolSpecificOptionsLayout);
+
+		rangeFilterHeight = new NumberRangeFilter(1, (int) (maximumBoxResolution / (boxWidth)));
+		rangeFilterWidth = new NumberRangeFilter(1, (int) (maximumBoxResolution / (boxHeight)));
+
+		widthEditText = (EditText) toolSpecificOptionsLayout.findViewById(R.id.transform_width_value);
+		widthEditText.setFilters(new InputFilter[]{rangeFilterWidth});
+		textWatcherWidth = new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				String str = widthEditText.getText().toString();
+				if (str.isEmpty()) {
+					str = "1";
+				}
+				boxWidth = Float.parseFloat(str);
+			}
+		};
+		widthEditText.addTextChangedListener(textWatcherWidth);
+
+		heightEditText = (EditText) toolSpecificOptionsLayout.findViewById(R.id.transform_height_value);
+		heightEditText.setFilters(new InputFilter[]{rangeFilterHeight});
+		textWatcherHeight = new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				String str = heightEditText.getText().toString();
+				if (str.isEmpty()) {
+					str = "1";
+				}
+				boxHeight = Float.parseFloat(str);
+			}
+		};
+		heightEditText.addTextChangedListener(textWatcherHeight);
 
 		View.OnClickListener onClickListener = new View.OnClickListener() {
 			@Override
@@ -411,5 +466,27 @@ public class TransformTool extends BaseToolWithRectangleShape {
 		if (!toolOptionsShown) {
 			ToastFactory.makeText(context, R.string.transform_info_text, Toast.LENGTH_LONG).show();
 		}
+	}
+
+	private void setWidthAndHeightTexts(float heightValue, float widthValue) {
+
+		final float height = heightValue;
+		final float width = widthValue;
+		((Activity) transformToolOptionView.getContext()).runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				widthEditText.removeTextChangedListener(textWatcherWidth);
+				heightEditText.removeTextChangedListener(textWatcherHeight);
+
+				rangeFilterHeight.setMax((int) (maximumBoxResolution / (boxWidth)));
+				rangeFilterWidth.setMax((int) (maximumBoxResolution / (boxHeight)));
+
+				widthEditText.setText(String.format(Locale.getDefault(), "%d", (int) width));
+				heightEditText.setText(String.format(Locale.getDefault(), "%d", (int) height));
+
+				widthEditText.addTextChangedListener(textWatcherWidth);
+				heightEditText.addTextChangedListener(textWatcherHeight);
+			}
+		});
 	}
 }

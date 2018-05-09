@@ -256,6 +256,10 @@ public class CursorTool extends BaseToolWithShape {
 	}
 
 	@Override
+	protected void onClickInBox() {
+	}
+
+	@Override
 	public void draw(Canvas canvas) {
 		setPaintColor(CANVAS_PAINT.getColor());
 		if (toolInDrawMode) {
