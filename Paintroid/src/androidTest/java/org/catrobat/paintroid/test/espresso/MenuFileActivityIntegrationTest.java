@@ -212,7 +212,7 @@ public class MenuFileActivityIntegrationTest {
 	public void testImageUnchangedAfterLanguageChange() {
 		onView(isRoot()).perform(touchAt(screenPoint.x, screenPoint.y));
 
-		Bitmap imageBefore = LayerListener.getInstance().getCurrentLayer().getImage();
+		Bitmap imageBefore = PaintroidApplication.layerModel.getCurrentLayer().getImage();
 		imageBefore = imageBefore.copy(imageBefore.getConfig(), imageBefore.isMutable());
 
 		openNavigationDrawer();
@@ -220,7 +220,7 @@ public class MenuFileActivityIntegrationTest {
 		intended(hasComponent(hasClassName(MultilingualActivity.class.getName())));
 		onView(withText(R.string.device_language)).perform(click());
 
-		Bitmap imageAfter = LayerListener.getInstance().getCurrentLayer().getImage();
+		Bitmap imageAfter = PaintroidApplication.layerModel.getCurrentLayer().getImage();
 		assertTrue("Image should not have changed", imageBefore.sameAs(imageAfter));
 	}
 
@@ -228,7 +228,7 @@ public class MenuFileActivityIntegrationTest {
 	public void testImageUnchangedAfterLanguageAbort() {
 		onView(isRoot()).perform(touchAt(screenPoint.x, screenPoint.y));
 
-		Bitmap imageBefore = LayerListener.getInstance().getCurrentLayer().getImage();
+		Bitmap imageBefore = PaintroidApplication.layerModel.getCurrentLayer().getImage();
 		imageBefore = imageBefore.copy(imageBefore.getConfig(), imageBefore.isMutable());
 
 		openNavigationDrawer();
@@ -236,7 +236,7 @@ public class MenuFileActivityIntegrationTest {
 		intended(hasComponent(hasClassName(MultilingualActivity.class.getName())));
 		pressBack();
 
-		Bitmap imageAfter = LayerListener.getInstance().getCurrentLayer().getImage();
+		Bitmap imageAfter = PaintroidApplication.layerModel.getCurrentLayer().getImage();
 		assertTrue("Image should not have changed", imageBefore.sameAs(imageAfter));
 	}
 
@@ -251,7 +251,7 @@ public class MenuFileActivityIntegrationTest {
 	public void testImageUnchangedAfterHelpSkip() {
 		onView(isRoot()).perform(touchAt(screenPoint.x, screenPoint.y));
 
-		Bitmap imageBefore = LayerListener.getInstance().getCurrentLayer().getImage();
+		Bitmap imageBefore = PaintroidApplication.layerModel.getCurrentLayer().getImage();
 		imageBefore = imageBefore.copy(imageBefore.getConfig(), imageBefore.isMutable());
 
 		openNavigationDrawer();
@@ -259,7 +259,7 @@ public class MenuFileActivityIntegrationTest {
 		intended(hasComponent(hasClassName(WelcomeActivity.class.getName())));
 		onView(withText(R.string.skip)).perform(click());
 
-		Bitmap imageAfter = LayerListener.getInstance().getCurrentLayer().getImage();
+		Bitmap imageAfter = PaintroidApplication.layerModel.getCurrentLayer().getImage();
 		assertTrue("Image should not have changed", imageBefore.sameAs(imageAfter));
 	}
 
@@ -267,7 +267,7 @@ public class MenuFileActivityIntegrationTest {
 	public void testImageUnchangedAfterHelpAbort() {
 		onView(isRoot()).perform(touchAt(screenPoint.x, screenPoint.y));
 
-		Bitmap imageBefore = LayerListener.getInstance().getCurrentLayer().getImage();
+		Bitmap imageBefore = PaintroidApplication.layerModel.getCurrentLayer().getImage();
 		imageBefore = imageBefore.copy(imageBefore.getConfig(), imageBefore.isMutable());
 
 		openNavigationDrawer();
@@ -275,7 +275,7 @@ public class MenuFileActivityIntegrationTest {
 		intended(hasComponent(hasClassName(WelcomeActivity.class.getName())));
 		pressBack();
 
-		Bitmap imageAfter = LayerListener.getInstance().getCurrentLayer().getImage();
+		Bitmap imageAfter = PaintroidApplication.layerModel.getCurrentLayer().getImage();
 		assertTrue("Image should not have changed", imageBefore.sameAs(imageAfter));
 	}
 

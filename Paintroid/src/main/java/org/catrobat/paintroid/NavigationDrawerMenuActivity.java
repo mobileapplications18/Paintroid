@@ -211,8 +211,8 @@ public abstract class NavigationDrawerMenuActivity extends AppCompatActivity {
 
 			// TODO ? should work through commands
 			/*
-			LayerListener.getInstance().getCurrentLayer().setImage(PaintroidApplication.drawingSurface.getBitmapCopy());
-			LayerListener.getInstance().refreshView();
+			PaintroidApplication.layerModel.getCurrentLayer().setImage(PaintroidApplication.drawingSurface.getBitmapCopy());
+			PaintroidApplication.layerModel.refreshView();
 			*/
 		}
 	}

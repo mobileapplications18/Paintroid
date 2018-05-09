@@ -20,12 +20,10 @@
 package org.catrobat.paintroid.test;
 
 import android.graphics.Bitmap;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.model.BitmapFactory;
-import org.catrobat.paintroid.model.LayerModel;
-
 import org.catrobat.paintroid.model.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.ui.DrawingSurface;
 import org.junit.After;
 import org.junit.Before;
@@ -35,14 +33,10 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
-
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,8 +72,7 @@ public class LayerModelTests {
 	public void testLayerModel() {
 		assertNotNull(layerModel);
 		assertEquals(layerModel.getLayerCount(), 1);
-		assertTrue((layerModel.getLayer(layerModel.getLayerCount()-1)) instanceof Layer);
-		assertEquals(layerModel.getPosition(0), layerModel.getLayerCount()-1);
+		assertEquals(layerModel.getPosition(0), layerModel.getLayerCount() - 1);
 	}
 
 
@@ -101,7 +94,7 @@ public class LayerModelTests {
 		layerModel.addLayer(testLayer);
 		assertEquals(layerModel.getLayerCount(), 2);
 		assertTrue((layerModel.getLayer(0)) instanceof Layer);
-		assertEquals((layerModel.getLayer(0)),testLayer);
+		assertEquals((layerModel.getLayer(0)), testLayer);
 		layerModel.removeLayer(layerModel.getLayer(0));
 		assertEquals(layerModel.getLayerCount(), 1);
 	}

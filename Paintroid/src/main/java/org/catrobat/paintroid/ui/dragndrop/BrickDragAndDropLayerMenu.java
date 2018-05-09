@@ -206,14 +206,14 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 					&& y < (((numLayerDropPosition + 1) * heightOneLayer) - (heightOneLayer / 3))
 					&& y > ((numLayerDropPosition * heightOneLayer) + (heightOneLayer / 3))) {
 
-				// TODO LayerListener.getInstance().mergeLayer(currentDragLayerPos, numLayerDropPosition);
+				// TODO PaintroidApplication.layerModel.mergeLayer(currentDragLayerPos, numLayerDropPosition);
 			}
 		}
 	}
 
 	public void dragEnded() {
 		if (outsideView && animationEnded) {
-			// TODO LayerListener.getInstance().moveLayer(currentDragLayerPos, startDragLayerPos);
+			// TODO PaintroidApplication.layerModel.moveLayer(currentDragLayerPos, startDragLayerPos);
 		}
 
 		positionWentOutsideView = -1;
@@ -256,9 +256,9 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (up) {
-					// TODO LayerListener.getInstance().moveLayer(movedLayerPos - 1, movedLayerPos);
+					// TODO PaintroidApplication.layerModel.moveLayer(movedLayerPos - 1, movedLayerPos);
 				} else {
-					// TODO LayerListener.getInstance().moveLayer(currentLayerPos, currentLayerPos + 1);
+					// TODO PaintroidApplication.layerModel.moveLayer(currentLayerPos, currentLayerPos + 1);
 				}
 
 				if ((movedLayerPos - currentLayerPos) == 1) {
@@ -267,7 +267,7 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 					} else {
 						PaintroidApplication.layerModel.getCurrentLayer().setSelected(false);
 					}
-					// TODO LayerListener.getInstance().refreshView();
+					// TODO PaintroidApplication.layerModel.refreshView();
 				}
 
 				animationEnded = true;
