@@ -165,6 +165,7 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 			IndeterminateProgressDialog.getInstance().show();
 		}
 
+		drawingSurface.resetBitmap(PaintroidApplication.layerModel.getCurrentLayer().getImage());
 		PaintroidApplication.perspective.resetScaleAndTranslation();
 		PaintroidApplication.currentTool.resetInternalState(Tool.StateChange.NEW_IMAGE_LOADED);
 	}
