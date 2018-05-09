@@ -22,11 +22,11 @@ package org.catrobat.paintroid.command.implementation
 import android.graphics.Canvas
 import org.catrobat.paintroid.command.Command
 import org.catrobat.paintroid.model.LayerModel
+import org.catrobat.paintroid.model.Layer
 
-class SelectLayerCommand(private val layerId: Int) : Command {
+class SelectLayerCommand(private val position: Int) : Command {
 
 	override fun run(canvas: Canvas, layerModel: LayerModel) {
-		val position = layerModel.getPosition(layerId)
 		val layer = layerModel.getLayer(position)
 		layerModel.currentLayer = layer
 	}
