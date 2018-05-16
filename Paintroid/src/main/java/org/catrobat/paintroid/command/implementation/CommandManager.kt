@@ -97,6 +97,7 @@ class CommandManager(private val layerModel: LayerModel) {
 		commandListener.forEach {
 			it.get()?.commandExecuted()
 		}
+		PaintroidApplication.drawingSurface.setBitmap(layerModel.currentLayer.image)
 	}
 
 	private fun clearCanvas() {
