@@ -178,7 +178,14 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	@Override
 	public void commandExecuted() {
-		refreshView();
+		activity.runOnUiThread(
+			new Runnable() {
+
+				@Override
+				public void run() {
+					refreshView();
+				}
+			});
 	}
 
 	private void refreshView() {
