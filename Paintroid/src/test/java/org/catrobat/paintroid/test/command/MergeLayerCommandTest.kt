@@ -22,47 +22,54 @@ package org.catrobat.paintroid.test.command
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import org.catrobat.paintroid.command.implementation.AddLayerCommand
-import org.catrobat.paintroid.command.implementation.SelectLayerCommand
+import org.catrobat.paintroid.command.implementation.MergeLayerCommand
 import org.catrobat.paintroid.model.BitmapFactory
 import org.catrobat.paintroid.model.LayerModel
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
-class SelectLayerCommandTest {
+class MergeLayerCommandTest {
 
     private val bitmapFactory = mock<BitmapFactory> {
-        on { createBitmap(any(), any(), any()) } doReturn mock<Bitmap>()
+        on { createBitmap(any(), any(), any()) } doAnswer { inv ->
+            mock {
+                on { width } doReturn inv.getArgument<Int>(0)
+                on { height } doReturn inv.getArgument<Int>(1)
+                on { config } doReturn inv.getArgument<Bitmap.Config>(2)
+            }
+        }
     }
 
-    @Mock
-    lateinit var canvas: Canvas
-
-    private val layerModel = LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888))
+    private val canvas = mock<Canvas>()
 
     @Test
-    fun testSelect() {
+    fun testMergeLayer() {
+        val layerModel = LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888)).also {
+            it.bitmapFactory = bitmapFactory
+        }
+        assertEquals(1, layerModel.getLayerCount())
         val firstLayer = layerModel.currentLayer
-        val firstLayerPosition = layerModel.getPosition(firstLayer)
-        assertEquals(0, firstLayerPosition)
-        assertEquals(firstLayerPosition, layerModel.getCurrentPosition())
 
-        AddLayerCommand(bitmapFactory).run(canvas, layerModel)
-        assertEquals(2, layerModel.getLayerCount())
-        assertEquals(1, layerModel.getCurrentPosition())
-
+        val addLayerCommand = AddLayerCommand(bitmapFactory)
+        addLayerCommand.run(canvas, layerModel)
         val secondLayer = layerModel.currentLayer
         assertNotEquals(firstLayer, secondLayer)
+        addLayerCommand.run(canvas, layerModel)
+        val thirdLayer = layerModel.currentLayer
+        assertNotEquals(firstLayer, thirdLayer)
+        assertEquals(3, layerModel.getLayerCount())
 
-        SelectLayerCommand(firstLayerPosition).run(canvas, layerModel)
-        assertEquals(firstLayerPosition, layerModel.getCurrentPosition())
-        assertEquals(firstLayer, layerModel.currentLayer)
+        MergeLayerCommand(0, 1, bitmapFactory).run(canvas, layerModel)
+        assertEquals(2, layerModel.getLayerCount())
+
+        val mergedLayer = layerModel.currentLayer
+        assertNotEquals(firstLayer, mergedLayer)
+        assertNotEquals(secondLayer, mergedLayer)
+        assertNotEquals(thirdLayer, mergedLayer)
     }
-
 }
