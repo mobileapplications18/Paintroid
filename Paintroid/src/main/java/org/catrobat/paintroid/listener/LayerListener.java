@@ -104,8 +104,9 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		delButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Layer layer = getLayerModel().getCurrentLayer();
-				View layerItem = listView.getChildAt(getLayerModel().getPosition(layer));
+				LayerModel layerModel = getLayerModel();
+
+				View layerItem = listView.getChildAt(layersAdapter.getPosition(layerModel.getCurrentPosition()));
 				Animation translateAnimation = new TranslateAnimation(0f, layerItem.getWidth(), 0f, 0f);
 				translateAnimation.setDuration(ANIMATION_TIME);
 				translateAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -123,7 +124,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 					}
 				});
 
-				if (getLayerModel().getLayerCount() > 1) {
+				if (layerModel.getLayerCount() > 1) {
 					layerItem.startAnimation(translateAnimation);
 				}
 			}
