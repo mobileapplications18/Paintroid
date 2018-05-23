@@ -70,10 +70,10 @@ class LayerModel(initialBitmap: Bitmap) {
 		val canvas = Canvas(bmpOverlay)
 
 		val overlayPaint = Paint()
-		overlayPaint.alpha = firstLayer.scaledOpacity
+		overlayPaint.alpha = 255
 
 		canvas.drawBitmap(firstBitmap, Matrix(), overlayPaint)
-		overlayPaint.alpha = secondLayer.scaledOpacity
+		overlayPaint.alpha = 255
 		canvas.drawBitmap(secondBitmap, 0f, 0f, overlayPaint)
 
 		return bmpOverlay

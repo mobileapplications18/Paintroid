@@ -69,7 +69,6 @@ public class LayerCommandTest {
         addLayerCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
         assertEquals(layerModel.getLayerCount(), 2);
         assertTrue((layerModel.getLayer(0)) instanceof Layer);
-        assertTrue(layerModel.getLayer(0).getSelected());
     }
 
     @Test

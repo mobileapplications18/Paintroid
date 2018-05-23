@@ -262,11 +262,6 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 				}
 
 				if ((movedLayerPos - currentLayerPos) == 1) {
-					if (up) {
-						PaintroidApplication.layerModel.getCurrentLayer().setSelected(false);
-					} else {
-						PaintroidApplication.layerModel.getCurrentLayer().setSelected(false);
-					}
 					// TODO PaintroidApplication.layerModel.refreshView();
 				}
 

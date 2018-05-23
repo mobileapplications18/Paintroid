@@ -252,9 +252,6 @@ public class TransformTool extends BaseToolWithRectangleShape {
 							(int) maximumBoxResolution
 					);
 
-					if (layer.getSelected()) {
-						resizeCommand.addObserver(this);
-					}
 					PaintroidApplication.commandManager.addCommand(resizeCommand);
 				}
 			} else {
@@ -278,9 +275,6 @@ public class TransformTool extends BaseToolWithRectangleShape {
 		for (Layer layer : layerModel.getLayers()) { // TODO implement in ResizeCommand once
 			RotateCommand command = new RotateCommand(rotateDirection);
 
-			if (layer.getSelected()) {
-				command.addObserver(this);
-			}
 			PaintroidApplication.commandManager.addCommand(command);
 			float tempBoxWidth = boxWidth;
 			float tempBoxHeight = boxHeight;
