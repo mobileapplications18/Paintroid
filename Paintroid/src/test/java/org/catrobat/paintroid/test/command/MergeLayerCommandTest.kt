@@ -25,12 +25,14 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doAnswer
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
+import org.catrobat.paintroid.PaintroidApplication
 import org.catrobat.paintroid.command.implementation.AddLayerCommand
 import org.catrobat.paintroid.command.implementation.MergeLayerCommand
 import org.catrobat.paintroid.model.BitmapFactory
 import org.catrobat.paintroid.model.LayerModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Before
 import org.junit.Test
 
 class MergeLayerCommandTest {
@@ -46,6 +48,11 @@ class MergeLayerCommandTest {
     }
 
     private val canvas = mock<Canvas>()
+
+    @Before
+    fun setup() {
+        PaintroidApplication.drawingSurface = mock()
+    }
 
     @Test
     fun testMergeLayer() {
@@ -71,5 +78,35 @@ class MergeLayerCommandTest {
         assertNotEquals(firstLayer, mergedLayer)
         assertNotEquals(secondLayer, mergedLayer)
         assertNotEquals(thirdLayer, mergedLayer)
+    }
+
+    @Test
+    fun testMergingFullLayerList() {
+        val layerModel = LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888)).also {
+            it.bitmapFactory = bitmapFactory
+        }
+
+        AddLayerCommand(bitmapFactory).run(canvas, layerModel)
+        AddLayerCommand(bitmapFactory).run(canvas, layerModel)
+        AddLayerCommand(bitmapFactory).run(canvas, layerModel)
+        assertEquals(4, layerModel.getLayerCount())
+        AddLayerCommand(bitmapFactory).run(canvas, layerModel)
+        assertEquals(4, layerModel.getLayerCount())
+
+        MergeLayerCommand(3, 2, bitmapFactory).run(canvas, layerModel)
+        assertEquals(3, layerModel.getLayerCount())
+    }
+
+    @Test
+    fun testMinimalLayerList() {
+        val layerModel = LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888)).also {
+            it.bitmapFactory = bitmapFactory
+        }
+
+        AddLayerCommand(bitmapFactory).run(canvas, layerModel)
+        assertEquals(2, layerModel.getLayerCount())
+
+        MergeLayerCommand(0, 1, bitmapFactory).run(canvas, layerModel)
+        assertEquals(1, layerModel.getLayerCount())
     }
 }

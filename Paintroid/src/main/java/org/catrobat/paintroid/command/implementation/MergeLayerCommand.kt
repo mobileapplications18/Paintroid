@@ -11,8 +11,8 @@ import org.catrobat.paintroid.model.LayerModel
 class MergeLayerCommand(private val firstLayerPosition: Int, private val secondLayerPosition: Int, private val bitmapFactory: BitmapFactory) : BaseCommand() {
 
     override fun run(canvas: Canvas, layerModel: LayerModel) {
-        val firstLayer: Layer = layerModel.getLayer(firstLayerPosition)
-        val secondLayer: Layer = layerModel.getLayer(secondLayerPosition)
+        val firstLayer = layerModel.getLayer(firstLayerPosition)
+        val secondLayer = layerModel.getLayer(secondLayerPosition)
 
         val mergedBitmap = when {
             firstLayerPosition > secondLayerPosition -> mergeBitmaps(firstLayer, secondLayer)
@@ -20,9 +20,8 @@ class MergeLayerCommand(private val firstLayerPosition: Int, private val secondL
         }
 
         val layer = Layer(mergedBitmap)
-        layerModel.addLayer(layer)
-
         layerModel.removeLayer(firstLayer)
+        layerModel.addLayer(layer)
         layerModel.removeLayer(secondLayer)
     }
 
