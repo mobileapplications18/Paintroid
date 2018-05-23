@@ -85,7 +85,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 				brickLayer.setDragStartPosition(pos);
 
 				MyDragShadowBuilder shadowBuilder = new MyDragShadowBuilder(listView.getChildAt(pos));
-				shadowBuilder.setDragPos(pos);
+				shadowBuilder.setDragPos(layersAdapter.getPosition(pos));
 
 				adapterView.startDrag(null, shadowBuilder, null, 0);
 
