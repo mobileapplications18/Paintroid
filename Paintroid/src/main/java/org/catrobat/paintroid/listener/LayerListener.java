@@ -74,17 +74,17 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		listView.setLongClickable(true);
 		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView adapterView, View view, int pos, long id) {
-				listView.getChildAt(pos).setVisibility(View.INVISIBLE);
+			public boolean onItemLongClick(AdapterView adapterView, View view, int position, long id) {
+				listView.getChildAt(position).setVisibility(View.INVISIBLE);
 				/*
 				Layer layer = layerModel.getLayer(pos);
 				if (!layer.getSelected()) {
 					setCurrentLayer(layer);
 				}
 				*/
-				brickLayer.setDragStartPosition(pos);
+				brickLayer.setDragStartPosition(position);
 
-				dragAndDropListener.setDragStartPosition(position);
+				brickLayer.setDragStartPosition(position);
 
 				Layer layer = (Layer) layersAdapter.getItem(position);
 				MyDragShadowBuilder shadowBuilder = new MyDragShadowBuilder(adapterView.getChildAt(position), layer);
