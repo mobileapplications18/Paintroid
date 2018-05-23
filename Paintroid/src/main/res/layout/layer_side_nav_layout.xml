@@ -51,4 +51,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/layer_side_nav_button_add"
         tools:listitem="@layout/layer_button" />
+
 </RelativeLayout>

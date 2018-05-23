@@ -28,7 +28,7 @@ import org.catrobat.paintroid.command.implementation.AddLayerCommand
 import org.catrobat.paintroid.command.implementation.SelectLayerCommand
 import org.catrobat.paintroid.model.BitmapFactory
 import org.catrobat.paintroid.model.LayerModel
-import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -37,27 +37,32 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class SelectLayerCommandTest {
 
-	private val bitmapFactory = mock<BitmapFactory> {
-		on { createBitmap(any(), any(), any()) } doReturn mock<Bitmap>()
-	}
+    private val bitmapFactory = mock<BitmapFactory> {
+        on { createBitmap(any(), any(), any()) } doReturn mock<Bitmap>()
+    }
 
-	@Mock
-	lateinit var canvas: Canvas
+    @Mock
+    lateinit var canvas: Canvas
 
-	private val layerModel = LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888))
+    private val layerModel = LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888))
 
-	@Test
-	fun testSelect() {
-		val firstLayer = layerModel.currentLayer
+    @Test
+    fun testSelect() {
+        val firstLayer = layerModel.currentLayer
+        val firstLayerPosition = layerModel.getPosition(firstLayer)
+        assertEquals(0, firstLayerPosition)
+        assertEquals(firstLayerPosition, layerModel.getCurrentPosition())
 
-		AddLayerCommand(bitmapFactory).run(canvas, layerModel)
-		Assert.assertEquals(2, layerModel.getLayerCount())
+        AddLayerCommand(bitmapFactory).run(canvas, layerModel)
+        assertEquals(2, layerModel.getLayerCount())
+        assertEquals(1, layerModel.getCurrentPosition())
 
-		val secondLayer = layerModel.currentLayer
-		Assert.assertNotEquals(firstLayer, secondLayer)
+        val secondLayer = layerModel.currentLayer
+        assertNotEquals(firstLayer, secondLayer)
 
-		SelectLayerCommand(firstLayer.layerID).run(canvas, layerModel)
-		Assert.assertEquals(firstLayer, layerModel.currentLayer)
-	}
+        SelectLayerCommand(firstLayerPosition).run(canvas, layerModel)
+        assertEquals(firstLayerPosition, layerModel.getCurrentPosition())
+        assertEquals(firstLayer, layerModel.currentLayer)
+    }
 
 }

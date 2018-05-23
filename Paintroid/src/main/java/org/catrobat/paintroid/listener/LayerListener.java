@@ -22,14 +22,12 @@ package org.catrobat.paintroid.listener;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
 import org.catrobat.paintroid.command.implementation.AddLayerCommand;
@@ -39,7 +37,6 @@ import org.catrobat.paintroid.command.implementation.SelectLayerCommand;
 import org.catrobat.paintroid.model.BitmapFactory;
 import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.model.LayerModel;
-import org.catrobat.paintroid.ui.ToastFactory;
 import org.catrobat.paintroid.ui.button.LayersAdapter;
 import org.catrobat.paintroid.ui.dragndrop.BrickDragAndDropLayerMenu;
 import org.catrobat.paintroid.ui.dragndrop.MyDragShadowBuilder;
@@ -75,7 +72,6 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		listView.setOnItemClickListener(this);
 		listView.setOnDragListener(dragListener);
 		listView.setLongClickable(true);
-
 		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView adapterView, View view, int pos, long id) {
@@ -153,16 +149,17 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	@Deprecated
 	public void moveLayer(int layerToMovePosition, int targetPosition) {
+		// layersAdapter.getPosition()
 		// TODO: uncomment when BrickDragAndDropLayerMenu / ListView has a temporary list for modification
 		// PaintroidApplication.commandManager.addCommand(new MoveLayerCommand(layerToMovePosition, targetPosition));
 	}
 
 	@Deprecated
 	public void mergeLayer(int firstLayer, int secondLayer) {
-
 		if (firstLayer != secondLayer) {
 			// TODO: uncomment when BrickDragAndDropLayerMenu / ListView has a temporary list for modification
 			/*
+			// layersAdapter.getPosition()
 			PaintroidApplication.commandManager.addCommand(new MergeLayerCommand(firstLayerPosition, secondLayerPosition));
 			ToastFactory.makeText(activity, R.string.layer_merged, Toast.LENGTH_LONG).show();
 			*/
@@ -171,8 +168,9 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		if (getLayerModel().getCurrentPosition() != position) {
-			PaintroidApplication.commandManager.addCommand(new SelectLayerCommand(position));
+		int modelPosition = layersAdapter.getPosition(position);
+		if (getLayerModel().getCurrentPosition() != modelPosition) {
+			PaintroidApplication.commandManager.addCommand(new SelectLayerCommand(modelPosition));
 		}
 	}
 
@@ -189,19 +187,10 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 	}
 
 	private void refreshView() {
-		ListView listView = (ListView) navigationView.findViewById(R.id.nav_layer_list);
-		if (listView != null) {
-			layersAdapter.notifyDataSetChanged();
-			listView.setAdapter(layersAdapter);
-		} else {
-			Log.d(TAG, "LAYERGRIDVIEW NOT INITIALIZED");
-		}
-		updateButtonResource();
-		PaintroidApplication.drawingSurface.refreshDrawingSurface();
-	}
-
-	private void updateButtonResource() {
+		layersAdapter.notifyDataSetChanged();
 		addButton.setEnabled(getLayerModel().getLayerCount() < LayerModel.MAX_LAYER);
 		delButton.setEnabled(getLayerModel().getLayerCount() > 1);
+
+		PaintroidApplication.drawingSurface.refreshDrawingSurface();
 	}
 }

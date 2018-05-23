@@ -46,7 +46,7 @@ public class PerspectiveTests {
 	private static final int SURFACE_HEIGHT = 100;
 	private static final float EXACT_CENTER_X = 5f;
 	private static final float EXACT_CENTER_Y = 50f;
-	public static final float INITIAL_SCALE = 1f;
+	private static final float INITIAL_SCALE = 1f;
 
 	@Mock
 	private SurfaceHolder holder;
@@ -56,7 +56,7 @@ public class PerspectiveTests {
 	private Perspective perspective;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		Rect rect = mock(Rect.class);
 		rect.right = SURFACE_WIDTH;
 		rect.bottom = SURFACE_HEIGHT;

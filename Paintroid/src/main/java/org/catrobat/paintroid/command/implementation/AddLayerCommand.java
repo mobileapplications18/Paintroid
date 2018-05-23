@@ -22,6 +22,7 @@ package org.catrobat.paintroid.command.implementation;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
+
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.model.BitmapFactory;
 import org.catrobat.paintroid.model.Layer;
@@ -30,26 +31,25 @@ import org.catrobat.paintroid.ui.DrawingSurface;
 
 public class AddLayerCommand extends BaseCommand {
 
-	public AddLayerCommand(BitmapFactory bitmapFactory) {
-		this.bitmapFactory = bitmapFactory;
-	}
+    private BitmapFactory bitmapFactory;
 
-	private BitmapFactory bitmapFactory;
+    public AddLayerCommand(BitmapFactory bitmapFactory) {
+        this.bitmapFactory = bitmapFactory;
+    }
 
-	@Override
-	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
-		DrawingSurface drawingSurface = PaintroidApplication.drawingSurface;
-		int width = drawingSurface.getBitmapWidth();
-		int height = drawingSurface.getBitmapHeight();
+    @Override
+    public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
+        DrawingSurface drawingSurface = PaintroidApplication.drawingSurface; // TODO: reduce drawingSurface access
+        int width = drawingSurface.getBitmapWidth();
+        int height = drawingSurface.getBitmapHeight();
 
-		Layer layer = new Layer(bitmapFactory.createBitmap(width, height, Bitmap.Config.ARGB_8888));
-		layerModel.addLayer(layer);
-		layerModel.setCurrentLayer(layer);
+        Layer layer = new Layer(bitmapFactory.createBitmap(width, height, Bitmap.Config.ARGB_8888));
+        layerModel.addLayer(layer);
 
-		drawingSurface.refreshDrawingSurface();
-	}
+        drawingSurface.refreshDrawingSurface();
+    }
 
-	@Override
-	public void freeResources() {
-	}
+    @Override
+    public void freeResources() {
+    }
 }

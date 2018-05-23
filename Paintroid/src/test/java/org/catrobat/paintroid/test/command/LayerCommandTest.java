@@ -1,38 +1,53 @@
+/*
+ * Paintroid: An image manipulation application for Android.
+ * Copyright (C) 2010-2018 The Catrobat Team
+ * (<http://developer.catrobat.org/credits>)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.catrobat.paintroid.test.command;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.command.implementation.AddLayerCommand;
-import org.catrobat.paintroid.command.implementation.MergeLayerCommand;
 import org.catrobat.paintroid.command.implementation.RemoveLayerCommand;
 import org.catrobat.paintroid.model.BitmapFactory;
 import org.catrobat.paintroid.model.LayerModel;
-import org.catrobat.paintroid.model.Layer;
-import org.catrobat.paintroid.ui.DrawingSurface;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(org.mockito.junit.MockitoJUnitRunner.class)
 public class LayerCommandTest {
-
 
     private LayerModel layerModel;
     private BitmapFactory bitmapFactory;
-    private AddLayerCommand addLayerCommand;
+
+    @Mock
+    private Canvas canvas;
 
     @Before
     public void setUp() {
@@ -40,20 +55,11 @@ public class LayerCommandTest {
         when(bitmapFactory.createBitmap(anyInt(), anyInt(), any(Bitmap.Config.class))).then(new Answer<Bitmap>() {
             @Override
             public Bitmap answer(InvocationOnMock invocation) throws Throwable {
-                Bitmap bitmap = mock(Bitmap.class);
-                return bitmap;
+                return mock(Bitmap.class);
             }
         });
         layerModel = new LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888));
         layerModel.setBitmapFactory(bitmapFactory);
-        PaintroidApplication.drawingSurface = mock(DrawingSurface.class);
-        when(PaintroidApplication.drawingSurface.getCanvas()).then(new Answer<Canvas>() {
-            @Override
-            public Canvas answer(InvocationOnMock invocation) throws Throwable {
-                Canvas canvas = mock(Canvas.class);
-                return canvas;
-            }
-        });
     }
 
     @After
@@ -62,35 +68,21 @@ public class LayerCommandTest {
 
     @Test
     public void testAddLayer() {
-        AddLayerCommand addLayerCommand = new AddLayerCommand(bitmapFactory);
+        assertEquals(1, layerModel.getLayerCount());
 
-        assertEquals(layerModel.getLayerCount(), 1);
-
-        addLayerCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
-        assertEquals(layerModel.getLayerCount(), 2);
-        assertTrue((layerModel.getLayer(0)) instanceof Layer);
+        new AddLayerCommand(bitmapFactory).run(canvas, layerModel);
+        assertEquals(2, layerModel.getLayerCount());
     }
 
-    @Test
+    @Test(expected = UnsupportedOperationException.class)
+    public void testRemoveLastLayer() {
+        new RemoveLayerCommand().run(canvas, layerModel);
+    }
+
     public void testRemoveLayer() {
-        RemoveLayerCommand removeLayerCommand = new RemoveLayerCommand();
-        removeLayerCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
-        assertEquals(layerModel.getLayerCount(), 0);
-    }
-
-    @Test
-    public void testMergeLayer() {
-        AddLayerCommand addLayerCommand = new AddLayerCommand(bitmapFactory);
-
-        int layer_count = layerModel.getLayerCount();
-
-        addLayerCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
-        addLayerCommand.run(PaintroidApplication.drawingSurface.getCanvas(), layerModel);
-
-        assertEquals(layerModel.getLayerCount(), layer_count+2);
-
-        MergeLayerCommand mergeLayerCommand = new MergeLayerCommand(0,1, bitmapFactory);
-
-        assertEquals(layerModel.getLayerCount(), layer_count+2);
+        new AddLayerCommand(bitmapFactory).run(canvas, layerModel);
+        assertEquals(2, layerModel.getLayerCount());
+        new RemoveLayerCommand().run(canvas, layerModel);
+        assertEquals(1, layerModel.getLayerCount());
     }
 } 

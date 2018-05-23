@@ -28,8 +28,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.model.Layer;
+import org.catrobat.paintroid.model.LayerModel;
 
 public class LayersAdapter extends BaseAdapter {
 
@@ -46,31 +46,37 @@ public class LayersAdapter extends BaseAdapter {
 
 	@Override
 	public Object getItem(int position) {
-		return layerModel.getLayer(position);
+		return layerModel.getLayer(layerModel.getLayerCount() - position - 1);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		return 0;
+		return -1;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		Context context = parent.getContext();
+
 		if (convertView == null) {
-			Context context = parent.getContext();
 			LayoutInflater inflater = LayoutInflater.from(context);
 			convertView = inflater.inflate(R.layout.layer_button, parent, false);
-			LinearLayout layerButton = (LinearLayout) convertView.findViewById(R.id.layer_button);
-
-			Layer layer = layerModel.getLayer(position);
-			if (layer == layerModel.getCurrentLayer()) {
-				layerButton.setBackgroundColor(ContextCompat.getColor(context, R.color.color_chooser_blue1));
-			} else {
-				layerButton.setBackgroundColor(ContextCompat.getColor(context, R.color.custom_background_color));
-			}
-			ImageView imageView = (ImageView) convertView.findViewById(R.id.layer_button_image);
-			imageView.setImageBitmap(layer.getImage());
 		}
+		LinearLayout layerButton = (LinearLayout) convertView.findViewById(R.id.layer_button);
+		ImageView imageView = (ImageView) convertView.findViewById(R.id.layer_button_image);
+
+		Layer layer = (Layer) getItem(position);
+		if (layer == layerModel.getCurrentLayer()) {
+			layerButton.setBackgroundColor(ContextCompat.getColor(context, R.color.color_chooser_blue1));
+		} else {
+			layerButton.setBackgroundColor(ContextCompat.getColor(context, R.color.custom_background_color));
+		}
+		imageView.setImageBitmap(layer.getImage());
+
 		return convertView;
+	}
+
+	public int getPosition(int viewPosition) {
+		return layerModel.getLayerCount() - viewPosition - 1;
 	}
 }

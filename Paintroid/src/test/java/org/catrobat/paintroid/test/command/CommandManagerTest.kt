@@ -20,7 +20,6 @@
 package org.catrobat.paintroid.test.command
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
@@ -38,87 +37,85 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class CommandManagerTest {
 
-	private val bitmapFactory: BitmapFactory = mock {
-		on { createBitmap(any(), any(), any()) } doReturn mock<Bitmap>()
-	}
+    private val bitmapFactory: BitmapFactory = mock {
+        on { createBitmap(any(), any(), any()) } doReturn mock<Bitmap>()
+    }
 
-	private val layerModel = LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888)).also {
-		it.bitmapFactory = bitmapFactory
-	}
+    private val layerModel = LayerModel(bitmapFactory.createBitmap(10, 10, Bitmap.Config.ARGB_8888)).also {
+        it.bitmapFactory = bitmapFactory
+    }
 
-	@Before
-	fun setup() {
-		PaintroidApplication.drawingSurface = mock {
-			on { canvas } doReturn mock<Canvas>()
-		}
-	}
+    @Before
+    fun setup() {
+        PaintroidApplication.drawingSurface = mock()
+    }
 
-	@Test
-	fun testAddCommand() {
-		val commandManager = CommandManager(layerModel)
-		Assert.assertFalse(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
+    @Test
+    fun testAddCommand() {
+        val commandManager = CommandManager(layerModel)
+        Assert.assertFalse(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand(bitmapFactory))
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
-	}
+        commandManager.addCommand(AddLayerCommand(bitmapFactory))
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
+    }
 
-	@Test
-	fun testUndoRedoCommand() {
-		val commandManager = CommandManager(layerModel).also {
-			it.bitmapFactory = bitmapFactory
-		}
-		Assert.assertFalse(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
+    @Test
+    fun testUndoRedoCommand() {
+        val commandManager = CommandManager(layerModel).also {
+            it.bitmapFactory = bitmapFactory
+        }
+        Assert.assertFalse(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand(bitmapFactory))
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
+        commandManager.addCommand(AddLayerCommand(bitmapFactory))
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand(bitmapFactory))
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
+        commandManager.addCommand(AddLayerCommand(bitmapFactory))
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.undo()
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertTrue(commandManager.isRedoAvailable())
+        commandManager.undo()
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertTrue(commandManager.isRedoAvailable())
 
-		commandManager.undo()
-		Assert.assertFalse(commandManager.isUndoAvailable())
-		Assert.assertTrue(commandManager.isRedoAvailable())
+        commandManager.undo()
+        Assert.assertFalse(commandManager.isUndoAvailable())
+        Assert.assertTrue(commandManager.isRedoAvailable())
 
-		commandManager.redo()
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertTrue(commandManager.isRedoAvailable())
+        commandManager.redo()
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertTrue(commandManager.isRedoAvailable())
 
-		commandManager.redo()
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
-	}
+        commandManager.redo()
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
+    }
 
-	@Test
-	fun testClear() {
-		val commandManager = CommandManager(layerModel).also {
-			it.bitmapFactory = bitmapFactory
-		}
-		Assert.assertFalse(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
+    @Test
+    fun testClear() {
+        val commandManager = CommandManager(layerModel).also {
+            it.bitmapFactory = bitmapFactory
+        }
+        Assert.assertFalse(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand(bitmapFactory))
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
+        commandManager.addCommand(AddLayerCommand(bitmapFactory))
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.addCommand(AddLayerCommand(bitmapFactory))
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
+        commandManager.addCommand(AddLayerCommand(bitmapFactory))
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
 
-		commandManager.undo()
-		Assert.assertTrue(commandManager.isUndoAvailable())
-		Assert.assertTrue(commandManager.isRedoAvailable())
+        commandManager.undo()
+        Assert.assertTrue(commandManager.isUndoAvailable())
+        Assert.assertTrue(commandManager.isRedoAvailable())
 
-		commandManager.resetAndClear()
-		Assert.assertFalse(commandManager.isUndoAvailable())
-		Assert.assertFalse(commandManager.isRedoAvailable())
-	}
+        commandManager.resetAndClear()
+        Assert.assertFalse(commandManager.isUndoAvailable())
+        Assert.assertFalse(commandManager.isRedoAvailable())
+    }
 }

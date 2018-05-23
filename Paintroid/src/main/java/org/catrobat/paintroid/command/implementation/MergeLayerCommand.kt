@@ -10,38 +10,35 @@ import org.catrobat.paintroid.model.LayerModel
 
 class MergeLayerCommand(private val firstLayerPosition: Int, private val secondLayerPosition: Int, private val bitmapFactory: BitmapFactory) : BaseCommand() {
 
-	override fun run(canvas: Canvas, layerModel: LayerModel) {
-		val firstLayer: Layer = layerModel.getLayer(firstLayerPosition)
-		val secondLayer: Layer = layerModel.getLayer(secondLayerPosition)
+    override fun run(canvas: Canvas, layerModel: LayerModel) {
+        val firstLayer = layerModel.getLayer(firstLayerPosition)
+        val secondLayer = layerModel.getLayer(secondLayerPosition)
 
-		val mergedBitmap = when {
-			firstLayerPosition > secondLayerPosition -> mergeBitmaps(firstLayer, secondLayer)
-			else -> mergeBitmaps(secondLayer, firstLayer)
-		}
+        val mergedBitmap = when {
+            firstLayerPosition > secondLayerPosition -> mergeBitmaps(firstLayer, secondLayer)
+            else -> mergeBitmaps(secondLayer, firstLayer)
+        }
 
-		layerModel.removeLayer(firstLayer)
-		layerModel.removeLayer(secondLayer)
+        val layer = Layer(mergedBitmap)
+        layerModel.removeLayer(firstLayer)
+        layerModel.addLayer(layer)
+        layerModel.removeLayer(secondLayer)
+    }
 
-		val layer = Layer(mergedBitmap)
-		layerModel.addLayer(layer)
-		layerModel.currentLayer = layer
-	}
+    private fun mergeBitmaps(firstLayer: Layer, secondLayer: Layer): Bitmap {
+        val firstBitmap = firstLayer.image
+        val secondBitmap = secondLayer.image
 
-	private fun mergeBitmaps(firstLayer: Layer, secondLayer: Layer): Bitmap {
-		val firstBitmap = firstLayer.image
-		val secondBitmap = secondLayer.image
+        val bmpOverlay = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
+        val canvas = Canvas(bmpOverlay)
 
-		val bmpOverlay = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
-		val canvas = Canvas(bmpOverlay)
+    		val overlayPaint = Paint()
+	    	overlayPaint.alpha = 255
 
-		val overlayPaint = Paint()
-		overlayPaint.alpha = 255
+		    canvas.drawBitmap(firstBitmap, Matrix(), overlayPaint)
+		    canvas.drawBitmap(secondBitmap, 0f, 0f, overlayPaint)
 
-		canvas.drawBitmap(firstBitmap, Matrix(), overlayPaint)
-		overlayPaint.alpha = 255
-		canvas.drawBitmap(secondBitmap, 0f, 0f, overlayPaint)
-
-		return bmpOverlay
+		    return bmpOverlay
 	}
 
 }
