@@ -32,14 +32,13 @@ class MergeLayerCommand(private val firstLayerPosition: Int, private val secondL
         val bmpOverlay = bitmapFactory.createBitmap(firstBitmap.width, firstBitmap.height, firstBitmap.config)
         val canvas = Canvas(bmpOverlay)
 
-        val overlayPaint = Paint()
-        overlayPaint.alpha = firstLayer.scaledOpacity
+    		val overlayPaint = Paint()
+	    	overlayPaint.alpha = 255
 
-        canvas.drawBitmap(firstBitmap, Matrix(), overlayPaint)
-        overlayPaint.alpha = secondLayer.scaledOpacity
-        canvas.drawBitmap(secondBitmap, 0f, 0f, overlayPaint)
+		    canvas.drawBitmap(firstBitmap, Matrix(), overlayPaint)
+		    canvas.drawBitmap(secondBitmap, 0f, 0f, overlayPaint)
 
-        return bmpOverlay
-    }
+		    return bmpOverlay
+	}
 
 }

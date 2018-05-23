@@ -117,7 +117,6 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		}
 
 		initialiseNewBitmap(); // TODO
-
 		if (openedFromCatroid) {
 			PaintroidApplication.commandManager.resetAndClear();
 
@@ -138,6 +137,9 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 						});
 			}
 		}
+		initNavigationDrawer();
+		initKeyboardIsShownListener();
+
 	}
 
 	@Override
@@ -192,8 +194,6 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		layerListener = new LayerListener(this, layerSideNav);
 
 		initActionBar();
-		initNavigationDrawer();
-		initKeyboardIsShownListener();
 		setFullScreen(false);
 
 		int colorPickerBackgroundColor = colorPickerInitialColor;

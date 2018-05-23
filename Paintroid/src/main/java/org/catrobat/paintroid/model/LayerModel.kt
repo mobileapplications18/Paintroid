@@ -8,7 +8,7 @@ import java.util.*
 import kotlin.math.max
 
 class LayerModel(initialBitmap: Bitmap) {
-
+  
     companion object {
         const val MAX_LAYER = 4
     }

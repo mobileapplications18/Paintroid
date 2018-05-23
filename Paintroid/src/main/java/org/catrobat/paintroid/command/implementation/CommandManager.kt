@@ -20,7 +20,6 @@
 package org.catrobat.paintroid.command.implementation
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.support.annotation.VisibleForTesting
 import org.catrobat.paintroid.PaintroidApplication
 import org.catrobat.paintroid.command.Command
@@ -65,8 +64,9 @@ class CommandManager(private val layerModel: LayerModel) {
 		val command = undoCommandList.pop()
 		redoCommandList.add(command)
 
-		clearCanvas()
 		layerModel.clearLayer()
+		PaintroidApplication.drawingSurface.resetBitmap(layerModel.currentLayer.image)
+
 		undoCommandList.forEach {
 			it.run(canvas, layerModel)
 		}
@@ -87,8 +87,9 @@ class CommandManager(private val layerModel: LayerModel) {
 		undoCommandList.clear()
 		redoCommandList.clear()
 
-		clearCanvas()
 		layerModel.clearLayer()
+		PaintroidApplication.drawingSurface.resetBitmap(layerModel.currentLayer.image)
+
 
 		notifyCommandExecuted()
 	}
@@ -97,14 +98,6 @@ class CommandManager(private val layerModel: LayerModel) {
 		commandListener.forEach {
 			it.get()?.commandExecuted()
 		}
-	}
-
-	private fun clearCanvas() {
-		layerModel.getLayers().forEach { layer ->
-			layer.image.eraseColor(Color.TRANSPARENT)
-		}
-
-		PaintroidApplication.drawingSurface.resetBitmap(layerModel.currentLayer.image)
 	}
 
 	interface CommandListener {
