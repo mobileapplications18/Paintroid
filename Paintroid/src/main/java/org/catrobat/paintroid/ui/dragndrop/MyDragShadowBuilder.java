@@ -23,30 +23,27 @@ import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
-import org.catrobat.paintroid.PaintroidApplication;
+import org.catrobat.paintroid.model.Layer;
 
 public class MyDragShadowBuilder extends View.DragShadowBuilder {
 
+	private final Layer layer;
+
 	private static Drawable shadow;
-	private int dragPosition;
 	private Bitmap greyBitmap;
-	private Bitmap shadowBitmap;
 
-	public MyDragShadowBuilder(View imageView) {
+	public MyDragShadowBuilder(View imageView, Layer layer) {
 		super(imageView);
+		this.layer = layer;
 
-		Bitmap buffer = PaintroidApplication.layerModel.getLayer(0).getImage();
+		Bitmap buffer = layer.getImage();
 		greyBitmap = Bitmap.createBitmap(buffer.getWidth(), buffer.getHeight(), buffer.getConfig());
 		greyBitmap.eraseColor(Color.LTGRAY);
 	}
 
-	public void setDragPos(int pos) {
-		dragPosition = pos;
-	}
-
 	@Override
 	public void onProvideShadowMetrics(Point size, Point touch) {
-		shadowBitmap = mergeBitmaps(greyBitmap, PaintroidApplication.layerModel.getLayer(dragPosition).getImage());
+		Bitmap shadowBitmap = mergeBitmaps(greyBitmap, layer.getImage());
 		shadow = new BitmapDrawable(getView().getResources(), shadowBitmap);
 
 		final View view = getView();

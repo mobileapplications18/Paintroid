@@ -74,19 +74,20 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		listView.setLongClickable(true);
 		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView adapterView, View view, int pos, long id) {
-				listView.getChildAt(pos).setVisibility(View.INVISIBLE);
+			public boolean onItemLongClick(AdapterView adapterView, View view, int position, long id) {
+				listView.getChildAt(position).setVisibility(View.INVISIBLE);
 				/*
 				Layer layer = layerModel.getLayer(pos);
 				if (!layer.getSelected()) {
 					setCurrentLayer(layer);
 				}
 				*/
-				brickLayer.setDragStartPosition(pos);
+				brickLayer.setDragStartPosition(position);
 
-				MyDragShadowBuilder shadowBuilder = new MyDragShadowBuilder(listView.getChildAt(pos));
-				shadowBuilder.setDragPos(pos);
+				brickLayer.setDragStartPosition(position);
 
+				Layer layer = (Layer) layersAdapter.getItem(position);
+				MyDragShadowBuilder shadowBuilder = new MyDragShadowBuilder(adapterView.getChildAt(position), layer);
 				adapterView.startDrag(null, shadowBuilder, null, 0);
 
 				return true;
@@ -104,8 +105,9 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		delButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Layer layer = getLayerModel().getCurrentLayer();
-				View layerItem = listView.getChildAt(getLayerModel().getPosition(layer));
+				LayerModel layerModel = getLayerModel();
+
+				View layerItem = listView.getChildAt(layersAdapter.getPosition(layerModel.getCurrentPosition()));
 				Animation translateAnimation = new TranslateAnimation(0f, layerItem.getWidth(), 0f, 0f);
 				translateAnimation.setDuration(ANIMATION_TIME);
 				translateAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -123,7 +125,7 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 					}
 				});
 
-				if (getLayerModel().getLayerCount() > 1) {
+				if (layerModel.getLayerCount() > 1) {
 					layerItem.startAnimation(translateAnimation);
 				}
 			}
