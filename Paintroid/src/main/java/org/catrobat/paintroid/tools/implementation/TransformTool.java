@@ -271,8 +271,6 @@ public class TransformTool extends BaseToolWithRectangleShape {
 
 	private void rotate(RotateCommand.RotateDirection rotateDirection) {
 		IndeterminateProgressDialog.getInstance().show();
-		LayerModel layerModel = PaintroidApplication.layerModel;
-		for (Layer layer : layerModel.getLayers()) { // TODO implement in ResizeCommand once
 			RotateCommand command = new RotateCommand(rotateDirection);
 
 			PaintroidApplication.commandManager.addCommand(command);
@@ -280,7 +278,6 @@ public class TransformTool extends BaseToolWithRectangleShape {
 			float tempBoxHeight = boxHeight;
 			boxWidth = tempBoxHeight;
 			boxHeight = tempBoxWidth;
-		}
 	}
 
 	private void autoCrop() {

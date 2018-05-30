@@ -27,6 +27,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.catrobat.paintroid.PaintroidApplication;
+import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
+import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.model.LayerModel;
 
 public class RotateCommand extends BaseCommand {
@@ -41,7 +43,6 @@ public class RotateCommand extends BaseCommand {
 
 	@Override
 	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
-		Bitmap bitmap = layerModel.getCurrentLayer().getImage();
 
 		setChanged();
 		notifyStatus(NotifyStates.COMMAND_STARTED);
@@ -70,24 +71,27 @@ public class RotateCommand extends BaseCommand {
 				return;
 		}
 
-		rotateMatrix.postTranslate(-bitmap.getWidth() / 2, -bitmap.getHeight() / 2);
 
-		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-				bitmap.getWidth(), bitmap.getHeight(), rotateMatrix, true);
-		Canvas rotateCanvas = new Canvas(rotatedBitmap);
+		for (Layer layer : layerModel.getLayers()) {
+			Bitmap bitmap = layer.getImage();
+			rotateMatrix.postTranslate(-bitmap.getWidth() / 2, -bitmap.getHeight() / 2);
 
-		rotateCanvas.drawBitmap(bitmap, rotateMatrix, new Paint());
+			Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+					bitmap.getWidth(), bitmap.getHeight(), rotateMatrix, true);
+			Canvas rotateCanvas = new Canvas(rotatedBitmap);
 
-		layerModel.getCurrentLayer().setImage(rotatedBitmap);
+			rotateCanvas.drawBitmap(bitmap, rotateMatrix, new Paint());
 
-		setChanged();
+			layer.setImage(rotatedBitmap);
+		}
+
+        IndeterminateProgressDialog.getInstance().dismiss();
+		PaintroidApplication.drawingSurface.resetBitmap(layerModel.getCurrentLayer().getImage());
+
+        setChanged();
 
 		PaintroidApplication.perspective.resetScaleAndTranslation();
 		notifyStatus(NotifyStates.COMMAND_DONE);
-	}
-
-	public RotateDirection getRotateDirection() {
-		return rotateDirection;
 	}
 
 	public enum RotateDirection {
