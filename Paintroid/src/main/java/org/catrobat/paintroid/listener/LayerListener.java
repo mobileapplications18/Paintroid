@@ -28,46 +28,39 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.command.implementation.AddLayerCommand;
-import org.catrobat.paintroid.command.implementation.CommandManager;
-import org.catrobat.paintroid.command.implementation.RemoveLayerCommand;
-import org.catrobat.paintroid.command.implementation.SelectLayerCommand;
+import org.catrobat.paintroid.command.implementation.*;
 import org.catrobat.paintroid.model.BitmapFactory;
 import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.model.LayerModel;
+import org.catrobat.paintroid.ui.ToastFactory;
 import org.catrobat.paintroid.ui.button.LayersAdapter;
-import org.catrobat.paintroid.ui.dragndrop.BrickDragAndDropLayerMenu;
+import org.catrobat.paintroid.ui.dragndrop.DragAndDropListener;
 import org.catrobat.paintroid.ui.dragndrop.MyDragShadowBuilder;
 import org.catrobat.paintroid.ui.dragndrop.OnDragListener;
 
-public final class LayerListener implements AdapterView.OnItemClickListener, CommandManager.CommandListener {
-
-	private static final String TAG = LayerListener.class.getSimpleName();
+public final class LayerListener implements AdapterView.OnItemClickListener, LayerActionListener, CommandManager.CommandListener {
 
 	private static final int ANIMATION_TIME = 300;
-	private static final int LAYER_UNDO_LIMIT = 10;
 
-	private Activity activity;
-	private NavigationView navigationView;
-	private BrickDragAndDropLayerMenu brickLayer;
-	private ImageButton addButton;
-	private ImageButton delButton;
+	private final Activity activity;
+	private final ImageButton addButton;
+	private final ImageButton delButton;
 
 	@NonNull
 	private LayersAdapter layersAdapter;
 
-	public LayerListener(Activity activity, NavigationView view) {
+	public LayerListener(Activity activity, NavigationView navigationView) {
 		this.activity = activity;
-		this.navigationView = view;
 		this.layersAdapter = new LayersAdapter(PaintroidApplication.layerModel);
 
-		final ListView listView = (ListView) view.findViewById(R.id.nav_layer_list);
+		final ListView listView = (ListView) navigationView.findViewById(R.id.nav_layer_list);
 		listView.setAdapter(layersAdapter);
 
-		brickLayer = new BrickDragAndDropLayerMenu(listView);
-		OnDragListener dragListener = new OnDragListener(brickLayer);
+		final DragAndDropListener dragAndDropListener = new DragAndDropListener(listView, this);
+		final OnDragListener dragListener = new OnDragListener(dragAndDropListener);
 
 		listView.setOnItemClickListener(this);
 		listView.setOnDragListener(dragListener);
@@ -76,15 +69,8 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 			@Override
 			public boolean onItemLongClick(AdapterView adapterView, View view, int position, long id) {
 				listView.getChildAt(position).setVisibility(View.INVISIBLE);
-				/*
-				Layer layer = layerModel.getLayer(pos);
-				if (!layer.getSelected()) {
-					setCurrentLayer(layer);
-				}
-				*/
-				brickLayer.setDragStartPosition(position);
 
-				brickLayer.setDragStartPosition(position);
+				dragAndDropListener.setDragStartPosition(position);
 
 				Layer layer = (Layer) layersAdapter.getItem(position);
 				MyDragShadowBuilder shadowBuilder = new MyDragShadowBuilder(adapterView.getChildAt(position), layer);
@@ -94,14 +80,14 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 			}
 		});
 
-		addButton = (ImageButton) view.findViewById(R.id.layer_side_nav_button_add);
+		addButton = (ImageButton) navigationView.findViewById(R.id.layer_side_nav_button_add);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				createLayer();
 			}
 		});
-		delButton = (ImageButton) view.findViewById(R.id.layer_side_nav_button_delete);
+		delButton = (ImageButton) navigationView.findViewById(R.id.layer_side_nav_button_delete);
 		delButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -133,43 +119,18 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 		refreshView();
 	}
 
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		selectLayer(position);
+	}
+
 	@NonNull
 	public LayerModel getLayerModel() {
 		return PaintroidApplication.layerModel;
 	}
 
-	@Deprecated
-	public void createLayer() {
-		PaintroidApplication.commandManager.addCommand(new AddLayerCommand(new BitmapFactory()));
-	}
-
-	@Deprecated
-	public void deleteLayer() {
-		PaintroidApplication.commandManager.addCommand(new RemoveLayerCommand());
-		//ToastFactory.makeText(activity, R.string.layer_invisible, Toast.LENGTH_LONG).show();
-	}
-
-	@Deprecated
-	public void moveLayer(int layerToMovePosition, int targetPosition) {
-		// layersAdapter.getPosition()
-		// TODO: uncomment when BrickDragAndDropLayerMenu / ListView has a temporary list for modification
-		// PaintroidApplication.commandManager.addCommand(new MoveLayerCommand(layerToMovePosition, targetPosition));
-	}
-
-	@Deprecated
-	public void mergeLayer(int firstLayer, int secondLayer) {
-		if (firstLayer != secondLayer) {
-			// TODO: uncomment when BrickDragAndDropLayerMenu / ListView has a temporary list for modification
-			/*
-			// layersAdapter.getPosition()
-			PaintroidApplication.commandManager.addCommand(new MergeLayerCommand(firstLayerPosition, secondLayerPosition));
-			ToastFactory.makeText(activity, R.string.layer_merged, Toast.LENGTH_LONG).show();
-			*/
-		}
-	}
-
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	public void selectLayer(int position) {
 		int modelPosition = layersAdapter.getPosition(position);
 		if (getLayerModel().getCurrentPosition() != modelPosition) {
 			PaintroidApplication.commandManager.addCommand(new SelectLayerCommand(modelPosition));
@@ -177,21 +138,60 @@ public final class LayerListener implements AdapterView.OnItemClickListener, Com
 	}
 
 	@Override
+	public void createLayer() {
+		PaintroidApplication.commandManager.addCommand(new AddLayerCommand(new BitmapFactory()));
+	}
+
+	@Override
+	public void deleteLayer() {
+		PaintroidApplication.commandManager.addCommand(new RemoveLayerCommand());
+	}
+
+	@Override
+	public void moveLayer(int layerToMovePosition, int targetPosition) {
+		int fromModelPosition = layersAdapter.getPosition(layerToMovePosition);
+		int toModelPosition = layersAdapter.getPosition(targetPosition);
+
+		PaintroidApplication.commandManager.addCommand(new MoveLayerCommand(fromModelPosition, toModelPosition));
+	}
+
+	@Override
+	public void mergeLayer(int firstLayerPosition, int secondLayerPosition) {
+		if (firstLayerPosition != secondLayerPosition) {
+			int firstLayerModelPosition = layersAdapter.getPosition(firstLayerPosition);
+			int secondLayerModelPosition = layersAdapter.getPosition(secondLayerPosition);
+
+			PaintroidApplication.commandManager.addCommand(new MergeLayerCommand(firstLayerModelPosition, secondLayerModelPosition, new BitmapFactory()));
+			ToastFactory.makeText(activity, R.string.layer_merged, Toast.LENGTH_LONG).show();
+		}
+	}
+
+	@Override
+	public void moveLayerTemporarily(int layerToMovePosition, int targetPosition) {
+		int fromModelPosition = layersAdapter.getPosition(layerToMovePosition);
+		int toModelPosition = layersAdapter.getPosition(targetPosition);
+
+		layersAdapter.swapLayer(fromModelPosition, toModelPosition);
+	}
+
+	@Override
 	public void commandExecuted() {
 		activity.runOnUiThread(
-			new Runnable() {
-
-				@Override
-				public void run() {
-					refreshView();
+				new Runnable() {
+					@Override
+					public void run() {
+						refreshView();
+					}
 				}
-			});
+		);
 	}
 
 	private void refreshView() {
-		layersAdapter.notifyDataSetChanged();
-		addButton.setEnabled(getLayerModel().getLayerCount() < LayerModel.MAX_LAYER);
-		delButton.setEnabled(getLayerModel().getLayerCount() > 1);
+		LayerModel layerModel = getLayerModel();
+
+		layersAdapter.updateLayers(layerModel);
+		addButton.setEnabled(layerModel.getLayerCount() < LayerModel.MAX_LAYER);
+		delButton.setEnabled(layerModel.getLayerCount() > 1);
 
 		PaintroidApplication.drawingSurface.refreshDrawingSurface();
 	}
