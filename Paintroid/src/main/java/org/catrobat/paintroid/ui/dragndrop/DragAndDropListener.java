@@ -21,19 +21,22 @@ package org.catrobat.paintroid.ui.dragndrop;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ListView;
-
 import org.catrobat.paintroid.PaintroidApplication;
 import org.catrobat.paintroid.R;
-import org.catrobat.paintroid.listener.LayerListener;
+import org.catrobat.paintroid.listener.LayerActionListener;
 
-public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
+public class DragAndDropListener {
 
 	private static final int ANIMATION_TIME = 500;
-	private ListView view;
+
+	private final ListView view;
+	private final LayerActionListener layerActionListener;
+
 	private int listViewHeight;
 	private int heightOneLayer;
 	private int numLayer;
@@ -46,8 +49,10 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 	private boolean dragEnded;
 	private boolean animationEnded;
 
-	public BrickDragAndDropLayerMenu(ListView v) {
-		view = v;
+	public DragAndDropListener(@NonNull ListView view, @NonNull LayerActionListener layerActionListener) {
+		this.view = view;
+		this.layerActionListener = layerActionListener;
+
 		moveAlreadyAnimated = false;
 		outsideView = false;
 		positionWentOutsideView = -1;
@@ -190,7 +195,6 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 	}
 
 	public void moveOrMerge(View v, float x, float y) {
-
 		int numLayerDropPosition = 0;
 
 		if (y >= 0 && y <= listViewHeight) {
@@ -206,14 +210,16 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 					&& y < (((numLayerDropPosition + 1) * heightOneLayer) - (heightOneLayer / 3))
 					&& y > ((numLayerDropPosition * heightOneLayer) + (heightOneLayer / 3))) {
 
-				// TODO PaintroidApplication.layerModel.mergeLayer(currentDragLayerPos, numLayerDropPosition);
+				layerActionListener.mergeLayer(startDragLayerPos, numLayerDropPosition);
+			} else {
+				layerActionListener.moveLayer(startDragLayerPos, currentDragLayerPos);
 			}
 		}
 	}
 
 	public void dragEnded() {
 		if (outsideView && animationEnded) {
-			// TODO PaintroidApplication.layerModel.moveLayer(currentDragLayerPos, startDragLayerPos);
+			layerActionListener.moveLayer(startDragLayerPos, currentDragLayerPos);
 		}
 
 		positionWentOutsideView = -1;
@@ -256,13 +262,9 @@ public class BrickDragAndDropLayerMenu extends BrickDragAndDrop {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (up) {
-					// TODO PaintroidApplication.layerModel.moveLayer(movedLayerPos - 1, movedLayerPos);
+					layerActionListener.moveLayerTemporarily(movedLayerPos - 1, movedLayerPos);
 				} else {
-					// TODO PaintroidApplication.layerModel.moveLayer(currentLayerPos, currentLayerPos + 1);
-				}
-
-				if ((movedLayerPos - currentLayerPos) == 1) {
-					// TODO PaintroidApplication.layerModel.refreshView();
+					layerActionListener.moveLayerTemporarily(currentLayerPos, currentLayerPos + 1);
 				}
 
 				animationEnded = true;

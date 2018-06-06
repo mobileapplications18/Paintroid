@@ -25,35 +25,34 @@ import android.view.View;
 
 public class OnDragListener implements View.OnDragListener {
 
-	private BrickDragAndDrop brick;
+	private DragAndDropListener dragAndDropListener;
 
-	public OnDragListener(BrickDragAndDrop brick) {
-		this.brick = brick;
+	public OnDragListener(DragAndDropListener dragAndDropListener) {
+		this.dragAndDropListener = dragAndDropListener;
 	}
 
 	public boolean onDrag(View v, DragEvent event) {
-
 		final int action = event.getAction();
 		switch (action) {
 
 			case DragEvent.ACTION_DRAG_STARTED:
-				brick.resetMoveAlreadyAnimated();
+				dragAndDropListener.resetMoveAlreadyAnimated();
 				return true;
 			case DragEvent.ACTION_DRAG_ENTERED:
-				brick.setupProperties();
-				brick.goOutsideView(false, event.getX(), event.getY());
+				dragAndDropListener.setupProperties();
+				dragAndDropListener.goOutsideView(false, event.getX(), event.getY());
 				return true;
 			case DragEvent.ACTION_DRAG_LOCATION:
-				brick.showOptionFromCurrentPosition(event.getX(), event.getY());
+				dragAndDropListener.showOptionFromCurrentPosition(event.getX(), event.getY());
 				return true;
 			case DragEvent.ACTION_DRAG_EXITED:
-				brick.goOutsideView(true, event.getX(), event.getY());
+				dragAndDropListener.goOutsideView(true, event.getX(), event.getY());
 				return true;
 			case DragEvent.ACTION_DROP:
-				brick.moveOrMerge(v, event.getX(), event.getY());
+				dragAndDropListener.moveOrMerge(v, event.getX(), event.getY());
 				return true;
 			case DragEvent.ACTION_DRAG_ENDED:
-				brick.dragEnded();
+				dragAndDropListener.dragEnded();
 				return true;
 			default:
 				Log.e("Drag and Drop: ", "Unknown action type receiver by OnDragListener");
