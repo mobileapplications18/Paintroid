@@ -25,7 +25,6 @@ import org.catrobat.paintroid.PaintroidApplication
 import org.catrobat.paintroid.command.Command
 import org.catrobat.paintroid.model.BitmapFactory
 import org.catrobat.paintroid.model.LayerModel
-import org.catrobat.paintroid.tools.Tool
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -91,7 +90,6 @@ class CommandManager(private val layerModel: LayerModel) {
 		layerModel.clearLayer()
 		PaintroidApplication.drawingSurface.resetBitmap(layerModel.currentLayer.image)
 
-
 		notifyCommandExecuted()
 	}
 
@@ -99,8 +97,6 @@ class CommandManager(private val layerModel: LayerModel) {
 		commandListener.forEach {
 			it.get()?.commandExecuted()
 		}
-		PaintroidApplication.drawingSurface.setBitmap(layerModel.currentLayer.image)
-		PaintroidApplication.currentTool.resetInternalState(Tool.StateChange.RESET_INTERNAL_STATE)
 	}
 
 	interface CommandListener {

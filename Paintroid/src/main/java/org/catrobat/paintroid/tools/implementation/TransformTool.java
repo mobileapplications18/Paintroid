@@ -263,21 +263,26 @@ public class TransformTool extends BaseToolWithRectangleShape {
 	}
 
 	private void flip(FlipCommand.FlipDirection flipDirection) {
-		FlipCommand command = new FlipCommand(flipDirection);
 		IndeterminateProgressDialog.getInstance().show();
+
+		FlipCommand command = new FlipCommand(flipDirection);
 		command.addObserver(this);
+
 		PaintroidApplication.commandManager.addCommand(command);
 	}
 
 	private void rotate(RotateCommand.RotateDirection rotateDirection) {
 		IndeterminateProgressDialog.getInstance().show();
-			RotateCommand command = new RotateCommand(rotateDirection);
 
-			PaintroidApplication.commandManager.addCommand(command);
-			float tempBoxWidth = boxWidth;
-			float tempBoxHeight = boxHeight;
-			boxWidth = tempBoxHeight;
-			boxHeight = tempBoxWidth;
+		RotateCommand command = new RotateCommand(rotateDirection);
+		command.addObserver(this);
+
+		PaintroidApplication.commandManager.addCommand(command);
+
+		float tempBoxWidth = boxWidth;
+		float tempBoxHeight = boxHeight;
+		boxWidth = tempBoxHeight;
+		boxHeight = tempBoxWidth;
 	}
 
 	private void autoCrop() {

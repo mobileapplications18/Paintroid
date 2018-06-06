@@ -20,6 +20,7 @@
 package org.catrobat.paintroid.command.implementation
 
 import android.graphics.Canvas
+import org.catrobat.paintroid.PaintroidApplication
 import org.catrobat.paintroid.command.Command
 import org.catrobat.paintroid.model.LayerModel
 
@@ -28,6 +29,7 @@ class MoveLayerCommand(private val layerPosition: Int, private val targetPositio
 	override fun run(canvas: Canvas, layerModel: LayerModel) {
 		layerModel.swapLayer(layerPosition, targetPosition)
 		layerModel.currentLayer = layerModel.getLayer(targetPosition)
+		PaintroidApplication.drawingSurface.setBitmap(layerModel.currentLayer.image)
 	}
 
 	override fun freeResources() {
