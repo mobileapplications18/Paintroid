@@ -283,6 +283,8 @@ public class TransformTool extends BaseToolWithRectangleShape {
 		float tempBoxHeight = boxHeight;
 		boxWidth = tempBoxHeight;
 		boxHeight = tempBoxWidth;
+		toolPosition.x = boxWidth / 2f;
+		toolPosition.y = boxHeight / 2f;
 	}
 
 	private void autoCrop() {
