@@ -21,10 +21,8 @@ package org.catrobat.paintroid.command.implementation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.model.LayerModel;
 
@@ -38,8 +36,8 @@ public class ResizeCommand extends BaseCommand {
 	private final int maximumBitmapResolution;
 
 	public ResizeCommand(int resizeCoordinateXLeft, int resizeCoordinateYTop,
-			int resizeCoordinateXRight, int resizeCoordinateYBottom,
-			int maximumBitmapResolution) {
+						 int resizeCoordinateXRight, int resizeCoordinateYBottom,
+						 int maximumBitmapResolution) {
 		this.resizeCoordinateXLeft = resizeCoordinateXLeft;
 		this.resizeCoordinateYTop = resizeCoordinateYTop;
 		this.resizeCoordinateXRight = resizeCoordinateXRight;
@@ -114,7 +112,7 @@ public class ResizeCommand extends BaseCommand {
 				resizedBitmap.setPixels(pixelsToCopy, 0, copyToWidth, copyToXLeft, copyToYTop, copyToWidth, copyToHeight);
 
 				setChanged();
-                layer.setImage(resizedBitmap);
+				layer.setImage(resizedBitmap);
 
 			} catch (Exception e) {
 				Log.e(TAG, "failed to resize bitmap:" + e.getMessage());

@@ -39,8 +39,6 @@ import org.catrobat.paintroid.command.implementation.FlipCommand;
 import org.catrobat.paintroid.command.implementation.ResizeCommand;
 import org.catrobat.paintroid.command.implementation.RotateCommand;
 import org.catrobat.paintroid.dialog.IndeterminateProgressDialog;
-import org.catrobat.paintroid.model.Layer;
-import org.catrobat.paintroid.model.LayerModel;
 import org.catrobat.paintroid.tools.ToolType;
 import org.catrobat.paintroid.ui.DrawingSurface;
 import org.catrobat.paintroid.ui.ToastFactory;
@@ -242,18 +240,14 @@ public class TransformTool extends BaseToolWithRectangleShape {
 			cropRunFinished = false;
 			initResizeBounds();
 			if (areResizeBordersValid()) {
-				LayerModel layerModel = PaintroidApplication.layerModel;
-				for (Layer layer : layerModel.getLayers()) { // TODO implement in ResizeCommand once
-					ResizeCommand resizeCommand = new ResizeCommand(
-							(int) Math.floor(resizeBoundWidthXLeft),
-							(int) Math.floor(resizeBoundHeightYTop),
-							(int) Math.floor(resizeBoundWidthXRight),
-							(int) Math.floor(resizeBoundHeightYBottom),
-							(int) maximumBoxResolution
-					);
-
-					PaintroidApplication.commandManager.addCommand(resizeCommand);
-				}
+				ResizeCommand resizeCommand = new ResizeCommand(
+						(int) Math.floor(resizeBoundWidthXLeft),
+						(int) Math.floor(resizeBoundHeightYTop),
+						(int) Math.floor(resizeBoundWidthXRight),
+						(int) Math.floor(resizeBoundHeightYBottom),
+						(int) maximumBoxResolution
+				);
+				PaintroidApplication.commandManager.addCommand(resizeCommand);
 			} else {
 				cropRunFinished = true;
 				ToastFactory.makeText(context, R.string.resize_nothing_to_resize,
