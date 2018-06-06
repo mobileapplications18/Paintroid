@@ -21,9 +21,11 @@ package org.catrobat.paintroid.command.implementation;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import org.catrobat.paintroid.model.Layer;
 import org.catrobat.paintroid.model.LayerModel;
 
 public class ResizeCommand extends BaseCommand {
@@ -49,75 +51,78 @@ public class ResizeCommand extends BaseCommand {
 	public void run(@NonNull Canvas canvas, @NonNull LayerModel layerModel) {
 		notifyStatus(NotifyStates.COMMAND_STARTED);
 
-		try {
-			Bitmap bitmap = layerModel.getCurrentLayer().getImage();
+		for (Layer layer : layerModel.getLayers()) {
+			try {
+				Bitmap bitmap = layer.getImage();
 
-			if (resizeCoordinateXRight < resizeCoordinateXLeft) {
-				Log.e(TAG, "coordinate X right must be larger than coordinate X left");
+				if (resizeCoordinateXRight < resizeCoordinateXLeft) {
+					Log.e(TAG, "coordinate X right must be larger than coordinate X left");
+
+					notifyStatus(NotifyStates.COMMAND_FAILED);
+					return;
+				}
+				if (resizeCoordinateYBottom < resizeCoordinateYTop) {
+					Log.e(TAG, "coordinate Y bottom must be larger than coordinate Y top");
+
+					notifyStatus(NotifyStates.COMMAND_FAILED);
+					return;
+				}
+				if (resizeCoordinateXLeft >= bitmap.getWidth() || resizeCoordinateXRight < 0
+						|| resizeCoordinateYTop >= bitmap.getHeight() || resizeCoordinateYBottom < 0) {
+					Log.e(TAG, "resize coordinates are out of bitmap scope");
+
+					notifyStatus(NotifyStates.COMMAND_FAILED);
+					return;
+				}
+				if (resizeCoordinateXLeft == 0
+						&& resizeCoordinateXRight == bitmap.getWidth() - 1
+						&& resizeCoordinateYBottom == bitmap.getHeight() - 1
+						&& resizeCoordinateYTop == 0) {
+					Log.e(TAG, " no need to resize ");
+
+					notifyStatus(NotifyStates.COMMAND_FAILED);
+					return;
+				}
+				if ((resizeCoordinateXRight + 1 - resizeCoordinateXLeft)
+						* (resizeCoordinateYBottom + 1 - resizeCoordinateYTop) > maximumBitmapResolution) {
+					Log.e(TAG, " image resolution not supported ");
+
+					notifyStatus(NotifyStates.COMMAND_FAILED);
+					return;
+				}
+
+				Bitmap resizedBitmap = Bitmap.createBitmap(
+						resizeCoordinateXRight + 1 - resizeCoordinateXLeft,
+						resizeCoordinateYBottom + 1 - resizeCoordinateYTop,
+						bitmap.getConfig());
+
+				int copyFromXLeft = Math.max(0, resizeCoordinateXLeft);
+				int copyFromXRight = Math.min(bitmap.getWidth() - 1, resizeCoordinateXRight);
+				int copyFromYTop = Math.max(0, resizeCoordinateYTop);
+				int copyFromYBottom = Math.min(bitmap.getHeight() - 1, resizeCoordinateYBottom);
+				int copyFromWidth = copyFromXRight - copyFromXLeft + 1;
+				int copyFromHeight = copyFromYBottom - copyFromYTop + 1;
+				int copyToXLeft = Math.abs(Math.min(0, resizeCoordinateXLeft));
+				int copyToXRight = Math.min(bitmap.getWidth() - 1, resizeCoordinateXRight) - resizeCoordinateXLeft;
+				int copyToYTop = Math.abs(Math.min(0, resizeCoordinateYTop));
+				int copyToYBottom = Math.min(bitmap.getHeight() - 1, resizeCoordinateYBottom) - resizeCoordinateYTop;
+				int copyToWidth = copyToXRight - copyToXLeft + 1;
+				int copyToHeight = copyToYBottom - copyToYTop + 1;
+				int[] pixelsToCopy = new int[(copyFromXRight - copyFromXLeft + 1) * (copyFromYBottom - copyFromYTop + 1)];
+
+				bitmap.getPixels(pixelsToCopy, 0, copyFromWidth, copyFromXLeft, copyFromYTop, copyFromWidth, copyFromHeight);
+				resizedBitmap.setPixels(pixelsToCopy, 0, copyToWidth, copyToXLeft, copyToYTop, copyToWidth, copyToHeight);
+
+				setChanged();
+                layer.setImage(resizedBitmap);
+
+			} catch (Exception e) {
+				Log.e(TAG, "failed to resize bitmap:" + e.getMessage());
 
 				notifyStatus(NotifyStates.COMMAND_FAILED);
-				return;
 			}
-			if (resizeCoordinateYBottom < resizeCoordinateYTop) {
-				Log.e(TAG, "coordinate Y bottom must be larger than coordinate Y top");
-
-				notifyStatus(NotifyStates.COMMAND_FAILED);
-				return;
-			}
-			if (resizeCoordinateXLeft >= bitmap.getWidth() || resizeCoordinateXRight < 0
-					|| resizeCoordinateYTop >= bitmap.getHeight() || resizeCoordinateYBottom < 0) {
-				Log.e(TAG, "resize coordinates are out of bitmap scope");
-
-				notifyStatus(NotifyStates.COMMAND_FAILED);
-				return;
-			}
-			if (resizeCoordinateXLeft == 0
-					&& resizeCoordinateXRight == bitmap.getWidth() - 1
-					&& resizeCoordinateYBottom == bitmap.getHeight() - 1
-					&& resizeCoordinateYTop == 0) {
-				Log.e(TAG, " no need to resize ");
-
-				notifyStatus(NotifyStates.COMMAND_FAILED);
-				return;
-			}
-			if ((resizeCoordinateXRight + 1 - resizeCoordinateXLeft)
-					* (resizeCoordinateYBottom + 1 - resizeCoordinateYTop) > maximumBitmapResolution) {
-				Log.e(TAG, " image resolution not supported ");
-
-				notifyStatus(NotifyStates.COMMAND_FAILED);
-				return;
-			}
-
-			Bitmap resizedBitmap = Bitmap.createBitmap(
-					resizeCoordinateXRight + 1 - resizeCoordinateXLeft,
-					resizeCoordinateYBottom + 1 - resizeCoordinateYTop,
-					bitmap.getConfig());
-
-			int copyFromXLeft = Math.max(0, resizeCoordinateXLeft);
-			int copyFromXRight = Math.min(bitmap.getWidth() - 1, resizeCoordinateXRight);
-			int copyFromYTop = Math.max(0, resizeCoordinateYTop);
-			int copyFromYBottom = Math.min(bitmap.getHeight() - 1, resizeCoordinateYBottom);
-			int copyFromWidth = copyFromXRight - copyFromXLeft + 1;
-			int copyFromHeight = copyFromYBottom - copyFromYTop + 1;
-			int copyToXLeft = Math.abs(Math.min(0, resizeCoordinateXLeft));
-			int copyToXRight = Math.min(bitmap.getWidth() - 1, resizeCoordinateXRight) - resizeCoordinateXLeft;
-			int copyToYTop = Math.abs(Math.min(0, resizeCoordinateYTop));
-			int copyToYBottom = Math.min(bitmap.getHeight() - 1, resizeCoordinateYBottom) - resizeCoordinateYTop;
-			int copyToWidth = copyToXRight - copyToXLeft + 1;
-			int copyToHeight = copyToYBottom - copyToYTop + 1;
-			int[] pixelsToCopy = new int[(copyFromXRight - copyFromXLeft + 1) * (copyFromYBottom - copyFromYTop + 1)];
-
-			bitmap.getPixels(pixelsToCopy, 0, copyFromWidth, copyFromXLeft, copyFromYTop, copyFromWidth, copyFromHeight);
-			resizedBitmap.setPixels(pixelsToCopy, 0, copyToWidth, copyToXLeft, copyToYTop, copyToWidth, copyToHeight);
-
-			layerModel.getCurrentLayer().setImage(resizedBitmap);
-
-			setChanged();
-		} catch (Exception e) {
-			Log.e(TAG, "failed to resize bitmap:" + e.getMessage());
-
-			notifyStatus(NotifyStates.COMMAND_FAILED);
 		}
+
 
 		notifyStatus(NotifyStates.COMMAND_DONE);
 	}
