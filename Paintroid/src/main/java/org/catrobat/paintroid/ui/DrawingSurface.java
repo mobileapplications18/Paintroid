@@ -185,8 +185,8 @@ public class DrawingSurface extends SurfaceView implements SurfaceHolder.Callbac
 	}
 
 	public synchronized void resetBitmap(Bitmap bitmap) {
-		PaintroidApplication.perspective.resetScaleAndTranslation();
 		setBitmap(bitmap);
+		PaintroidApplication.perspective.resetScaleAndTranslation();
 
 		if (surfaceCanBeUsed) {
 			drawingThread.start();

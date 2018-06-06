@@ -90,7 +90,6 @@ class CommandManager(private val layerModel: LayerModel) {
 		layerModel.clearLayer()
 		PaintroidApplication.drawingSurface.resetBitmap(layerModel.currentLayer.image)
 
-
 		notifyCommandExecuted()
 	}
 

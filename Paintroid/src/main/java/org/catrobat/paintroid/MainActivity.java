@@ -44,6 +44,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
+import org.catrobat.paintroid.command.implementation.CommandManager;
 import org.catrobat.paintroid.command.implementation.LoadCommand;
 import org.catrobat.paintroid.common.Constants;
 import org.catrobat.paintroid.dialog.*;
@@ -201,6 +202,12 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 
 		PaintroidApplication.commandManager.addCommandListener(layerListener);
 		PaintroidApplication.commandManager.addCommandListener(topBar);
+		PaintroidApplication.commandManager.addCommandListener(new CommandManager.CommandListener() {
+			@Override
+			public void commandExecuted() {
+				PaintroidApplication.currentTool.resetInternalState(Tool.StateChange.RESET_INTERNAL_STATE);
+			}
+		});
 	}
 
 	private void initActionBar() {
