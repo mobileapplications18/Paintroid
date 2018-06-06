@@ -195,7 +195,6 @@ public class DragAndDropListener {
 	}
 
 	public void moveOrMerge(View v, float x, float y) {
-
 		int numLayerDropPosition = 0;
 
 		if (y >= 0 && y <= listViewHeight) {
@@ -211,14 +210,16 @@ public class DragAndDropListener {
 					&& y < (((numLayerDropPosition + 1) * heightOneLayer) - (heightOneLayer / 3))
 					&& y > ((numLayerDropPosition * heightOneLayer) + (heightOneLayer / 3))) {
 
-				layerActionListener.mergeLayer(currentDragLayerPos, numLayerDropPosition);
+				layerActionListener.mergeLayer(startDragLayerPos, numLayerDropPosition);
+			} else {
+				layerActionListener.moveLayer(startDragLayerPos, currentDragLayerPos);
 			}
 		}
 	}
 
 	public void dragEnded() {
 		if (outsideView && animationEnded) {
-			layerActionListener.moveLayer(currentDragLayerPos, startDragLayerPos);
+			layerActionListener.moveLayer(startDragLayerPos, currentDragLayerPos);
 		}
 
 		positionWentOutsideView = -1;
