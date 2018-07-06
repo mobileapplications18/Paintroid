@@ -291,6 +291,7 @@ public class MainActivity extends NavigationDrawerMenuActivity implements Naviga
 		PaintroidApplication.currentTool.changePaintStrokeCap(Cap.ROUND);
 		PaintroidApplication.currentTool.changePaintStrokeWidth(25);
 		PaintroidApplication.currentTool = null;
+		PaintroidApplication.commandManager.resetAndClear();
 
 		NavigationDrawerMenuActivity.savedPictureUri = null;
 
